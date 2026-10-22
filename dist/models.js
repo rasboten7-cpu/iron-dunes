@@ -13,7 +13,7 @@ function camoTexture(base,spots,repeat=.32,dirt=.25){const c=document.createElem
  const d=g.getImageData(0,0,256,256),p=d.data;for(let i=0;i<p.length;i+=4){const n=(rnd()-.5)*22*dirt*2;p[i]+=n;p[i+1]+=n;p[i+2]+=n*.9}g.putImageData(d,0,0);
  const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(repeat*.8,repeat*.8);t.anisotropy=4;return t}
 function stripeTexture(){const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');g.fillStyle='#2b2924';g.fillRect(0,0,64,64);g.fillStyle='#46423a';for(let i=0;i<8;i++)g.fillRect(0,i*8,64,3);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(1,6);return t}
-const TEAM_COL=[0x3d8fd0,0xc8412e,0x9a9a8a];
+const TEAM_COL=[0x3d8fd0,0xc8412e,0x3fae4a,0xe0b52a,0x8e55c9,0xe07a22,0x2ab8b8,0xd05a9a];const tcol=t=>TEAM_COL[t]??0x9a9a8a;
 export function palette(name,team){const P={
   desert:['#a6916b',[['#8d7b57',26,30],['#77694b',16,26],['#b29e78',10,18]]],
   dark:['#5e6052',[['#4f5145',26,30],['#43453b',16,26],['#68695a',10,18]]],
@@ -38,7 +38,7 @@ export function palette(name,team){const P={
   wood:new T.MeshStandardMaterial({color:0x8b6a42,roughness:.9}),
   canvas:new T.MeshStandardMaterial({color:0x6b6648,roughness:.95}),
   skin:new T.MeshStandardMaterial({color:0xc08a62,roughness:.7}),
-  team:new T.MeshStandardMaterial({color:TEAM_COL[team]??TEAM_COL[2],roughness:.6,metalness:.1,emissive:TEAM_COL[team]??TEAM_COL[2],emissiveIntensity:.18})}}
+  team:new T.MeshStandardMaterial({color:tcol(team),roughness:.6,metalness:.1,emissive:tcol(team),emissiveIntensity:.18})}}
 
 // ---------------------------------------------------------------------------
 // Geometry helpers
@@ -247,7 +247,7 @@ const corrugT=base=>texCanvas(64,64,(g,w,h)=>{g.fillStyle=base;g.fillRect(0,0,w,
 const stripeT=(a,b)=>texCanvas(64,64,(g,w,h)=>{g.fillStyle=a;g.fillRect(0,0,w,h);g.fillStyle=b;for(let i=-64;i<128;i+=16){g.beginPath();g.moveTo(i,0);g.lineTo(i+8,0);g.lineTo(i+8-64,64);g.lineTo(i-64,64);g.closePath();g.fill()}},2);
 const padT=(col)=>texCanvas(128,128,(g,w,h)=>{g.fillStyle='#55554e';g.fillRect(0,0,w,h);grain(g,w,h,16);g.strokeStyle=col;g.lineWidth=6;g.beginPath();g.arc(64,64,52,0,7);g.stroke();g.fillStyle=col;g.fillRect(40,34,10,60);g.fillRect(78,34,10,60);g.fillRect(40,58,48,10)});
 const screenT=()=>texCanvas(128,64,(g,w,h)=>{g.fillStyle='#4a0d0a';g.fillRect(0,0,w,h);g.fillStyle='#e8b84a';const st=(cx,cy,R)=>{g.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?R*.42:R;g.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r)}g.closePath();g.fill()};st(30,32,20);g.fillStyle='#f1d9a0';for(let i=0;i<4;i++)g.fillRect(60,14+i*11,50-i*8,5)});
-function bmat(f,team){const tc=TEAM_COL[team]??TEAM_COL[2],M=o=>new T.MeshStandardMaterial({roughness:.86,metalness:.04,...o});
+function bmat(f,team){const tc=tcol(team),M=o=>new T.MeshStandardMaterial({roughness:.86,metalness:.04,...o});
  const c={glass:M({color:0x22333c,roughness:.12,metalness:.55}),dark:M({color:0x27261f,roughness:.92}),metal:M({color:0x6d6e68,roughness:.42,metalness:.62}),steel:M({color:0x8d918c,roughness:.35,metalness:.7}),team:M({color:tc,emissive:tc,emissiveIntensity:.28,roughness:.55}),lamp:M({color:0xfff1c8,emissive:0xffd88a,emissiveIntensity:.9}),hazard:M({map:stripeT('#d6ac34','#25221c')}),sandbag:M({color:0xa08b62,roughness:1}),crate:M({color:0x8d6c42,roughness:.9}),tarp:M({color:0x6e6a48,roughness:1,side:T.DoubleSide}),wood:M({color:0x7a5a36,roughness:.95}),dirt:M({color:0xa58a5e,roughness:1})};
  if(f==='falcon')return{...c,f,wall:M({map:concreteT('#cdc6b3')}),wall2:M({map:concreteT('#a9a594')}),roof:M({map:concreteT('#62707a','#0003'),roughness:.65}),trim:M({color:0x3d5a6c,roughness:.5,metalness:.35}),accent:M({color:0x5fb4ea,emissive:0x2f86c4,emissiveIntensity:.7,roughness:.3}),floor:M({map:concreteT('#6f6c62','#0003')})};
  if(f==='dragon')return{...c,f,wall:M({map:concreteT('#858a6c')}),wall2:M({map:concreteT('#656b53')}),roof:M({map:tileT('#86281f'),roughness:.55}),trim:M({color:0xcfa33c,roughness:.35,metalness:.65}),accent:M({color:0xd9473a,emissive:0x7a1a10,emissiveIntensity:.45}),floor:M({map:concreteT('#605e4e','#0003')}),screen:M({map:screenT(),emissive:0x401010,emissiveIntensity:.5,emissiveMap:screenT()})};
@@ -410,7 +410,7 @@ function bakeOne(key,team,touch){const spec=MODEL_SPECS[key],{renderer,scene,dir
  for(let row=0;row<poses.length;row++){const ps=poses[row];if(model.pose){if(ps.startsWith('walk'))model.pose('walk',+ps.slice(4)/WALK*Math.PI*2);else model.pose(ps)}strip(holder,g,row)}scene.remove(holder);
  let turretAtlas=null;if(spec.turret&&model.turret){const th=new T.Group();model.turret.position.x=model.turret.position.z=0;th.add(model.turret);scene.add(th);turretAtlas=document.createElement('canvas');turretAtlas.width=F*dirs;turretAtlas.height=F;strip(th,turretAtlas.getContext('2d'),0);scene.remove(th)}
  return{key,S:spec.S,F,dirs,poses,atlas,turretAtlas,maskSize:32}}
-function bakeBuilding(key,team,touch){const spec=MODEL_SPECS[key],{renderer,scene,sun,ground,dirv}=bakeRenderer();const model=spec.build(team),holder=new T.Group();model.hull.scale.y=1.3;if(model.turret){model.turret.position.y*=1.3}holder.add(model.hull);if(model.turret)holder.add(model.turret);scene.add(holder);holder.updateMatrixWorld(true);
+function bakeBuilding(key,team,touch){const spec=MODEL_SPECS[key],{renderer,scene,sun,ground,dirv}=bakeRenderer();const model=spec.build(team),holder=new T.Group();if(!spec.tree)model.hull.scale.y=1.3;if(model.turret){model.turret.position.y*=1.3}holder.add(model.hull);if(model.turret)holder.add(model.turret);scene.add(holder);holder.updateMatrixWorld(true);
  const cam=new T.OrthographicCamera(-1,1,1,-1,.1,200);cam.position.copy(dirv).multiplyScalar(60);cam.lookAt(0,0,0);cam.updateMatrixWorld();const bb=new T.Box3().setFromObject(holder);let ext=0;const v=new T.Vector3();for(const x of [bb.min.x,bb.max.x])for(const y of [bb.min.y,bb.max.y])for(const z of [bb.min.z,bb.max.z]){v.set(x,y,z).applyMatrix4(cam.matrixWorldInverse);ext=Math.max(ext,Math.abs(v.x),Math.abs(v.y))}
  const S=Math.ceil(ext*2.24*10)/10;cam.left=cam.bottom=-S/2;cam.right=cam.top=S/2;cam.updateProjectionMatrix();const F=Math.min(touch?300:400,Math.max(128,Math.round(S*(touch?13:18)))),SS=2,cw=F*SS,frames=spec.frames||1,CH=Math.min(8,Math.max(frames,model.turret?8:1));
  const sc=sun.shadow.camera;sc.left=sc.bottom=-S*.75;sc.right=sc.top=S*.75;sc.far=60;sun.position.set(-S*.5,S*.9+4,S*.5);sc.updateProjectionMatrix();sun.shadow.map?.dispose();sun.shadow.map=null;scene.add(ground);if(model.turret)holder.remove(model.turret);
@@ -428,3 +428,17 @@ export async function bakeFaction(faction,team,{touch=false,progress}={}){const 
  return out}
 export function bakeKey(key,team,touch){const e=MODEL_SPECS[key].building?bakeBuilding(key,team,touch):bakeOne(key,team,touch);buildMaskE(e);return e}
 export function buildModel(key,team){const sp=MODEL_SPECS[key],m=sp.build(team),g=new T.Group();g.add(m.hull);if(m.turret)g.add(m.turret);if(sp.building)m.hull.scale.y=1.3;if(m.pose)m.pose(sp.infantry?'aim':'rot1');return g}
+
+// ---------------------------------------------------------------------------
+// Scenery for the different environments (baked once as single-view sprites)
+// ---------------------------------------------------------------------------
+const TREES={
+ pine:(v)=>{const h=new T.Group(),bark=new T.MeshStandardMaterial({color:0x5a4030,roughness:.95}),nd=new T.MeshStandardMaterial({color:[0x2f4a34,0x2a4430,0x35523a][v%3],roughness:.9,flatShading:true}),sn=new T.MeshStandardMaterial({color:0xf2f6fa,roughness:.7,flatShading:true});const k=.9+v*.12;
+  cyl(.22*k,.3*k,2.2*k,bark,h,0,1.1*k,0,'y',8);for(let i=0;i<4;i++){const r=(2.3-i*.48)*k,y=(1.6+i*1.45)*k,hh=2.3*k;const c=mesh(new T.ConeGeometry(r,hh,9),nd,h,0,y+hh/2,0);c.rotation.y=i*.7;const s=mesh(new T.ConeGeometry(r*.8,hh*.55,9),sn,h,0,y+hh*.72,0);s.rotation.y=i*.7+.3}return{hull:h}},
+ oak:(v)=>{const h=new T.Group(),bark=new T.MeshStandardMaterial({color:0x5b4632,roughness:.95}),cols=[0x4f7a32,0x5e8a3a,0x46702c,0x6a8f40];const k=.85+v*.12;cyl(.28*k,.4*k,3*k,bark,h,0,1.5*k,0,'y',8);
+  for(let i=0;i<7;i++){const a=i/7*Math.PI*2+v,r=i?1.5*k:0,y=(3.6+(i%3)*.5)*k;const b=mesh(new T.IcosahedronGeometry((1.5+((i*37+v*13)%5)*.12)*k,1),new T.MeshStandardMaterial({color:cols[(i+v)%4],roughness:.9,flatShading:true}),h,Math.cos(a)*r,y,Math.sin(a)*r);b.scale.y=.85}return{hull:h}},
+ acacia:(v)=>{const h=new T.Group(),bark=new T.MeshStandardMaterial({color:0x5a4430,roughness:.95}),leaf=new T.MeshStandardMaterial({color:[0x6f7a36,0x7a8440,0x66702e][v%3],roughness:.9,flatShading:true});const k=.9+v*.1;
+  cyl(.2*k,.3*k,2.4*k,bark,h,0,1.2*k,0,'y',7);for(const [dx,dz,rz,rx] of [[.8,0,-.5,0],[-.7,.3,.5,.2],[0,-.7,0,-.5]]){const b=cyl(.11*k,.15*k,2*k,bark,h,dx*.6*k,3.0*k,dz*.6*k,'y',6);b.rotation.set(rx,0,rz)}
+  for(const [x,z,r] of [[0,0,2.8],[1.4,.4,1.8],[-1.3,.5,1.9],[.2,-1.2,1.8]]){const c=mesh(new T.SphereGeometry(r*k,10,6),leaf,h,x*k,3.9*k,z*k);c.scale.y=.28}return{hull:h}}};
+for(const t of Object.keys(TREES))for(let v=0;v<3;v++)MODEL_SPECS['tree_'+t+v]={build:()=>TREES[t](v),building:true,tree:true,frames:1};
+export function bakeScenery(type,touch){const out=[];for(let v=0;v<3;v++){const e=bakeBuilding('tree_'+type+v,2,touch);out.push(e)}return out}

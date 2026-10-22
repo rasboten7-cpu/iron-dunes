@@ -1,7 +1,8 @@
 import * as T from './three.module.js';
-import {MAP,MAPS,setMap,mapObstacles} from './world-config.js?v=5';
-import {bakeFaction,WALK_FRAMES} from './models.js?v=10';
-export {T,MAP,MAPS,setMap,mapObstacles};
+import {MAP,MAPS,setMap,mapObstacles,BIOMES} from './world-config.js?v=7';
+import {bakeFaction,WALK_FRAMES,bakeScenery} from './models.js?v=12';
+export {T,MAP,MAPS,setMap,mapObstacles,BIOMES};
+const BIO=()=>BIOMES[MAP.biome]||BIOMES.desert;
 
 // ---------------------------------------------------------------------------
 // Terrain
@@ -35,18 +36,29 @@ await Promise.all([...SHEETS,...ENV].map(key=>new Promise((resolve,reject)=>{
 })));
 
 export const MODELS={};export {WALK_FRAMES};
+// --- environment art -------------------------------------------------------
+const GROUNDS={};function groundTex(){const b=BIO();if(!b.ground)return assets.ground.frames[0];if(GROUNDS[MAP.biome])return GROUNDS[MAP.biome];const N=512,c=canvas(N,N),g=c.getContext('2d'),G=b.ground;g.fillStyle=`rgb(${G.base})`;g.fillRect(0,0,N,N);let sd=MAP.biome.length*977;const r=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296};
+ const blob=(x,y,rad,col,a)=>{for(const[dx,dy]of[[0,0],[N,0],[-N,0],[0,N],[0,-N]]){const gr=g.createRadialGradient(x+dx,y+dy,0,x+dx,y+dy,rad);gr.addColorStop(0,`rgba(${col},${a})`);gr.addColorStop(1,`rgba(${col},0)`);g.fillStyle=gr;g.fillRect(x+dx-rad,y+dy-rad,rad*2,rad*2)}};
+ for(let i=0;i<70;i++)blob(r()*N,r()*N,30+r()*90,G.var[i%G.var.length],(MAP.biome==='snow'?.18:.35)+r()*.3);for(let i=0;i<260;i++)blob(r()*N,r()*N,4+r()*14,G.var[i%G.var.length],.4);
+ if(MAP.biome==='green'||MAP.biome==='savanna'){g.lineWidth=1;for(let i=0;i<4200;i++){const x=r()*N,y=r()*N,l=2+r()*4;const v=G.var[i%G.var.length];g.strokeStyle=`rgba(${v.map(q=>q+(r()*30-15)|0)},.7)`;g.beginPath();g.moveTo(x,y);g.lineTo(x+(r()-.5)*2,y-l);g.stroke()}}
+ if(MAP.biome==='snow'){for(let i=0;i<900;i++){g.fillStyle=r()<.5?'rgba(255,255,255,.9)':'rgba(170,190,215,.35)';g.fillRect(r()*N,r()*N,1.5,1.5)}for(let i=0;i<30;i++){g.strokeStyle='rgba(150,170,195,.25)';g.lineWidth=2+r()*3;g.beginPath();const x=r()*N,y=r()*N;g.moveTo(x,y);g.quadraticCurveTo(x+r()*80-40,y+r()*40,x+r()*120-60,y+r()*60);g.stroke()}}
+ g.fillStyle=G.speck;for(let i=0;i<1600;i++)g.fillRect(r()*N,r()*N,1+r()*1.5,1+r()*1.5);GROUNDS[MAP.biome]=c;return c}
+function treeAsset(kind,v){const key='tree_'+kind+v;if(assets[key])return key;try{const touch=matchMedia('(pointer:coarse)').matches;const list=bakeScenery(kind,touch);list.forEach((e,i)=>{const k='tree_'+kind+i,m=e.mask;assets[k]={image:{width:e.F,height:e.F},frames:[e.atlas],mask:null,sheet:false,variants:{},model:e};dimensions[k]=[e.S,kind==='oak'?1.8:1.4,.5]})}catch(err){console.warn('tree bake failed',err);return'palm'}return assets[key]?key:'palm'}
+function rockAsset(){const t=BIO().rockTint;if(!t)return'rocks';const key='rocks_'+t;if(assets[key])return key;const src=assets.rocks.frames[0],c=canvas(src.width,src.height),g=c.getContext('2d');g.drawImage(src,0,0);g.globalCompositeOperation='source-atop';
+ if(t==='snow'){const gr=g.createLinearGradient(0,0,0,c.height);gr.addColorStop(0,'rgba(245,249,255,.92)');gr.addColorStop(.55,'rgba(225,235,248,.55)');gr.addColorStop(1,'rgba(200,215,235,.15)');g.fillStyle=gr;g.fillRect(0,0,c.width,c.height)}else if(t==='moss'){g.fillStyle='rgba(70,90,50,.32)';g.fillRect(0,0,c.width,c.height)}else{g.fillStyle='rgba(150,60,30,.3)';g.fillRect(0,0,c.width,c.height)}
+ assets[key]={...assets.rocks,frames:[c],variants:{}};dimensions[key]=dimensions.rocks;return key}
 // 3D models are baked per faction and team when a battle starts (cached in the browser afterwards)
 export async function ensureModels(list,progress){const touch=matchMedia('(pointer:coarse)').matches;let step=0;for(const[f,t]of list){const k=f+':'+t;if(MODELS[k]){step++;continue}try{MODELS[k]=await bakeFaction(f,t,{touch,progress:(d,n)=>progress?.(step*8+d,list.length*8)})}catch(err){console.warn('3D models unavailable, using sprites',err);MODELS[k]={}}step++}}
 function modelVariant(entry,kind){entry.var??={};const id=kind;if(entry.var[id])return entry.var[id];const src=entry.atlas,c=canvas(src.width,src.height),g=c.getContext('2d');g.drawImage(src,0,0);g.globalCompositeOperation='source-atop';g.fillStyle='rgba(18,14,10,.74)';g.fillRect(0,0,c.width,c.height);entry.var[id]=c;return c}
 // Team colours are baked once per frame so the Canvas renderer needs no per-draw filters (works in every browser).
-const TINT={0:'rgba(60,140,215,.15)',1:'rgba(190,52,36,.15)',wreck:'rgba(18,14,10,.74)',ghostok:'rgba(110,220,140,.55)',ghostbad:'rgba(235,80,60,.6)'};
-function variant(key,frame,v){const entry=assets[key];if(v===undefined||v===2||v===null)return entry.frames[frame];const id=v+':'+frame;let c=entry.variants[id];if(c)return c;const src=entry.frames[frame];c=canvas(src.width,src.height);const g=c.getContext('2d');g.drawImage(src,0,0);g.globalCompositeOperation='source-atop';g.fillStyle=TINT[v];g.fillRect(0,0,c.width,c.height);if(v==='wreck'){g.globalCompositeOperation='source-atop';g.fillStyle='rgba(60,30,10,.25)';g.fillRect(0,c.height*.55,c.width,c.height*.45)}entry.variants[id]=c;return c}
+const TINT={0:'rgba(60,140,215,.15)',1:'rgba(190,52,36,.15)',2:'rgba(60,170,74,.15)',3:'rgba(224,181,42,.15)',4:'rgba(142,85,201,.15)',5:'rgba(224,122,34,.15)',6:'rgba(42,184,184,.15)',7:'rgba(208,90,154,.15)',wreck:'rgba(18,14,10,.74)',ghostok:'rgba(110,220,140,.55)',ghostbad:'rgba(235,80,60,.6)'};
+function variant(key,frame,v){const entry=assets[key];if(v===undefined||v===9||v===null||!(v in TINT))return entry.frames[frame];const id=v+':'+frame;let c=entry.variants[id];if(c)return c;const src=entry.frames[frame];c=canvas(src.width,src.height);const g=c.getContext('2d');g.drawImage(src,0,0);g.globalCompositeOperation='source-atop';g.fillStyle=TINT[v];g.fillRect(0,0,c.width,c.height);if(v==='wreck'){g.globalCompositeOperation='source-atop';g.fillStyle='rgba(60,30,10,.25)';g.fillRect(0,c.height*.55,c.width,c.height*.45)}entry.variants[id]=c;return c}
 
 // World sizes: [sprite width in world units, footprint radius, ground anchor]
 export const FALLBACK={raptor:'jeep',mig:'jeep',sniper:'infantry',hacker:'infantry',suicide:'infantry',heli:'jeep',flame:'tank',toxin:'jeep',bombtruck:'harvester',airfield:'factory',speaker:'turret',tunnel:'turret'};
 export const dimensions={raptor:[9,1.9,.25],mig:[9,1.9,.25],sniper:[2.9,.6,.16],hacker:[2.9,.6,.16],suicide:[2.9,.6,.16],heli:[9,1.8,.25],flame:[8,1.9,.25],toxin:[7,1.8,.25],bombtruck:[7.5,2,.24],airfield:[20,6.2,.23],speaker:[7,2.4,.25],tunnel:[8,3,.25],hq:[18,5.8,.22],power:[12,4,.22],refinery:[17,5.5,.23],barracks:[15,4.8,.23],factory:[20,6.5,.23],turret:[7,2.4,.25],radar:[15,4,.2],silo:[19,6.2,.40],civilian:[13.5,4.3,.23],builder:[6.2,1.6,.26],infantry:[2.9,.6,.16],rocket:[2.9,.6,.16],jeep:[5.4,1.3,.25],tank:[8,1.9,.25],heavy:[10.2,2.4,.25],artillery:[9,1.9,.25],harvester:[7.3,2.1,.24],palm:[12,2,.07],rocks:[16,6,.23],supplies:[10,4,.22]};
 
-export function makeAsset(type,team=2,{sprite=false,faction=null}={}){const g=new T.Group(),[size,r,anchor]=dimensions[type],key=assets[type]?type:FALLBACK[type],entry=assets[key];const M=!sprite&&faction&&MODELS[faction+':'+team]?.[type];if(M){g.userData={asset:type,model:M,team:team<2?team:0,size:M.S,r,anchor:.5,aspect:1,frame:0,opacity:1,pose:0,turretYaw:null,recoil:0,noShadow:!!M.building};return g}g.userData={asset:key,team,size,r,anchor,aspect:entry.sheet?1:entry.image.height/entry.image.width,frame:0,opacity:1,variant:entry.sheet&&team<2?team:null};return g}
+export function makeAsset(type,team=2,{sprite=false,faction=null}={}){const g=new T.Group(),[size,r,anchor]=dimensions[type],key=assets[type]?type:FALLBACK[type],entry=assets[key];const M=!sprite&&faction&&MODELS[faction+':'+team]?.[type];if(M){g.userData={asset:type,model:M,team,size:M.S,r,anchor:.5,aspect:1,frame:0,opacity:1,pose:0,turretYaw:null,recoil:0,noShadow:!!M.building};return g}g.userData={asset:key,team,size,r,anchor,aspect:entry.sheet?1:entry.image.height/entry.image.width,frame:0,opacity:1,variant:entry.sheet&&team<9?team:null};return g}
 export function makeBuilding(type,team){return makeAsset(type,team)}
 export function makeUnit(type,team){return makeAsset(type,team)}
 
@@ -55,17 +67,18 @@ export function makeUnit(type,team){return makeAsset(type,team)}
 // ---------------------------------------------------------------------------
 export const world={patches:[],decals:[],tracks:[],scenery:[],clouds:[]};
 export function makeWorld(scene,map=MAP){
- for(const s of world.scenery)scene.remove(s);world.scenery=[];world.decals=[];world.tracks=[];world.patches=[];world.clouds=Array.from({length:7},(_,i)=>({x:-260+i*80+Math.random()*30,z:(Math.random()-.5)*400,r:38+Math.random()*40,ratio:.55+Math.random()*.3,rot:Math.random()*3}));
+ for(const s of world.scenery)scene.remove(s);world.scenery=[];world.decals=[];world.tracks=[];world.patches=[];world.clouds=Array.from({length:Math.round(7*map.limit/200)},(_,i)=>({x:-map.limit-60+i*80+Math.random()*30,z:(Math.random()-.5)*400,r:38+Math.random()*40,ratio:.55+Math.random()*.3,rot:Math.random()*3}));
  let seed=731+map.id.length*97;const random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
- const add=(key,x,z,scale,team=2)=>{const g=makeAsset(key,team);g.position.set(x,height(x,z),z);if(scale)g.scale.setScalar(scale);scene.add(g);world.scenery.push(g);return g};
+ const B=BIO(),treeKey=v=>B.tree==='palm'?'palm':treeAsset(B.tree,v),rk=rockAsset(),L=map.limit;
+ const add=(key,x,z,scale,team=9)=>{if(key==='palm'&&B.tree!=='palm'){key=treeKey(Math.floor(random()*3));scale=(scale||1)*({pine:1.55,acacia:1.25,oak:1.1}[B.tree]||1.15)}if(key==='rocks')key=rk;const g=makeAsset(key,team);g.position.set(x,height(x,z),z);if(scale)g.scale.setScalar(scale);scene.add(g);world.scenery.push(g);return g};
  const clearOf=(x,z,pad)=>map.bases.every(b=>Math.hypot(x-b.x,z-b.z)>48+pad)&&map.deposits.every(d=>Math.hypot(x-d.x,z-d.z)>13+pad)&&map.civilians.every(c=>Math.hypot(x-c.x,z-c.z)>11+pad);
- for(let i=0;i<150;i++){const side=Math.floor(random()*4),u=(random()*2-1)*(map.limit+40),o=map.limit+14+random()*28;const x=side===0?u:side===1?u:side===2?o:-o,z=side===0?o:side===1?-o:u;add('rocks',x,z,.8+random())}
- let palms=0;for(let i=0;i<900&&palms<map.palms.count;i++){const x=(random()-.5)*380,z=(random()-.5)*380;if(map.palms.rule(x,z)&&clearOf(x,z,0)&&map.groves.every(g=>Math.hypot(x-g.x,z-g.z)>g.r+4)&&map.rocks.every(r=>Math.hypot(x-r.x,z-r.z)>r.r+5)){add('palm',x,z,.55+random()*.5);palms++}}
- for(let i=0;i<90;i++){const x=(random()-.5)*395,z=(random()-.5)*395;if(clearOf(x,z,-10))add('rocks',x,z,.06+random()*.13)}
+ for(let i=0;i<Math.round(150*L/200);i++){const side=Math.floor(random()*4),u=(random()*2-1)*(map.limit+40),o=map.limit+14+random()*28;const x=side===0?u:side===1?u:side===2?o:-o,z=side===0?o:side===1?-o:u;add('rocks',x,z,.8+random())}
+ let palms=0;for(let i=0;i<1400&&palms<map.palms.count;i++){const x=(random()-.5)*L*1.9,z=(random()-.5)*L*1.9;if(map.palms.rule(x,z)&&clearOf(x,z,0)&&map.groves.every(g=>Math.hypot(x-g.x,z-g.z)>g.r+4)&&map.rocks.every(r=>Math.hypot(x-r.x,z-r.z)>r.r+5)){add('palm',x,z,.55+random()*.5);palms++}}
+ for(let i=0;i<Math.round(90*L/200);i++){const x=(random()-.5)*L*1.98,z=(random()-.5)*L*1.98;if(clearOf(x,z,-10))add('rocks',x,z,.06+random()*.13)}
  for(const {x,z}of map.deposits)add('supplies',x,z,1.1);
  for(const r of map.rocks)add('rocks',r.x,r.z,r.r/5.2*(0.95+random()*.15));
- for(const g of map.groves){for(let i=0;i<34;i++){const a=random()*Math.PI*2,d=Math.sqrt(random())*g.r;add('palm',g.x+Math.cos(a)*d,g.z+Math.sin(a)*d,.7+random()*.45)}world.patches.push({x:g.x,z:g.z,rx:g.r+6,rz:g.r+6,color:'#56603a',alpha:.42})}
- for(let i=0;i<70;i++){const x=(random()-.5)*380,z=(random()-.5)*380,r=6+random()*18;world.patches.push({x,z,rx:r,rz:r*(.5+random()*.6),rot:random()*3,color:random()<.5?'#6e5a3c':'#c4ad84',alpha:.10+random()*.12})}
+ for(const g of map.groves){for(let i=0;i<34;i++){const a=random()*Math.PI*2,d=Math.sqrt(random())*g.r;add('palm',g.x+Math.cos(a)*d,g.z+Math.sin(a)*d,.7+random()*.45)}world.patches.push({x:g.x,z:g.z,rx:g.r+6,rz:g.r+6,color:B.grove,alpha:.42})}
+ for(let i=0;i<Math.round(70*L/200);i++){const x=(random()-.5)*L*1.9,z=(random()-.5)*L*1.9,r=6+random()*18;world.patches.push({x,z,rx:r,rz:r*(.5+random()*.6),rot:random()*3,color:random()<.5?B.patch[0]:B.patch[1],alpha:.10+random()*.12})}
  for(const d of map.deposits)world.patches.push({x:d.x,z:d.z,rx:11,rz:9,color:'#5b4a32',alpha:.22});
  const sun=new T.DirectionalLight(0xffe6b5,3.4);return{sun}
 }
@@ -91,17 +104,17 @@ export class ImageRenderer{
  drawGround(ctx,camera,H){const{w,h,project}=H;const key=[camera.position.x,camera.position.y,camera.position.z,camera.rotation.y,w,h,MAP.id,this.tint,camera.view?.offsetY||0].map(n=>typeof n==='number'?n.toFixed(2):n).join('|');
   if(key===this.groundKey&&this.groundCache){ctx.drawImage(this.groundCache,0,0,w,h);return}
   if(!this.groundCache||this.groundCache.width!==this.domElement.width||this.groundCache.height!==this.domElement.height){this.groundCache=canvas(this.domElement.width,this.domElement.height)}
-  const g=this.groundCache.getContext('2d');g.setTransform(this.ratio,0,0,this.ratio,0,0);g.fillStyle='#9f8e6d';g.fillRect(0,0,w,h);
+  const g=this.groundCache.getContext('2d');g.setTransform(this.ratio,0,0,this.ratio,0,0);g.fillStyle=BIO().base;g.fillRect(0,0,w,h);const LIM=MAP.limit+64;
   const focus=new T.Vector3(),origin=new T.Vector3();camera.getWorldDirection(focus);const t=camera.position.y/(-focus.y);origin.copy(camera.position).addScaledVector(focus,t);
-  const radius=Math.min(250,camera.position.y*1.9),tile=camera.position.y>120?32:16,x0=Math.max(-264,Math.floor((origin.x-radius)/tile)*tile),x1=Math.min(264,origin.x+radius),z0=Math.max(-264,Math.floor((origin.z-radius)/tile)*tile),z1=Math.min(264,origin.z+radius),ground=assets.ground.frames[0];
+  const radius=Math.min(250,camera.position.y*1.9),tile=camera.position.y>120?32:16,x0=Math.max(-LIM,Math.floor((origin.x-radius)/tile)*tile),x1=Math.min(LIM,origin.x+radius),z0=Math.max(-LIM,Math.floor((origin.z-radius)/tile)*tile),z1=Math.min(264,origin.z+radius),ground=groundTex();
   const tri=(a,b,c,second)=>{g.save();g.beginPath();g.moveTo(a.x,a.y);g.lineTo(b.x,b.y);g.lineTo(c.x,c.y);g.closePath();g.clip();let aa,bb,cc,dd,tx,ty;const s=tile/16;if(!second){aa=(b.x-a.x)/ground.width/s;bb=(b.y-a.y)/ground.width/s;cc=(c.x-a.x)/ground.height/s;dd=(c.y-a.y)/ground.height/s;tx=a.x;ty=a.y}else{aa=(a.x-b.x)/ground.width/s;bb=(a.y-b.y)/ground.width/s;cc=(a.x-c.x)/ground.height/s;dd=(a.y-c.y)/ground.height/s;tx=b.x+c.x-a.x;ty=b.y+c.y-a.y}g.transform(aa,bb,cc,dd,tx,ty);if(s>1){for(let i=0;i<s;i++)for(let j=0;j<s;j++)g.drawImage(ground,i*ground.width,j*ground.height)}else g.drawImage(ground,0,0);g.restore()};
   for(let z=z0;z<z1;z+=tile)for(let x=x0;x<x1;x+=tile){const a=project(x,height(x,z),z),b=project(x+tile,height(x+tile,z),z),c=project(x,height(x,z+tile),z+tile),d=project(x+tile,height(x+tile,z+tile),z+tile);if([a,b,c,d].some(p=>p.z>1||p.z<-1)||[a,b,c,d].every(p=>p.x<0)||[a,b,c,d].every(p=>p.x>w)||[a,b,c,d].every(p=>p.y<0)||[a,b,c,d].every(p=>p.y>h))continue;tri(a,b,c,false);tri(d,c,b,true)}
   // colour grade toward the warm, saturated ochre of Generals' desert maps
-  g.save();g.globalCompositeOperation='soft-light';g.globalAlpha=this.grade??.6;g.fillStyle=this.tint==='sunset'?'#e07a30':'#e8a43c';g.fillRect(0,0,w,h);g.globalCompositeOperation='multiply';g.globalAlpha=.10;g.fillStyle='#d79a48';g.fillRect(0,0,w,h);g.restore();
+  g.save();g.globalCompositeOperation='soft-light';g.globalAlpha=BIO().gradeA;g.fillStyle=this.tint==='sunset'?'#e07a30':BIO().grade;g.fillRect(0,0,w,h);g.globalCompositeOperation='multiply';g.globalAlpha=BIO().multA;g.fillStyle=BIO().mult;g.fillRect(0,0,w,h);g.restore();
   // static ground patches (gravel, darker soil, oasis vegetation)
   for(const p of world.patches)this.ellipse(g,H,p.x,p.z,p.rx,p.rz,p.color,p.alpha,p.rot||0,true);
   // service roads
-  for(const road of MAP.roads){for(let i=0;i<road.length-1;i++){const[ax,az]=road[i],[bx,bz]=road[i+1],dx=bx-ax,dz=bz-az,l=Math.hypot(dx,dz)||1,nx=-dz/l*3.2,nz=dx/l*3.2,p=[project(ax+nx,height(ax,az)+.04,az+nz),project(bx+nx,height(bx,bz)+.04,bz+nz),project(bx-nx,height(bx,bz)+.04,bz-nz),project(ax-nx,height(ax,az)+.04,az-nz)];if(p.some(q=>q.z>1)||p.every(q=>q.y<0)||p.every(q=>q.y>h)||p.every(q=>q.x<0)||p.every(q=>q.x>w))continue;g.fillStyle='#6a624e30';g.beginPath();p.forEach((q,i)=>i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y));g.closePath();g.fill();const m=[p[0],p[1]].map((q,i)=>({x:(q.x+p[3-i].x)/2,y:(q.y+p[3-i].y)/2}));g.strokeStyle='#4f4a3c22';g.lineWidth=Math.max(1,Math.hypot(p[0].x-p[3].x,p[0].y-p[3].y)*.18);for(const off of [-.28,.28]){g.beginPath();g.moveTo(m[0].x+(p[0].x-p[3].x)*off,m[0].y+(p[0].y-p[3].y)*off);g.lineTo(m[1].x+(p[1].x-p[2].x)*off,m[1].y+(p[1].y-p[2].y)*off);g.stroke()}}}
+  for(const road of MAP.roads){for(let i=0;i<road.length-1;i++){const[ax,az]=road[i],[bx,bz]=road[i+1],dx=bx-ax,dz=bz-az,l=Math.hypot(dx,dz)||1,nx=-dz/l*3.2,nz=dx/l*3.2,p=[project(ax+nx,height(ax,az)+.04,az+nz),project(bx+nx,height(bx,bz)+.04,bz+nz),project(bx-nx,height(bx,bz)+.04,bz-nz),project(ax-nx,height(ax,az)+.04,az-nz)];if(p.some(q=>q.z>1)||p.every(q=>q.y<0)||p.every(q=>q.y>h)||p.every(q=>q.x<0)||p.every(q=>q.x>w))continue;g.fillStyle=BIO().road;g.beginPath();p.forEach((q,i)=>i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y));g.closePath();g.fill();const m=[p[0],p[1]].map((q,i)=>({x:(q.x+p[3-i].x)/2,y:(q.y+p[3-i].y)/2}));g.strokeStyle='#4f4a3c22';g.lineWidth=Math.max(1,Math.hypot(p[0].x-p[3].x,p[0].y-p[3].y)*.18);for(const off of [-.28,.28]){g.beginPath();g.moveTo(m[0].x+(p[0].x-p[3].x)*off,m[0].y+(p[0].y-p[3].y)*off);g.lineTo(m[1].x+(p[1].x-p[2].x)*off,m[1].y+(p[1].y-p[2].y)*off);g.stroke()}}}
   this.groundKey=key;ctx.drawImage(this.groundCache,0,0,w,h)}
  ellipse(ctx,H,x,z,rx,rz,color,alpha,rot=0,soft=false){const p=H.project(x,height(x,z),z);if(p.z>1)return;const s=H.scaleAt(x,height(x,z),z),a=rx*s,b=rz*s*H.squash;if(p.x+a<0||p.x-a>H.w||p.y+a<0||p.y-a>H.h)return;ctx.save();ctx.globalAlpha=alpha;ctx.translate(p.x,p.y);ctx.scale(1,H.squash);ctx.rotate(rot);if(soft){const gr=ctx.createRadialGradient(0,0,0,0,0,Math.max(a,rz*s));gr.addColorStop(0,color);gr.addColorStop(.35,color+'cc');gr.addColorStop(.7,color+'55');gr.addColorStop(1,color+'00');ctx.fillStyle=gr}else ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(0,0,a,rz*s,0,0,Math.PI*2);ctx.fill();ctx.restore()}
  render(scene,camera){const start=performance.now();scene.updateMatrixWorld(true);camera.updateMatrixWorld();const ctx=this.ctx,H=this.helpers(camera),{w,h,project,scaleAt}=H;ctx.setTransform(this.ratio,0,0,this.ratio,0,0);
@@ -111,7 +124,7 @@ export class ImageRenderer{
   // tyre/track marks
   world.tracks=world.tracks.filter(d=>now-d.born<d.life);ctx.save();ctx.lineCap='round';for(const d of world.tracks){const age=(now-d.born)/d.life,a=d.alpha*(age>.6?(1-age)/.4:1);const sx=Math.sin(d.ang),sz=Math.cos(d.ang),nx=sz*d.w,nz=-sx*d.w,L=.75;const y=height(d.x,d.z)+.02;const c=H.project(d.x,y,d.z);if(c.z>1||c.x<-20||c.x>w+20||c.y<-20||c.y>h+20)continue;const s=H.scaleAt(d.x,y,d.z);ctx.strokeStyle=`rgba(70,52,30,${a.toFixed(3)})`;ctx.lineWidth=Math.max(1,s*.32);for(const side of [-1,1]){const p0=H.project(d.x+nx*side-sx*L,y,d.z+nz*side-sz*L),p1=H.project(d.x+nx*side+sx*L,y,d.z+nz*side+sz*L);ctx.beginPath();ctx.moveTo(p0.x,p0.y);ctx.lineTo(p1.x,p1.y);ctx.stroke()}}ctx.restore();
   // drifting cloud shadows
-  const ct=performance.now()/1000;for(const c of world.clouds){let x=c.x+ct*2.2;x=((x+300)%600+600)%600-300;this.ellipse(ctx,H,x,c.z+ct*.6%1,c.r,c.r*c.ratio,'#2b1c08',.16,c.rot,true)}
+  const ct=performance.now()/1000;for(const c of world.clouds){let x=c.x+ct*2.2;x=((x+300)%600+600)%600-300;this.ellipse(ctx,H,x,c.z+ct*.6%1,c.r,c.r*c.ratio,MAP.biome==='snow'?'#3a4a5c':'#2b1c08',MAP.biome==='snow'?.12:.16,c.rot,true)}
   const items=[],ground=[],top=[],origin=new T.Vector3(),size=new T.Vector3();
   for(const root of scene.children){if(!root.visible)continue;const u=root.userData;
    if(u.asset){root.getWorldPosition(origin);root.getWorldScale(size);const p=project(origin.x,origin.y,origin.z),s=scaleAt(origin.x,origin.y,origin.z),pixels=u.size*s*size.x;if(p.z>1||p.x+pixels<0||p.x-pixels>w||p.y+pixels<0||p.y-pixels*1.2>h)continue;const angle=Math.atan2(camera.position.x-origin.x,camera.position.z-origin.z);let frame;if(u.model){const M=u.model,n=M.dirs,st=Math.PI*2/n,tn=M.tdirs||n,tst=Math.PI*2/tn;frame=M.building?(n>1?Math.floor(performance.now()/160)%n:0):((Math.round((root.rotation.y-angle)/st)%n)+n)%n;u.tframe=u.turretYaw==null?null:((Math.round((u.turretYaw-angle)/tst)%tn)+tn)%tn;u.rel=u.turretYaw==null?0:u.turretYaw-angle}else frame=((Math.round((root.rotation.y-angle-Math.PI/4)/(Math.PI/2))%4)+4)%4;u.frame=frame;items.push({kind:'asset',root,u,p,s,pixels,frame,sy:size.y,depth:H.depth(origin.x,origin.y,origin.z),gp:u.alt?project(origin.x,origin.y-u.alt,origin.z):null})}
@@ -134,6 +147,7 @@ export class ImageRenderer{
    if(u.entity)this.drawn.push({root,left,top:topY,w:pixels,h:ph,frame,entry,p,s});
    if(u.hud)top.push({kind:'hud',root,u,p,s,topY})}
   for(const it of top){if(it.kind==='hud')this.drawHud(ctx,it);else it.u.draw(ctx,H,it.root,it.p)}
+  if(BIO().snowfall){const t=performance.now()/1000;ctx.save();ctx.fillStyle='#ffffffcc';for(let i=0;i<110;i++){const sp=18+(i*37%23),x=((i*197.3+t*(10+i%7*3)+Math.sin(t+i)*14)%(w+40)+w+40)%(w+40)-20,y=((i*131.7+t*sp*2.2)%(h+40))-20,r=.8+(i%3)*.6;ctx.globalAlpha=.35+(i%4)*.15;ctx.fillRect(x,y,r*1.6,r*1.6)}ctx.restore()}
   if(this.tint==='sunset'){ctx.fillStyle='#b4602014';ctx.fillRect(0,0,w,h)}
   if(this.flash>0){ctx.fillStyle=`rgba(255,244,214,${Math.min(.85,this.flash)})`;ctx.fillRect(0,0,w,h);this.flash-=.03}
   this.domElement.dataset.renderMs=(performance.now()-start).toFixed(1)}
