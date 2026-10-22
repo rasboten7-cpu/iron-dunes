@@ -237,3 +237,5 @@ footer section{background:linear-gradient(165deg,#1e251ef7,#131813f9);border:1px
 @media (max-width:760px) and (min-height:521px){.intro-shade{background:linear-gradient(180deg,#0a080600 0%,#0a080633 26%,#0e100cd0 46%,#11150ff5 70%),url('assets/web/menu_bg.webp') 72% 0/auto 62vh no-repeat;background-color:#11150f}.brandmark{padding-bottom:22vh}.logo img{width:100%}}
 @media (max-height:520px){.brandmark{padding-bottom:0}.logo img{width:100%;max-width:190px}.intro-shade{background:linear-gradient(90deg,#11150ff0 0%,#11150fc0 55%,#11150f66 100%),url('assets/web/menu_bg.webp') center/cover no-repeat}}
 .slot select[data-k=diff] option[value=impossible]{color:#ff7a5c}
+#selectedInfo .acts button.on{border-color:var(--fac);background:color-mix(in srgb,var(--fac) 30%,#1c221b);color:#fff}
+#selectedInfo .acts{flex-wrap:wrap;justify-content:center}

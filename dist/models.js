@@ -237,6 +237,22 @@ function jetFighter(team,{pal='dark',twin=true,k=1}={}){const m=palette(pal,team
  const fin=(x,rz)=>{const g=new T.Group();g.position.x=x;g.rotation.z=rz;b.add(g);profile([[-2.3,.9],[-3.3,2.3],[-3.85,2.3],[-3.75,.9]],.1,m.camo,g);slab(.04,.3,.6,.01,m.team,g,.06,1.6,-3.2);slab(.04,.3,.6,.01,m.team,g,-.06,1.6,-3.2)};if(twin){fin(.45,-.28);fin(-.45,.28)}else fin(0,0);
  for(const s of [-1,1]){box(.36,.42,1.4,m.camo,b,s*.62,.55,.9);cyl(.24,.2,.5,m.dark,b,s*(twin?.32:0)*(twin?1:0)+(twin?0:0),.55,-3.85,'z',12);for(const x of [1.6,2.6])cyl(.07,.07,1.1,m.metal,b,s*x,.38,-.6,'z',8)}
  if(!twin)cyl(.3,.24,.5,m.dark,b,0,.55,-3.85,'z',12);return{hull,turret:null}}
+// --- Generals-style additions -------------------------------------------------
+// tandem-rotor transport helicopter that carries supplies (falcon)
+function chinook(team){const m=palette('dark',team);const hull=new T.Group(),b=new T.Group();hull.add(b);b.position.y=-1.1;
+ slab(1.9,1.7,7.2,.3,m.camo,b,0,.3,0);profile([[3.6,.6],[3.6,1.9],[4.3,1.6],[4.5,.9]],1.8,m.camo,b);profile([[3.7,1.5],[4.25,1.45],[4.45,1.0],[3.7,1.0]],1.5,m.glass,b);
+ profile([[-3.6,.5],[-3.6,2.6],[-4.6,2.9],[-4.4,1.0]],1.4,m.camo,b);for(const s of [-1,1]){cyl(.42,.42,2.4,m.dark,b,s*1.15,.8,.2,'z',12);box(.06,.5,1.2,m.glass,b,s*.97,1.5,1.6);slab(.04,.35,2.6,.01,m.team,b,s*.97,1.0,-1.0);for(const z of [2.4,-2.2])cyl(.08,.08,.5,m.dark,b,s*.6,.1,z)}
+ const rot=[];for(const [z,y] of [[3.3,2.25],[-4.1,3.05]]){cyl(.2,.25,.5,m.dark,b,0,y-.2,z);const r=new T.Group();r.position.set(0,y+.1,z);b.add(r);for(let i=0;i<3;i++){const g=new T.BoxGeometry(4.2,.05,.3);g.translate(2.1,0,0);mesh(g,m.dark,r).rotation.y=i/3*Math.PI*2}const disc=mesh(new T.CircleGeometry(4.2,36),new T.MeshBasicMaterial({color:0x3a3a34,transparent:true,opacity:.07,depthWrite:false}),r);disc.rotation.x=-Math.PI/2;disc.castShadow=false;rot.push(r)}
+ slab(1.5,.5,1.4,.05,m.wood,b,0,-.25,-.4);
+ function pose(kind){const k=+String(kind).replace(/\D/g,'')||0;rot[0].rotation.y=k/4*(Math.PI*2/3);rot[1].rotation.y=-k/4*(Math.PI*2/3)+.5}pose('rot0');return{hull,turret:null,pose}}
+// field ambulance (falcon)
+function ambulance(team){const m=palette('desert',team);const hull=new T.Group();const white=new T.MeshStandardMaterial({color:0xe8e6dc,roughness:.6});
+ for(const [x,z] of [[-.95,1.5],[.95,1.5],[-.95,-1.4],[.95,-1.4]])wheel(.46,.36,m,hull,x,.46,z);slab(1.95,.45,4.6,.06,m.dark,hull,0,.45,0);
+ slab(2.0,1.0,1.4,.08,m.camo,hull,0,.85,1.55);box(1.7,.4,.05,m.glass,hull,0,1.55,2.26).rotation.x=-.4;slab(2.1,1.7,3.0,.08,white,hull,0,.85,-.75);
+ for(const s of [-1,1]){const g=new T.Group();g.position.set(s*1.06,1.75,-.7);g.rotation.y=s*Math.PI/2;hull.add(g);box(.75,.22,.03,m.team,g,0,0,0);box(.22,.75,.03,m.team,g,0,0,0)}box(.75,.22,.03,m.team,hull,0,2.56,-.75).rotation.x=-Math.PI/2;box(.22,.75,.03,m.team,hull,0,2.56,-.75).rotation.x=-Math.PI/2;
+ for(const s of [-1,1])box(.3,.12,.12,m.team,hull,s*.5,2.62,.75);box(.22,.1,.06,m.light,hull,-.7,1.0,2.28);box(.22,.1,.06,m.light,hull,.7,1.0,2.28);return{hull,turret:null}}
+// technical with a four-barrel anti-air gun (sand)
+function quad(team){const t=technical(team),m=palette('rust',team);const tu=t.turret;tu.clear();cyl(.16,.2,.4,m.dark,tu,0,.2,0);slab(1.1,.55,.8,.05,m.camo,tu,0,.35,0);for(const [x,y] of [[-.28,.55],[.28,.55],[-.28,.85],[.28,.85]])cyl(.05,.05,1.6,m.gun,tu,x,y,.9,'z',8);box(.7,.4,.06,m.metal,tu,0,.95,.45);return t}
 // ---------------------------------------------------------------------------
 // Buildings — one visual language per faction
 // ---------------------------------------------------------------------------
@@ -321,8 +337,6 @@ B.factory_sand=t=>{const m=bmat('sand',t),h=new T.Group();const sh=G(h,-1.6,0,-1
  container('#7a3a24',h,4.2,.1,-3.2,.1);container('#3e5a40',h,4.3,1.35,-3.1,-.05);container('#8a7a30',h,4.4,.1,-.6,1.6);crates(m,h,3.6,3.4,4);for(let i=0;i<6;i++){const s2=slab(.6+rnd(),.3+rnd()*.4,.5+rnd(),.05,i%2?m.metal:m.accent,h,-4+rnd()*3,.1,3.6+rnd()*1.2);s2.rotation.y=rnd()*3}
  const cr=G(h,1.4,0,-4.8);cyl(.1,.12,5.2,m.metal,cr,0,2.6,0);box(3.2,.15,.15,m.metal,cr,-1.4,5.1,0);flag(m,h,-5.4,4.8,4);return{hull:h}};
 // ---------- defence towers (turret = rotating head, baked in 32 directions)
-B.turret_falcon=t=>{const m=bmat('falcon',t),h=new T.Group(),tu=new T.Group();cyl(2.1,2.3,.3,m.floor,h,0,.15,0,'y',8);cyl(1.55,1.8,1.3,m.wall,h,0,.95,0,'y',8);cyl(1.6,1.6,.14,m.accent,h,0,1.55,0,'y',8);
- slab(1.9,.95,2.1,.12,m.trim,tu,0,0,-.2);for(const s of [-1,1]){cyl(.1,.11,2.4,m.gun,tu,s*.38,.5,1.8,'z',10);cyl(.15,.15,.4,m.dark,tu,s*.38,.5,1.0,'z',10)}box(.5,.32,.4,m.glass,tu,.55,1.0,-.6);slab(.06,.3,1.2,.01,m.team,tu,.97,.4,-.3);slab(.06,.3,1.2,.01,m.team,tu,-.97,.4,-.3);tu.position.y=1.62;return{hull:h,turret:tu}};
 B.turret_dragon=t=>{const m=bmat('dragon',t),h=new T.Group(),tu=new T.Group();cyl(2.1,2.3,.3,m.floor,h,0,.15,0,'y',10);dome(1.8,m.wall2,h,0,.3,0,.55);
  cyl(.75,.85,.7,m.wall,tu,0,.35,0,'y',14);for(let i=0;i<6;i++){const a=i/6*Math.PI*2;cyl(.05,.05,2.2,m.gun,tu,Math.cos(a)*.15,.45+Math.sin(a)*.15,1.6,'z',6)}cyl(.25,.25,.5,m.dark,tu,0,.45,.6,'z');cyl(.24,.24,.1,m.dark,tu,0,.45,2.7,'z');box(.5,.4,.6,m.accent,tu,-.7,.5,-.3);tu.position.y=1.1;return{hull:h,turret:tu}};
 B.turret_sand=t=>{const m=bmat('sand',t),h=new T.Group(),tu=new T.Group();const pts=[];for(let i=0;i<=10;i++){const a=i/10*Math.PI*2*.85+Math.PI*.6;pts.push([Math.cos(a)*1.85,Math.sin(a)*1.85])}sandbags(m,h,pts);
@@ -350,6 +364,17 @@ B.airfield=t=>{const m=bmat('falcon',t),h=new T.Group();pad(m,h,12.4,12.4);const
 B.airfield_dragon=t=>{const m=bmat('dragon',t),h=new T.Group();pad(m,h,12.4,12.4);const hp=new T.MeshStandardMaterial({map:padT('#e8b84a'),roughness:.8});for(const x of [-2.9,2.9]){const c=mesh(new T.CylinderGeometry(2.6,2.6,.06,32),hp,h,x,.2,1.6);c.rotation.y=Math.PI/2}
  for(let i=0;i<8;i++)for(const z of [-1.2,4.4])box(.2,.12,.2,m.lamp,h,-5.6+i*1.6,.22,z);slab(6.6,2.4,3.4,.08,m.wall2,h,1.4,.16,-4.2);pagoda(6.6,3.4,1.0,m.roof,m.trim,h,1.4,2.56,-4.2);door(m,h,3.6,1.9,1.4,-2.48,.16);star(.4,m.trim,h,3.9,1.6,-2.46);
  const tw=G(h,-4.4,0,-4.2);slab(1.6,3.8,1.6,.06,m.wall,tw,0,0,0);slab(2.1,.9,2.1,.05,m.glass,tw,0,3.8,0);pagoda(1.6,1.6,.6,m.roof,m.trim,tw,0,4.7,0);flag(m,h,5.6,4.8,4);return{hull:h}};
+// Patriot battery replaces the falcon gun tower: radar box + angled 4-cell launcher
+B.turret_falcon=t=>{const m=bmat('falcon',t),h=new T.Group(),tu=new T.Group();cyl(2.1,2.3,.3,m.floor,h,0,.15,0,'y',8);slab(2.6,.7,2.6,.1,m.wall,h,0,.3,0);box(2.62,.12,2.62,m.accent,h,0,.95,0);
+ cyl(.35,.45,.5,m.metal,tu,0,.1,0);const l=G(tu,0,.6,-.2);l.rotation.x=-.45;slab(1.8,1.1,2.2,.06,m.trim,l,0,0,0);for(let i=0;i<4;i++)cyl(.22,.22,.06,m.dark,l,-.45+(i%2)*.9,.3+Math.floor(i/2)*.5,1.11,'z',12);slab(.06,.3,1.4,.01,m.team,l,.92,.4,0);slab(.06,.3,1.4,.01,m.team,l,-.92,.4,0);
+ const rd=G(tu,0,.35,-1.2);box(1.0,.9,.12,m.glass,rd,0,.6,0).rotation.x=.3;tu.position.y=1.0;return{hull:h,turret:tu}};
+B.dropzone=t=>{const m=bmat('falcon',t),h=new T.Group();pad(m,h,10,10);const zone=new T.MeshStandardMaterial({map:padT('#f0c94a'),roughness:.8});mesh(new T.CylinderGeometry(3.4,3.4,.06,36),zone,h,0,.2,.6);
+ for(let i=0;i<10;i++){const a=i/10*Math.PI*2;box(.25,.15,.25,m.lamp,h,Math.cos(a)*4.1,.25,.6+Math.sin(a)*4.1)}slab(2.4,1.8,1.8,.08,m.wall2,h,-3.0,.16,-3.6);windows(m,h,2,1.3,-2.68,2,-3);mast(3.2,m.steel,h,-3.8,-3.8,1.96);crates(m,h,3.2,-3.4,3);flag(m,h,3.8,3.8,3.6);return{hull:h}};
+B.blackmarket=t=>{const m=bmat('sand',t),h=new T.Group();slab(6,2.4,3.6,.15,m.wall,h,-.4,.1,-1.6);gable(6,3.6,1,m.roof,h,-.4,2.5,-1.6,.3);for(let i=0;i<3;i++){const st=G(h,-2.4+i*2.2,0,1.6);for(const [x,z] of [[-.8,-.6],[.8,-.6],[-.8,.6],[.8,.6]])cyl(.05,.05,1.8,m.wood,st,x,.9,z);const tp=slab(2,.05,1.6,.02,i%2?m.accent:m.tarp,st,0,1.8,0);tp.rotation.x=.12;slab(1.6,.5,.8,.04,m.crate,st,0,.1,0);for(let k=0;k<3;k++)cyl(.15,.15,.3,k%2?m.team:m.metal,st,-.5+k*.5,.75,0)}
+ for(let i=0;i<4;i++)cyl(.34,.34,.9,i%2?m.accent:m.metal,h,2.6,.55,-2.6+i*.8,'y',12);sandbags(m,h,[[-3.4,3],[-1.4,3.5]]);flag(m,h,3.0,2.8,3.8);return{hull:h}};
+B.hole=t=>{const m=bmat('sand',t),h=new T.Group();dome(2.6,m.dirt,h,0,0,0,.25);mesh(new T.CircleGeometry(1.2,20),m.dark,h,0,.68,0).rotation.x=-Math.PI/2;for(let i=0;i<7;i++){const a=i/7*Math.PI*2,r=2.2+rnd()*.6;const s2=slab(.5+rnd()*.6,.25,.4+rnd()*.5,.05,i%2?m.wall2:m.metal,h,Math.cos(a)*r,.05,Math.sin(a)*r);s2.rotation.y=rnd()*3}
+ for(const [x,z] of [[-1.2,-1.2],[1.2,-1.2]]){const p=cyl(.05,.05,2.2,m.wood,h,x,1.1,z);p.rotation.z=x>0?-.15:.15}box(2.6,.08,.08,m.wood,h,0,2.1,-1.2);cyl(.02,.02,1.2,m.dark,h,0,1.5,-1.2);return{hull:h}};
+B.trap=t=>{const m=bmat('sand',t),h=new T.Group();dome(1.0,m.dirt,h,0,0,0,.3);for(let i=0;i<3;i++)cyl(.22,.22,.5,i===1?m.team:m.accent,h,-.35+i*.35,.35,0,'y',10);box(.9,.08,.4,m.dark,h,0,.6,0);cyl(.015,.015,1.2,new T.MeshStandardMaterial({color:0xc8241a}),h,.3,.5,.4,'z',4);return{hull:h}};
 B.speaker=t=>{const m=bmat('dragon',t),h=new T.Group();cyl(1.9,2.1,.3,m.floor,h,0,.15,0,'y',8);slab(1.8,1.1,1.8,.08,m.wall,h,0,.3,0);cyl(.12,.16,5.4,m.metal,h,0,3.6,0);for(let i=0;i<4;i++)horn(m.metal,h,0,5.6,0,i*Math.PI/2+.3);for(let i=0;i<4;i++)horn(m.metal,h,0,4.6,0,i*Math.PI/2+1.1);
  const r=mesh(new T.TorusGeometry(.5,.08,6,20),m.trim,h,0,6.2,0);r.rotation.x=Math.PI/2;box(.04,1.6,.9,m.accent,h,.25,2.6,.45);star(.3,m.trim,h,0,.9,.92);return{hull:h}};
 B.tunnel=t=>{const m=bmat('sand',t),h=new T.Group(),tu=new T.Group();dome(2.4,m.dirt,h,0,.05,-.2,.5);const pts=[];for(let i=0;i<=12;i++){const a=i/12*Math.PI*2*.8+Math.PI*.7;pts.push([Math.cos(a)*2.6,Math.sin(a)*2.6-.2])}sandbags(m,h,pts);
@@ -383,20 +408,20 @@ export const MODEL_SPECS={
  // faction-only units
  sniper:{S:3.9,build:t=>soldier(t,{sniper:true}),poses:INF_POSES,infantry:true},heli:{S:10.4,build:t=>heli(t),poses:['rot0','rot1','rot2','rot3']},
  hacker:{S:3.9,build:t=>soldier(t,{pal:'cnuni',hacker:true}),poses:[...INF_POSES,'hack'],infantry:true},flametank:{S:9.2,build:t=>tank(t,{pal:'green',k:.95,flame:true}),turret:true},
- raptor:{S:10.4,build:t=>jetFighter(t,{pal:'dark',twin:true})},mig:{S:10.4,build:t=>jetFighter(t,{pal:'olive',twin:false,k:.95})},
+ raptor:{S:10.4,build:t=>jetFighter(t,{pal:'dark',twin:true})},chinook:{S:12,build:t=>chinook(t),poses:['rot0','rot1','rot2','rot3']},ambulance:{S:7,build:t=>ambulance(t)},quad:{S:7.2,build:t=>quad(t),turret:true},mig:{S:10.4,build:t=>jetFighter(t,{pal:'olive',twin:false,k:.95})},
  suicide:{S:3.9,build:t=>soldier(t,{pal:'glauni',scarf:true,vest:true}),poses:INF_POSES,infantry:true},toxin:{S:7.8,build:t=>tractor(t)},bombtruck:{S:8.8,build:t=>bombTruck(t)}};
 for(const[k,f]of Object.entries(B)){MODEL_SPECS[k]={build:f,building:true,turret:/^(turret|tunnel)/.test(k),frames:/^radar/.test(k)?8:1}}
 const BLD=f=>Object.fromEntries(['hq','power','refinery','barracks','factory','turret','radar','silo'].filter(t=>B[t+'_'+f]).map(t=>[t,t+'_'+f]));
 export const FACTION_MODELS={
- falcon:{builder:'builder',harvester:'harvester',infantry:'infantry',rocket:'rocket',jeep:'jeep',tank:'crusader',heavy:'paladin',artillery:'tomahawk',sniper:'sniper',heli:'heli',raptor:'raptor',...BLD('falcon'),airfield:'airfield'},
+ falcon:{builder:'builder',harvester:'harvester',infantry:'infantry',rocket:'rocket',jeep:'jeep',tank:'crusader',heavy:'paladin',artillery:'tomahawk',sniper:'sniper',heli:'heli',raptor:'raptor',ambulance:'ambulance',...BLD('falcon'),harvester:'chinook',airfield:'airfield',dropzone:'dropzone'},
  dragon:{builder:'dozer_cn',harvester:'truck_cn',infantry:'soldier_cn',rocket:'rocket_cn',jeep:'gattling',tank:'battlemaster',heavy:'overlord',artillery:'inferno',hacker:'hacker',flame:'flametank',mig:'mig',...BLD('dragon'),speaker:'speaker',airfield:'airfield_dragon'},
- sand:{builder:'worker',harvester:'oldtruck',infantry:'soldier_gla',rocket:'rocket_gla',jeep:'technical',tank:'scorpion',heavy:'marauder',artillery:'buggy',suicide:'suicide',toxin:'toxin',bombtruck:'bombtruck',...BLD('sand'),tunnel:'tunnel'}};
+ sand:{builder:'worker',harvester:'oldtruck',infantry:'soldier_gla',rocket:'rocket_gla',jeep:'technical',tank:'scorpion',heavy:'marauder',artillery:'buggy',suicide:'suicide',toxin:'toxin',bombtruck:'bombtruck',quad:'quad',...BLD('sand'),tunnel:'tunnel',blackmarket:'blackmarket',hole:'hole',trap:'trap'}};
 export const WALK_FRAMES=WALK;
 
 // ---------------------------------------------------------------------------
 // Bake every model into sprite atlases: columns = directions, rows = poses
 // ---------------------------------------------------------------------------
-const CACHE_VER='iron-dunes-models-v5';
+const CACHE_VER='iron-dunes-models-v6';
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('iron-dunes',1);r.onupgradeneeded=()=>r.result.createObjectStore('atlas');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function cacheGet(key){try{const db=await idb();return await new Promise(res=>{const q=db.transaction('atlas').objectStore('atlas').get(key);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)})}catch(e){return null}}
 async function cachePut(key,val){try{const db=await idb();await new Promise(res=>{const tx=db.transaction('atlas','readwrite');tx.objectStore('atlas').put(val,key);tx.oncomplete=res;tx.onerror=()=>{console.warn('idb put error',tx.error);res()};tx.onabort=()=>{console.warn('idb abort',tx.error);res()}})}catch(e){console.warn('idb',e)}}
