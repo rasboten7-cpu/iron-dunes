@@ -226,6 +226,15 @@ function bombTruck(team){const m=palette('rust',team);const hull=new T.Group();
  const wire=new T.MeshStandardMaterial({color:0xc8241a,emissive:0x601008,emissiveIntensity:.4});for(let k=0;k<3;k++)cyl(.025,.025,3.0,wire,hull,-.1+k*.1,2.13,-1.0,'z',4);box(.3,.2,.2,m.dark,hull,0,2.2,.6);slab(.04,.3,1.0,.01,m.team,hull,1.07,1.25,-.8);slab(.04,.3,1.0,.01,m.team,hull,-1.07,1.25,-.8);
  return{hull,turret:null}}
 
+// jet fighters (falcon raptor, dragon MiG); nose points +z
+function jetFighter(team,{pal='dark',twin=true,k=1}={}){const m=palette(pal,team);const hull=new T.Group(),b=new T.Group();hull.add(b);b.position.y=-.5;b.scale.setScalar(k);
+ profile([[-3.7,.3],[-3.7,.85],[-1.2,1.0],[2.0,.98],[3.3,.72],[4.4,.5],[3.4,.3],[.2,.12]],.95,m.camo,b);
+ profile([[1.1,.95],[1.55,1.35],[2.6,1.2],[3.1,.9]],.56,m.glass,b);
+ plan([[0,1.6],[3.7,-1.2],[3.7,-1.9],[.6,-1.5],[-.6,-1.5],[-3.7,-1.9],[-3.7,-1.2]],.12,m.camo,b,.5);
+ plan([[0,-2.6],[1.8,-3.6],[1.8,-4.0],[0,-3.6],[-1.8,-4.0],[-1.8,-3.6]],.08,m.camo,b,.6);
+ const fin=(x,rz)=>{const g=new T.Group();g.position.x=x;g.rotation.z=rz;b.add(g);profile([[-2.3,.9],[-3.3,2.3],[-3.85,2.3],[-3.75,.9]],.1,m.camo,g);slab(.04,.3,.6,.01,m.team,g,.06,1.6,-3.2);slab(.04,.3,.6,.01,m.team,g,-.06,1.6,-3.2)};if(twin){fin(.45,-.28);fin(-.45,.28)}else fin(0,0);
+ for(const s of [-1,1]){box(.36,.42,1.4,m.camo,b,s*.62,.55,.9);cyl(.24,.2,.5,m.dark,b,s*(twin?.32:0)*(twin?1:0)+(twin?0:0),.55,-3.85,'z',12);for(const x of [1.6,2.6])cyl(.07,.07,1.1,m.metal,b,s*x,.38,-.6,'z',8)}
+ if(!twin)cyl(.3,.24,.5,m.dark,b,0,.55,-3.85,'z',12);return{hull,turret:null}}
 // ---------------------------------------------------------------------------
 // Buildings — one visual language per faction
 // ---------------------------------------------------------------------------
@@ -335,6 +344,9 @@ B.silo_sand=t=>{const m=bmat('sand',t),h=new T.Group();slab(9,.3,6,.08,m.floor,h
 B.airfield=t=>{const m=bmat('falcon',t),h=new T.Group();pad(m,h,12.4,12.4);const hp=new T.MeshStandardMaterial({map:padT('#e8e4d4'),roughness:.8});for(const x of [-2.9,2.9]){const c=mesh(new T.CylinderGeometry(2.6,2.6,.06,32),hp,h,x,.2,1.6);c.rotation.y=Math.PI/2}
  for(let i=0;i<8;i++)for(const z of [-1.2,4.4])box(.2,.12,.2,m.lamp,h,-5.6+i*1.6,.22,z);const tw=G(h,-4.4,0,-4.2);cyl(.7,.85,4.2,m.wall,tw,0,2.1,0,'y',10);cyl(1.25,1.0,1.0,m.glass,tw,0,4.7,0,'y',10);cyl(1.35,1.35,.14,m.trim,tw,0,5.25,0,'y',10);mast(1.4,m.steel,tw,0,0,5.3);
  slab(6.4,2.4,3.4,.08,m.wall2,h,1.6,.16,-4.2);gable(6.4,3.4,.9,m.roof,h,1.6,2.56,-4.2);door(m,h,3.6,1.9,1.6,-2.48,.16);const sock=G(h,5.6,0,4.8);cyl(.04,.04,2.6,m.steel,sock,0,1.3,0);mesh(new T.ConeGeometry(.22,.9,10,1,true),m.accent,sock,.5,2.5,0).rotation.z=Math.PI/2;return{hull:h}};
+B.airfield_dragon=t=>{const m=bmat('dragon',t),h=new T.Group();pad(m,h,12.4,12.4);const hp=new T.MeshStandardMaterial({map:padT('#e8b84a'),roughness:.8});for(const x of [-2.9,2.9]){const c=mesh(new T.CylinderGeometry(2.6,2.6,.06,32),hp,h,x,.2,1.6);c.rotation.y=Math.PI/2}
+ for(let i=0;i<8;i++)for(const z of [-1.2,4.4])box(.2,.12,.2,m.lamp,h,-5.6+i*1.6,.22,z);slab(6.6,2.4,3.4,.08,m.wall2,h,1.4,.16,-4.2);pagoda(6.6,3.4,1.0,m.roof,m.trim,h,1.4,2.56,-4.2);door(m,h,3.6,1.9,1.4,-2.48,.16);star(.4,m.trim,h,3.9,1.6,-2.46);
+ const tw=G(h,-4.4,0,-4.2);slab(1.6,3.8,1.6,.06,m.wall,tw,0,0,0);slab(2.1,.9,2.1,.05,m.glass,tw,0,3.8,0);pagoda(1.6,1.6,.6,m.roof,m.trim,tw,0,4.7,0);flag(m,h,5.6,4.8,4);return{hull:h}};
 B.speaker=t=>{const m=bmat('dragon',t),h=new T.Group();cyl(1.9,2.1,.3,m.floor,h,0,.15,0,'y',8);slab(1.8,1.1,1.8,.08,m.wall,h,0,.3,0);cyl(.12,.16,5.4,m.metal,h,0,3.6,0);for(let i=0;i<4;i++)horn(m.metal,h,0,5.6,0,i*Math.PI/2+.3);for(let i=0;i<4;i++)horn(m.metal,h,0,4.6,0,i*Math.PI/2+1.1);
  const r=mesh(new T.TorusGeometry(.5,.08,6,20),m.trim,h,0,6.2,0);r.rotation.x=Math.PI/2;box(.04,1.6,.9,m.accent,h,.25,2.6,.45);star(.3,m.trim,h,0,.9,.92);return{hull:h}};
 B.tunnel=t=>{const m=bmat('sand',t),h=new T.Group(),tu=new T.Group();dome(2.4,m.dirt,h,0,.05,-.2,.5);const pts=[];for(let i=0;i<=12;i++){const a=i/12*Math.PI*2*.8+Math.PI*.7;pts.push([Math.cos(a)*2.6,Math.sin(a)*2.6-.2])}sandbags(m,h,pts);
@@ -368,19 +380,20 @@ export const MODEL_SPECS={
  // faction-only units
  sniper:{S:3.9,build:t=>soldier(t,{sniper:true}),poses:INF_POSES,infantry:true},heli:{S:10.4,build:t=>heli(t),poses:['rot0','rot1','rot2','rot3']},
  hacker:{S:3.9,build:t=>soldier(t,{pal:'cnuni',hacker:true}),poses:[...INF_POSES,'hack'],infantry:true},flametank:{S:9.2,build:t=>tank(t,{pal:'green',k:.95,flame:true}),turret:true},
+ raptor:{S:10.4,build:t=>jetFighter(t,{pal:'dark',twin:true})},mig:{S:10.4,build:t=>jetFighter(t,{pal:'olive',twin:false,k:.95})},
  suicide:{S:3.9,build:t=>soldier(t,{pal:'glauni',scarf:true,vest:true}),poses:INF_POSES,infantry:true},toxin:{S:7.8,build:t=>tractor(t)},bombtruck:{S:8.8,build:t=>bombTruck(t)}};
 for(const[k,f]of Object.entries(B)){MODEL_SPECS[k]={build:f,building:true,turret:/^(turret|tunnel)/.test(k),frames:/^radar/.test(k)?8:1}}
 const BLD=f=>Object.fromEntries(['hq','power','refinery','barracks','factory','turret','radar','silo'].filter(t=>B[t+'_'+f]).map(t=>[t,t+'_'+f]));
 export const FACTION_MODELS={
- falcon:{builder:'builder',harvester:'harvester',infantry:'infantry',rocket:'rocket',jeep:'jeep',tank:'crusader',heavy:'paladin',artillery:'tomahawk',sniper:'sniper',heli:'heli',...BLD('falcon'),airfield:'airfield'},
- dragon:{builder:'dozer_cn',harvester:'truck_cn',infantry:'soldier_cn',rocket:'rocket_cn',jeep:'gattling',tank:'battlemaster',heavy:'overlord',artillery:'inferno',hacker:'hacker',flame:'flametank',...BLD('dragon'),speaker:'speaker'},
+ falcon:{builder:'builder',harvester:'harvester',infantry:'infantry',rocket:'rocket',jeep:'jeep',tank:'crusader',heavy:'paladin',artillery:'tomahawk',sniper:'sniper',heli:'heli',raptor:'raptor',...BLD('falcon'),airfield:'airfield'},
+ dragon:{builder:'dozer_cn',harvester:'truck_cn',infantry:'soldier_cn',rocket:'rocket_cn',jeep:'gattling',tank:'battlemaster',heavy:'overlord',artillery:'inferno',hacker:'hacker',flame:'flametank',mig:'mig',...BLD('dragon'),speaker:'speaker',airfield:'airfield_dragon'},
  sand:{builder:'worker',harvester:'oldtruck',infantry:'soldier_gla',rocket:'rocket_gla',jeep:'technical',tank:'scorpion',heavy:'marauder',artillery:'buggy',suicide:'suicide',toxin:'toxin',bombtruck:'bombtruck',...BLD('sand'),tunnel:'tunnel'}};
 export const WALK_FRAMES=WALK;
 
 // ---------------------------------------------------------------------------
 // Bake every model into sprite atlases: columns = directions, rows = poses
 // ---------------------------------------------------------------------------
-const CACHE_VER='iron-dunes-models-v3';
+const CACHE_VER='iron-dunes-models-v4';
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('iron-dunes',1);r.onupgradeneeded=()=>r.result.createObjectStore('atlas');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function cacheGet(key){try{const db=await idb();return await new Promise(res=>{const q=db.transaction('atlas').objectStore('atlas').get(key);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)})}catch(e){return null}}
 async function cachePut(key,val){try{const db=await idb();await new Promise(res=>{const tx=db.transaction('atlas','readwrite');tx.objectStore('atlas').put(val,key);tx.oncomplete=res;tx.onerror=()=>{console.warn('idb put error',tx.error);res()};tx.onabort=()=>{console.warn('idb abort',tx.error);res()}})}catch(e){console.warn('idb',e)}}
