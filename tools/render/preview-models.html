@@ -1,0 +1,12 @@
+<!doctype html><html><body style="margin:0;background:#a08c66"><div id="o" style="display:flex;flex-wrap:wrap;gap:6px;padding:6px"></div>
+<script type="module">
+const {bakeKey,FACTION_MODELS}=await import('./models.js?v='+Math.random());
+const q=new URLSearchParams(location.search),f=q.get('f')||'falcon',only=q.get('only'),touch=q.get('touch')==='1';
+const map=FACTION_MODELS[f];const log=[];
+for(const [type,key] of Object.entries(map)){if(only&&!only.split(',').includes(type))continue;const t0=performance.now();const e=bakeKey(key,+(q.get('t')||0),touch);log.push(type+':'+Math.round(performance.now()-t0));
+ const c=document.createElement('canvas');const n=e.building?1:6,rows=e.building?1:Math.min(2,e.poses.length);c.width=n*e.F;c.height=rows*e.F;const g=c.getContext('2d');
+ if(e.building){g.drawImage(e.atlas,0,0,e.F,e.F,0,0,e.F,e.F);if(e.turretAtlas)g.drawImage(e.turretAtlas,e.F*3,0,e.F,e.F,0,0,e.F,e.F)}
+ else{for(let r=0;r<rows;r++)for(let i=0;i<6;i++){const col=Math.round(i*e.dirs/6);g.drawImage(e.atlas,col*e.F,r*e.F,e.F,e.F,i*e.F,r*e.F,e.F,e.F);if(e.turretAtlas&&r===0)g.drawImage(e.turretAtlas,col*e.F,0,e.F,e.F,i*e.F,0,e.F,e.F)}}
+ const d=document.createElement('div');d.style.cssText='font:12px sans-serif;background:#0002';d.append(type+' S='+e.S+' F='+e.F,document.createElement('br'),c);o.append(d);await new Promise(r=>setTimeout(r,0))}
+console.log(log.join(' '));document.title='done';
+</script></body></html>

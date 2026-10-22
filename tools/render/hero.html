@@ -1,0 +1,14 @@
+<!doctype html><html><body style="margin:0;background:#333"><script type="module">
+import * as T from './three.module.js';
+const {buildModel}=await import('./models.js?v='+Math.random());
+const W=1200,H=760;const r=new T.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});r.setSize(W,H);r.outputColorSpace=T.SRGBColorSpace;r.toneMapping=T.ACESFilmicToneMapping;r.toneMappingExposure=1.15;r.shadowMap.enabled=true;r.shadowMap.type=T.PCFSoftShadowMap;document.body.append(r.domElement);
+const SC={falcon:{team:0,b:'factory_falcon',back:'radar_falcon',units:[['paladin',0,2,.55],['crusader',5.8,-.5,.85],['heli',-7,-2,.9,6.5],['jeep',-5.4,3.6,.35],['infantry',-1.6,6.6,.2],['sniper',-.2,7.4,.45],['rocket',1.4,6.8,.6]]},
+ dragon:{team:1,b:'factory_dragon',back:'power_dragon',units:[['overlord',0,1.5,.55],['battlemaster',5.8,-.8,.9],['flametank',-5.6,1.5,.3],['gattling',-6.5,-3.5,.2],['soldier_cn',-1.4,6.6,.25],['soldier_cn',.2,7.2,.5],['hacker',2.4,7,.7]]},
+ sand:{team:1,b:'factory_sand',back:'hq_sand',units:[['marauder',0,1.8,.55],['technical',5.6,.5,1.0],['toxin',-5.6,2.4,.25],['buggy',-6.6,-3.2,.15],['soldier_gla',-1.6,6.6,.25],['suicide',.2,7.3,.5],['rocket_gla',2.0,6.8,.7]]}};
+window.render=f=>{const s=new T.Scene();s.add(new T.HemisphereLight(0xfff0d8,0x6b5432,1.25));const sun=new T.DirectionalLight(0xffe2b8,3.0);sun.position.set(-14,18,12);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);const c=sun.shadow.camera;c.left=c.bottom=-24;c.right=c.top=24;c.far=80;sun.shadow.bias=-.001;s.add(sun);const rim=new T.DirectionalLight(0x9fc4ff,.7);rim.position.set(10,6,-12);s.add(rim);
+ const g=new T.Mesh(new T.PlaneGeometry(200,200),new T.ShadowMaterial({opacity:.38}));g.rotation.x=-Math.PI/2;g.receiveShadow=true;s.add(g);
+ const S=SC[f];const b=buildModel(S.b,S.team);b.position.set(4,0,-12);b.rotation.y=-.35;s.add(b);const b2=buildModel(S.back,S.team);b2.position.set(-9,0,-13);b2.rotation.y=.3;s.add(b2);
+ for(const [k,x,z,ry,y] of S.units){const m=buildModel(k,S.team);m.position.set(x,y||0,z);m.rotation.y=ry;if(/soldier|infantry|rocket|sniper|hacker|suicide/.test(k))m.scale.setScalar(1.0);s.add(m)}
+ const cam=new T.PerspectiveCamera(30,W/H,.5,200);cam.position.set(0,10,30);cam.lookAt(0,1.2,-1);r.render(s,cam);return r.domElement.toDataURL('image/png')};
+document.title='ready';
+</script></body></html>
