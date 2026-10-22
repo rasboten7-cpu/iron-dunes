@@ -1,6 +1,6 @@
 import * as T from './three.module.js';
 import {MAP,MAPS,setMap,mapObstacles,BIOMES} from './world-config.js?v=7';
-import {bakeFaction,WALK_FRAMES,bakeScenery} from './models.js?v=12';
+import {bakeFaction,WALK_FRAMES,bakeScenery} from './models.js?v=13';
 export {T,MAP,MAPS,setMap,mapObstacles,BIOMES};
 const BIO=()=>BIOMES[MAP.biome]||BIOMES.desert;
 
@@ -135,7 +135,8 @@ export class ImageRenderer{
    const{root,u,p,s,pixels,frame}=it,entry=assets[u.asset];ctx.save();ctx.globalAlpha=u.opacity??1;
    const gp=it.gp||p;
    if(!u.noShadow){ctx.fillStyle=u.alt?'#2d2a2344':'#2d2a2338';ctx.beginPath();ctx.ellipse(gp.x,gp.y,u.r*s*root.scale.x*(u.alt?1.6:.95),u.r*s*root.scale.x*(u.alt?1.6:.95)*H.squash,0,0,Math.PI*2);ctx.fill()}
-   if(u.ring){ctx.strokeStyle=u.ring;ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(gp.x,gp.y,(u.r*root.scale.x+.35)*s,(u.r*root.scale.x+.35)*s*H.squash,0,0,Math.PI*2);ctx.stroke();if(u.alt){ctx.globalAlpha*=.4;ctx.beginPath();ctx.moveTo(gp.x,gp.y);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.globalAlpha/=.4}}
+   if(u.tc){ctx.fillStyle=u.tc+'40';ctx.beginPath();ctx.ellipse(gp.x,gp.y,(u.r*root.scale.x+.3)*s,(u.r*root.scale.x+.3)*s*H.squash,0,0,Math.PI*2);ctx.fill()}
+   if(u.ring){ctx.strokeStyle=u.ring;ctx.lineWidth=u.tc&&u.ring!=='#f2f6d8'?2.2:1.8;ctx.beginPath();ctx.ellipse(gp.x,gp.y,(u.r*root.scale.x+.35)*s,(u.r*root.scale.x+.35)*s*H.squash,0,0,Math.PI*2);ctx.stroke();if(u.alt){ctx.globalAlpha*=.4;ctx.beginPath();ctx.moveTo(gp.x,gp.y);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.globalAlpha/=.4}}
    if(u.model){const M=u.model,F=M.F,ph=pixels*it.sy/(root.scale.x||1),left=p.x-pixels*.5,topY=p.y-ph*.5,row=Math.min(M.poses.length-1,u.pose||0);const src=u.wreck?modelVariant(M,'w'):M.atlas;if(u.flashT&&performance.now()-u.flashT<90)ctx.globalAlpha*=.75;
     if(M.building&&u.build!==undefined&&u.build<1){const a0=ctx.globalAlpha,k=Math.max(.05,u.build),cut=topY+ph*(.78-.6*k);ctx.globalAlpha=a0*.28;ctx.drawImage(src,frame*F,row*F,F,F,left,topY,pixels,ph);ctx.globalAlpha=a0;ctx.save();ctx.beginPath();ctx.rect(left,cut,pixels,topY+ph-cut);ctx.clip();ctx.drawImage(src,frame*F,row*F,F,F,left,topY,pixels,ph);ctx.restore();ctx.strokeStyle='#ffd27acc';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(left+pixels*.18,cut);ctx.lineTo(left+pixels*.82,cut);ctx.stroke();ctx.setLineDash([])}
     else ctx.drawImage(src,frame*F,row*F,F,F,left,topY,pixels,ph);

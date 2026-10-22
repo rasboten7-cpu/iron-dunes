@@ -227,3 +227,12 @@ footer section{background:linear-gradient(165deg,#1e251ef7,#131813f9);border:1px
 @media (max-height:520px){.lobby{grid-column:1/-1;padding:8px 10px;gap:5px}.lobby-head h3{font-size:16px}.slot{padding:3px 6px}.slot select{padding:3px;font-size:11px}.dossier{grid-template-columns:repeat(5,minmax(0,1fr))}}
 
 @media (max-height:520px){.slots-head,.slot{grid-template-columns:12px 70px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr) 30px;gap:6px}.slots-head{font-size:9.5px}#intro .primary{position:static}}
+/* ---- v9: Fires of War branding ---- */
+.intro-shade{background:linear-gradient(180deg,#0a080600 0%,#0a080622 30%,#0e100cb8 58%,#11150ff2 82%),linear-gradient(270deg,#0e0c0a99 0%,#0e0c0a00 45%),url('assets/web/menu_bg.webp') center 30%/cover no-repeat;background-color:#120e0a}
+.brandmark{padding-bottom:clamp(40px,16vh,190px)}
+.logo{margin:0;line-height:0}.logo img{display:block;width:min(560px,92%);height:auto;filter:drop-shadow(0 8px 24px #000c) drop-shadow(0 0 30px #ff7a1a33)}
+.logo-en{font:clamp(13px,1.4vw,17px) 'Black Ops One',Impact,sans-serif;letter-spacing:.5em;color:#f0c78a;text-shadow:0 2px 8px #000;margin-top:2px}
+.tagline{color:#efe2c8;text-shadow:0 2px 10px #000,0 0 2px #000}
+.pick-head{border-bottom-color:#ff9a4044}
+@media (max-width:760px) and (min-height:521px){.intro-shade{background:linear-gradient(180deg,#0a080600 0%,#0a080633 26%,#0e100cd0 46%,#11150ff5 70%),url('assets/web/menu_bg.webp') 72% 0/auto 62vh no-repeat;background-color:#11150f}.brandmark{padding-bottom:22vh}.logo img{width:100%}}
+@media (max-height:520px){.brandmark{padding-bottom:0}.logo img{width:100%;max-width:190px}.intro-shade{background:linear-gradient(90deg,#11150ff0 0%,#11150fc0 55%,#11150f66 100%),url('assets/web/menu_bg.webp') center/cover no-repeat}}

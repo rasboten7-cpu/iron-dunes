@@ -6,14 +6,16 @@ import * as T from './three.module.js';
 // Materials
 // ---------------------------------------------------------------------------
 let seed=1234;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
-function camoTexture(base,spots,repeat=.32,dirt=.25){const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d');g.fillStyle=base;g.fillRect(0,0,256,256);
+function camoTexture(base,spots,repeat=.32,dirt=.25,tint=null,ta=.5){const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d');g.fillStyle=base;g.fillRect(0,0,256,256);
  for(const [col,count,size] of spots){g.fillStyle=col;for(let i=0;i<count;i++){const x=rnd()*256,y=rnd()*256,r=size*(.5+rnd());g.beginPath();for(let k=0;k<7;k++){const a=k/7*Math.PI*2,rr=r*(.6+rnd()*.6);const px=x+Math.cos(a)*rr*1.4,py=y+Math.sin(a)*rr;k?g.lineTo(px,py):g.moveTo(px,py)}g.closePath();g.fill();
   // wrap blobs so the texture tiles
   for(const [dx,dy] of [[256,0],[-256,0],[0,256],[0,-256]]){g.save();g.translate(dx,dy);g.fill();g.restore()}}}
  const d=g.getImageData(0,0,256,256),p=d.data;for(let i=0;i<p.length;i+=4){const n=(rnd()-.5)*22*dirt*2;p[i]+=n;p[i+1]+=n;p[i+2]+=n*.9}g.putImageData(d,0,0);
+ if(tint){g.globalCompositeOperation='color';g.globalAlpha=ta;g.fillStyle=tint;g.fillRect(0,0,256,256);g.globalCompositeOperation='soft-light';g.globalAlpha=ta*.5;g.fillRect(0,0,256,256);g.globalCompositeOperation='source-over';g.globalAlpha=1}
  const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(repeat*.8,repeat*.8);t.anisotropy=4;return t}
 function stripeTexture(){const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');g.fillStyle='#2b2924';g.fillRect(0,0,64,64);g.fillStyle='#46423a';for(let i=0;i<8;i++)g.fillRect(0,i*8,64,3);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(1,6);return t}
-const TEAM_COL=[0x3d8fd0,0xc8412e,0x3fae4a,0xe0b52a,0x8e55c9,0xe07a22,0x2ab8b8,0xd05a9a];const tcol=t=>TEAM_COL[t]??0x9a9a8a;
+const TEAM_COL=[0x3d8fd0,0xc8412e,0x3fae4a,0xe0b52a,0x8e55c9,0xe07a22,0x2ab8b8,0xd05a9a];const tcol=t=>TEAM_COL[t]??0x9a9a8a;const thex=t=>TEAM_COL[t]!=null?'#'+TEAM_COL[t].toString(16).padStart(6,'0'):null;
+function tintTex(t,col,a){if(!col)return t;const c=t.image,g=c.getContext('2d');g.save();g.globalCompositeOperation='color';g.globalAlpha=a;g.fillStyle=col;g.fillRect(0,0,c.width,c.height);g.restore();t.needsUpdate=true;return t}
 export function palette(name,team){const P={
   desert:['#a6916b',[['#8d7b57',26,30],['#77694b',16,26],['#b29e78',10,18]]],
   dark:['#5e6052',[['#4f5145',26,30],['#43453b',16,26],['#68695a',10,18]]],
@@ -25,9 +27,9 @@ export function palette(name,team){const P={
   glauni:['#b29d78',[['#9a8562',40,10],['#c4b08a',26,8],['#7e6c4c',16,6]]],
   uniform:['#8f8463',[['#6d6548',40,10],['#5a5a40',30,8],['#a89c76',20,6]]],
   tanuni:['#a8956a',[['#8a7a52',40,10],['#b9a882',26,8],['#77693f',20,6]]]}[name];
- const camo=new T.MeshStandardMaterial({map:camoTexture(P[0],P[1],/uni$/.test(name)||name==='uniform'?1.4:.32),roughness:.86,metalness:.08});
+ const uni=/uni$/.test(name)||name==='uniform',tc=thex(team);const camo=new T.MeshStandardMaterial({map:camoTexture(P[0],P[1],uni?1.4:.32,.25,tc,uni?.62:.55),roughness:.86,metalness:.08});
  return{camo,
-  plain:new T.MeshStandardMaterial({color:new T.Color(P[0]).multiplyScalar(.92),roughness:.85,metalness:.08}),
+  plain:new T.MeshStandardMaterial({color:tc?new T.Color(P[0]).lerp(new T.Color(tc),.45).multiplyScalar(.92):new T.Color(P[0]).multiplyScalar(.92),roughness:.85,metalness:.08}),
   dark:new T.MeshStandardMaterial({color:0x2c2b27,roughness:.9,metalness:.15}),
   metal:new T.MeshStandardMaterial({color:0x55574f,roughness:.5,metalness:.55}),
   gun:new T.MeshStandardMaterial({color:0x3d3e38,roughness:.45,metalness:.6}),
@@ -38,7 +40,7 @@ export function palette(name,team){const P={
   wood:new T.MeshStandardMaterial({color:0x8b6a42,roughness:.9}),
   canvas:new T.MeshStandardMaterial({color:0x6b6648,roughness:.95}),
   skin:new T.MeshStandardMaterial({color:0xc08a62,roughness:.7}),
-  team:new T.MeshStandardMaterial({color:tcol(team),roughness:.6,metalness:.1,emissive:tcol(team),emissiveIntensity:.18})}}
+  team:new T.MeshStandardMaterial({color:tcol(team),roughness:.5,metalness:.1,emissive:tcol(team),emissiveIntensity:.45})}}
 
 // ---------------------------------------------------------------------------
 // Geometry helpers
@@ -247,11 +249,12 @@ const corrugT=base=>texCanvas(64,64,(g,w,h)=>{g.fillStyle=base;g.fillRect(0,0,w,
 const stripeT=(a,b)=>texCanvas(64,64,(g,w,h)=>{g.fillStyle=a;g.fillRect(0,0,w,h);g.fillStyle=b;for(let i=-64;i<128;i+=16){g.beginPath();g.moveTo(i,0);g.lineTo(i+8,0);g.lineTo(i+8-64,64);g.lineTo(i-64,64);g.closePath();g.fill()}},2);
 const padT=(col)=>texCanvas(128,128,(g,w,h)=>{g.fillStyle='#55554e';g.fillRect(0,0,w,h);grain(g,w,h,16);g.strokeStyle=col;g.lineWidth=6;g.beginPath();g.arc(64,64,52,0,7);g.stroke();g.fillStyle=col;g.fillRect(40,34,10,60);g.fillRect(78,34,10,60);g.fillRect(40,58,48,10)});
 const screenT=()=>texCanvas(128,64,(g,w,h)=>{g.fillStyle='#4a0d0a';g.fillRect(0,0,w,h);g.fillStyle='#e8b84a';const st=(cx,cy,R)=>{g.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?R*.42:R;g.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r)}g.closePath();g.fill()};st(30,32,20);g.fillStyle='#f1d9a0';for(let i=0;i<4;i++)g.fillRect(60,14+i*11,50-i*8,5)});
-function bmat(f,team){const tc=tcol(team),M=o=>new T.MeshStandardMaterial({roughness:.86,metalness:.04,...o});
+function bmat(f,team){const tc=tcol(team),th=thex(team),M=o=>new T.MeshStandardMaterial({roughness:.86,metalness:.04,...o});
  const c={glass:M({color:0x22333c,roughness:.12,metalness:.55}),dark:M({color:0x27261f,roughness:.92}),metal:M({color:0x6d6e68,roughness:.42,metalness:.62}),steel:M({color:0x8d918c,roughness:.35,metalness:.7}),team:M({color:tc,emissive:tc,emissiveIntensity:.28,roughness:.55}),lamp:M({color:0xfff1c8,emissive:0xffd88a,emissiveIntensity:.9}),hazard:M({map:stripeT('#d6ac34','#25221c')}),sandbag:M({color:0xa08b62,roughness:1}),crate:M({color:0x8d6c42,roughness:.9}),tarp:M({color:0x6e6a48,roughness:1,side:T.DoubleSide}),wood:M({color:0x7a5a36,roughness:.95}),dirt:M({color:0xa58a5e,roughness:1})};
- if(f==='falcon')return{...c,f,wall:M({map:concreteT('#cdc6b3')}),wall2:M({map:concreteT('#a9a594')}),roof:M({map:concreteT('#62707a','#0003'),roughness:.65}),trim:M({color:0x3d5a6c,roughness:.5,metalness:.35}),accent:M({color:0x5fb4ea,emissive:0x2f86c4,emissiveIntensity:.7,roughness:.3}),floor:M({map:concreteT('#6f6c62','#0003')})};
- if(f==='dragon')return{...c,f,wall:M({map:concreteT('#858a6c')}),wall2:M({map:concreteT('#656b53')}),roof:M({map:tileT('#86281f'),roughness:.55}),trim:M({color:0xcfa33c,roughness:.35,metalness:.65}),accent:M({color:0xd9473a,emissive:0x7a1a10,emissiveIntensity:.45}),floor:M({map:concreteT('#605e4e','#0003')}),screen:M({map:screenT(),emissive:0x401010,emissiveIntensity:.5,emissiveMap:screenT()})};
- return{...c,f,wall:M({map:adobeT('#c8a777')}),wall2:M({map:adobeT('#ad8e62')}),roof:M({map:corrugT('#8f7254'),metalness:.3,roughness:.7}),trim:M({color:0x6e5236}),accent:M({color:0x9a4f2a,roughness:.7}),floor:M({map:adobeT('#b89e72')})}}
+ const T0=(o)=>{if(o.map&&th)tintTex(o.map,th,.42);return o};const acc=th?M({color:tc,emissive:tc,emissiveIntensity:.5,roughness:.4}):null;
+ if(f==='falcon')return{...c,f,wall:M({map:concreteT('#cdc6b3')}),wall2:M({map:concreteT('#a9a594')}),roof:M(T0({map:concreteT('#62707a','#0003'),roughness:.65})),trim:M({color:0x3d5a6c,roughness:.5,metalness:.35}),accent:acc||M({color:0x5fb4ea,emissive:0x2f86c4,emissiveIntensity:.7,roughness:.3}),floor:M({map:concreteT('#6f6c62','#0003')})};
+ if(f==='dragon')return{...c,f,wall:M({map:concreteT('#858a6c')}),wall2:M({map:concreteT('#656b53')}),roof:M(T0({map:tileT('#86281f'),roughness:.55})),trim:M({color:0xcfa33c,roughness:.35,metalness:.65}),accent:acc||M({color:0xd9473a,emissive:0x7a1a10,emissiveIntensity:.45}),floor:M({map:concreteT('#605e4e','#0003')}),screen:M({map:screenT(),emissive:0x401010,emissiveIntensity:.5,emissiveMap:screenT()})};
+ return{...c,f,wall:M({map:adobeT('#c8a777')}),wall2:M({map:adobeT('#ad8e62')}),roof:M(T0({map:corrugT('#8f7254'),metalness:.3,roughness:.7})),trim:M({color:0x6e5236}),accent:acc||M({color:0x9a4f2a,roughness:.7}),floor:M({map:adobeT('#b89e72')})}}
 const G=(parent,x=0,y=0,z=0,ry=0)=>{const g=new T.Group();g.position.set(x,y,z);g.rotation.y=ry;parent.add(g);return g};
 // gable roof with its ridge along x
 function gable(w,d,h,mat,p,x,y,z,over=.35){const g=G(p,x,y,z);profile([[-d/2-over,0],[d/2+over,0],[0,h]],w+over*2,mat,g,0,.04);return g}
@@ -393,7 +396,7 @@ export const WALK_FRAMES=WALK;
 // ---------------------------------------------------------------------------
 // Bake every model into sprite atlases: columns = directions, rows = poses
 // ---------------------------------------------------------------------------
-const CACHE_VER='iron-dunes-models-v4';
+const CACHE_VER='iron-dunes-models-v5';
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('iron-dunes',1);r.onupgradeneeded=()=>r.result.createObjectStore('atlas');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function cacheGet(key){try{const db=await idb();return await new Promise(res=>{const q=db.transaction('atlas').objectStore('atlas').get(key);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)})}catch(e){return null}}
 async function cachePut(key,val){try{const db=await idb();await new Promise(res=>{const tx=db.transaction('atlas','readwrite');tx.objectStore('atlas').put(val,key);tx.oncomplete=res;tx.onerror=()=>{console.warn('idb put error',tx.error);res()};tx.onabort=()=>{console.warn('idb abort',tx.error);res()}})}catch(e){console.warn('idb',e)}}
