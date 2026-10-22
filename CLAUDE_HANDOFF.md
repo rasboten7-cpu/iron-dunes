@@ -71,3 +71,14 @@ Fog of war (v4 explicitly wanted the enemy visible; could be an option), aircraf
 - Faction-only content: `only:[faction]` on defs; use `avail(type,team)`. New weapon kinds: sniper, hack, flame, toxin, suicide (handled in `special()`); aircraft (`air:true`) fly straight, need `hitsAir()` weapons, altitude in `e.alt`.
 - Hackers earn $6/2s when idle 3s; `building.off>timer` = disabled (no production/turret/aura/power).
 - UI theme: CSS layer "v7" in style.css; `body[data-f]` sets `--fac`; menu faction cards built in game.js from `FACTIONS` (+`EMBLEM`), hero images `assets/web/hero_<faction>.webp`. Card portraits are cropped from the baked atlases (`icon(type,faction)` in visuals.js).
+
+## v11 notes (remaining Generals features for all three factions)
+- Capacity system: `capOf(b)` = `b.cap ?? D(b).capacity`. Holders: civilian (switches team), dragon `bunker`, `crawler` (noFire, crew of 8 spawned inside in `spawnFrom`), falcon `jeep` (humvee, capacity 5), sand `bus` (husk: first death → immobile bunker `e.husked`, `userData.wreck`), Overlord `bnk` add-on (`e.cap=5`). `canHold/enterBuilding/garrisonIn/evacuate`; passengers follow vehicles each tick and fire unless `D(holder).noFire`. `remove()` evacuates.
+- Stealth: `updateStealth()` every 0.4 s sets `e.hidden` and `e.seenBy` (ally ids) — sniper `stealth:true`, sand infantry/rocket with `camo`. Detectors: `D.detector` (crawler 30), radar buildings 26, any unit 5. `canAttack` and AI threat lists respect it; `hudFrame` hides enemy hidden units / draws own at 45% opacity.
+- Stun: `e.stun>timer` freezes units (leaflets, EMP). EMP also sets `building.off` and destroys aircraft.
+- Overlord add-ons: `ADDONS`, `addAddon(e,k)` swaps the sprite with `reskin()` (model keys `heavy_gat|heavy_spk|heavy_bnk`); `gatFire()` = secondary AA gattling; `spk` = heal aura.
+- Mines: global `mines[]` (cluster-mine power, `addMine`) + building `e.mines` charges (`mines` upgrade); `checkMines()` every 0.25 s.
+- New weapons flags: `rad` (radPool), `toxic` (scud), `toxinshells`, `w.muzzle`. `damageOf(e,t,w)` and `canAttack(e,o,w)` take the weapon.
+- New models in models.js: crawler, battleBus, scudLauncher, nukeCannon, overlord(add), B.bunker. Cache `iron-dunes-models-v7`. visuals.js FALLBACK/dimensions updated.
+- AI: `aiTransports`, `aiBunkers`, addon purchase in `aiProduce`, research throttled (`ai.resT`, niche upgrades after 6 min), earlier 2nd factory/barracks, powers cashhack/sneak/leaflet targeting, reactor overcharge when power is low.
+- Tests: tools/feat11.mjs (features), tools/ai11.mjs (AI vs AI).

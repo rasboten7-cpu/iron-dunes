@@ -253,6 +253,43 @@ function ambulance(team){const m=palette('desert',team);const hull=new T.Group()
  for(const s of [-1,1])box(.3,.12,.12,m.team,hull,s*.5,2.62,.75);box(.22,.1,.06,m.light,hull,-.7,1.0,2.28);box(.22,.1,.06,m.light,hull,.7,1.0,2.28);return{hull,turret:null}}
 // technical with a four-barrel anti-air gun (sand)
 function quad(team){const t=technical(team),m=palette('rust',team);const tu=t.turret;tu.clear();cyl(.16,.2,.4,m.dark,tu,0,.2,0);slab(1.1,.55,.8,.05,m.camo,tu,0,.35,0);for(const [x,y] of [[-.28,.55],[.28,.55],[-.28,.85],[.28,.85]])cyl(.05,.05,1.6,m.gun,tu,x,y,.9,'z',8);box(.7,.4,.06,m.metal,tu,0,.95,.45);return t}
+// --- v11: transports, long-range launchers and Overlord add-ons -----------------
+// eight-wheel armoured troop carrier (dragon)
+function crawler(team){const m=palette('green',team);const hull=new T.Group();
+ for(const z of [2.0,.7,-.6,-1.9])for(const s of [-1,1])wheel(.5,.36,m,hull,s*1.12,.5,z);
+ profile([[-2.7,.55],[-2.75,1.75],[1.2,1.85],[2.95,1.15],[2.85,.55]],2.3,m.camo,hull);
+ slab(2.2,.1,3.6,.03,m.camo,hull,0,1.82,-.6);
+ for(const s of [-1,1]){for(let i=0;i<3;i++)box(.05,.18,.3,m.dark,hull,s*1.16,1.35,-1.6+i*1.0);slab(.04,.3,1.0,.01,m.team,hull,s*1.16,.95,-.3);box(.2,.1,.06,m.light,hull,s*.75,1.2,2.9)}
+ box(1.5,.9,.06,m.dark,hull,0,1.15,-2.76);for(const x of [-.5,.5])cyl(.32,.32,.08,m.dark,hull,x,1.92,-1.0,'y',12);
+ cyl(.35,.4,.3,m.camo,hull,.3,2.0,.4);cyl(.03,.03,.9,m.gun,hull,.3,2.1,.95,'z',6);cyl(.02,.02,1.8,m.dark,hull,-.8,2.7,-2.2);box(.55,.06,.55,m.metal,hull,-.8,3.6,-2.2);
+ box(2.0,.3,.15,m.dark,hull,0,.75,2.95);for(let i=0;i<3;i++)box(.5,.32,.45,m.canvas,hull,-.6+i*.6,2.0,-2.2);return{hull,turret:null}}
+// armoured "battle bus" with plated windows and sandbags on the roof (sand)
+function battleBus(team){const m=palette('rust',team);const hull=new T.Group();const paint=new T.MeshStandardMaterial({map:camoTexture('#b8923a',[['#9a7a30',18,22],['#7d6a3a',10,16],['#c9a65a',8,14]],.32,.3),roughness:.8,metalness:.1});
+ for(const z of [2.3,-1.5,-2.35])for(const s of [-1,1])wheel(.52,.38,m,hull,s*1.1,.52,z);
+ slab(2.3,2.0,6.4,.12,paint,hull,0,.6,-.3);slab(2.2,1.0,1.0,.08,paint,hull,0,.6,3.3);
+ box(2.0,.6,.05,m.glass,hull,0,2.05,2.89).rotation.x=-.12;
+ for(const s of [-1,1]){for(let i=0;i<6;i++){box(.05,.5,.62,m.glass,hull,s*1.16,1.95,-2.9+i*.86);if(i%2)box(.09,.66,.8,m.metal,hull,s*1.2,1.95,-2.9+i*.86)}slab(.04,.25,5.4,.01,m.team,hull,s*1.17,1.12,-.3);box(.22,.12,.06,m.light,hull,s*.8,1.25,3.81)}
+ slab(2.36,.1,6.5,.03,m.camo,hull,0,2.6,-.3);box(2.3,.28,.22,m.dark,hull,0,.75,3.86);
+ for(let i=0;i<7;i++)slab(.6,.26,.36,.08,m.canvas,hull,(i%2?.5:-.5),2.7,-2.8+Math.floor(i/2)*1.2);box(.8,.5,.7,m.wood,hull,0,2.9,1.6);cyl(.02,.02,1.4,m.dark,hull,.9,3.4,-3.1);return{hull,turret:null}}
+// truck-mounted Scud with the missile raised (sand)
+function scudLauncher(team){const m=palette('rust',team);const hull=new T.Group();const scud=new T.MeshStandardMaterial({color:0x8e9c6a,roughness:.6,metalness:.2}),cone=new T.MeshStandardMaterial({color:0xa83a22,roughness:.5});
+ for(const z of [2.6,1.35,-1.15,-2.4])for(const s of [-1,1])wheel(.55,.4,m,hull,s*1.2,.55,z);
+ slab(2.1,.5,7.0,.04,m.dark,hull,0,.6,-.1);slab(2.4,1.2,1.6,.08,m.camo,hull,0,.9,2.7);box(2.1,.45,.06,m.glass,hull,0,1.78,3.51).rotation.x=.2;for(const s of [-1,1]){box(.2,.1,.06,m.light,hull,s*.8,1.2,3.52);slab(.04,.3,.9,.01,m.team,hull,s*1.21,1.25,2.6)}
+ const er=G(hull,0,1.35,-3.0);er.rotation.x=-.42;for(const s of [-1,1])box(.14,.14,5.2,m.metal,er,s*.48,0,2.5);cyl(.42,.42,4.8,scud,er,0,.5,2.6,'z',14);const c=mesh(new T.ConeGeometry(.42,1.3,14),cone,er,0,.5,5.65);c.rotation.x=Math.PI/2;for(let i=0;i<4;i++){const f=box(.05,.8,.6,cone,er,0,.5,.45);f.rotation.z=i*Math.PI/4}
+ const arm=cyl(.09,.09,1.7,m.metal,hull,0,1.35,-.9);arm.rotation.x=.9;slab(1.6,.4,1.4,.04,m.camo,hull,0,1.1,.9);return{hull,turret:null}}
+// long-barrelled nuclear howitzer on a tracked chassis (dragon)
+function nukeCannon(team){const m=palette('green',team);const hull=new T.Group(),turret=new T.Group();const haz=new T.MeshStandardMaterial({color:0xe0c040,roughness:.55,emissive:0x3a2a00,emissiveIntensity:.3});
+ for(const s of [-1,1]){trackUnit(6.6,.9,.66,m,hull,s*1.4,.45,-.3);slab(.16,.4,6.2,.04,m.camo,hull,s*1.43,.72,-.3)}
+ profile([[-3.5,.42],[-3.55,1.3],[2.3,1.3],[3.1,.9],[2.95,.42]],2.4,m.camo,hull);box(2.4,.8,.2,m.dark,hull,0,.8,-3.7);for(const s of [-1,1])box(.2,.1,.06,m.light,hull,s*.9,1.0,3.0);
+ slab(2.3,1.0,2.6,.07,m.camo,turret,0,0,-.7);slab(1.9,.12,2.0,.03,m.camo,turret,0,1.0,-.8);cyl(.48,.48,1.4,m.gun,turret,0,.55,.8,'z');cyl(.27,.32,4.2,m.gun,turret,0,.6,3.5,'z');box(.72,.52,.6,m.gun,turret,0,.6,5.8);
+ cyl(.36,.36,.35,haz,turret,0,.6,2.0,'z');for(const s of [-1,1]){slab(.04,.5,.5,.01,haz,turret,s*1.16,.25,-.5);slab(.04,.3,.8,.01,m.team,turret,s*1.16,.25,-1.4)}cyl(.03,.03,1.4,m.dark,turret,.8,1.6,-1.7);
+ turret.position.y=1.3;return{hull,turret}}
+// Overlord with a battlefield add-on on the turret roof (dragon)
+function overlord(team,add){const k=1.26,r=tank(team,{heavy:true,pal:'green',k}),m=palette('green',team),tu=r.turret,g=G(tu,0,.72*k+.04,-.35);
+ if(add==='gat'){cyl(.5,.56,.35,m.camo,g,0,.18,0);slab(.8,.5,.8,.05,m.camo,g,0,.35,0);for(let i=0;i<6;i++){const a=i/6*Math.PI*2;cyl(.045,.045,1.6,m.gun,g,Math.cos(a)*.13,.6+Math.sin(a)*.13,1.15,'z',6)}cyl(.2,.2,.3,m.dark,g,0,.6,.45,'z')}
+ if(add==='spk'){slab(.9,.55,.9,.05,m.camo,g,0,0,0);cyl(.08,.1,2.0,m.metal,g,0,1.5,0);for(let i=0;i<4;i++){const h=new T.Mesh(new T.CylinderGeometry(.34,.08,.65,12,1,true),m.metal);h.position.set(Math.sin(i*Math.PI/2+.3)*.3,2.4,Math.cos(i*Math.PI/2+.3)*.3);h.rotation.set(Math.PI/2,0,0);const hg=G(g,0,0,0,i*Math.PI/2+.3);hg.add(h);h.position.set(0,2.4,.3)}box(.5,.3,.06,m.team,g,0,.35,.47)}
+ if(add==='bnk'){slab(1.9,.9,1.9,.06,m.camo,g,0,0,0);for(const s of [-1,1]){box(1.2,.14,.06,m.dark,g,0,.55,s*.96);box(.06,.14,1.2,m.dark,g,s*.96,.55,0)}slab(2.0,.1,2.0,.03,m.metal,g,0,.9,0);box(.5,.3,.06,m.team,g,0,.2,.97)}
+ return r}
 // ---------------------------------------------------------------------------
 // Buildings — one visual language per faction
 // ---------------------------------------------------------------------------
@@ -381,6 +418,11 @@ B.tunnel=t=>{const m=bmat('sand',t),h=new T.Group(),tu=new T.Group();dome(2.4,m.
  const hole=mesh(new T.CircleGeometry(.9,18,0,Math.PI),m.dark,h,0,.1,1.9);slab(2.2,.3,.4,.04,m.wood,h,0,1.0,1.7);
  cyl(.08,.1,.8,m.metal,tu,0,-.3,0);box(.12,.14,1.0,m.gun,tu,0,.1,.3);cyl(.035,.035,1.0,m.gun,tu,0,.12,1.2,'z',8);box(.8,.5,.06,m.metal,tu,0,.25,.5);tu.position.y=1.35;return{hull:h,turret:tu}};
 
+// concrete battle bunker with firing slits (dragon)
+B.bunker=t=>{const m=bmat('dragon',t),h=new T.Group();cyl(2.7,2.9,.3,m.floor,h,0,.15,0,'y',8);cyl(2.0,2.35,1.5,m.wall2,h,0,1.05,0,'y',8);cyl(2.15,2.15,.28,m.wall,h,0,1.92,0,'y',8);dome(1.6,m.wall,h,0,2.0,0,.35);
+ for(let i=0;i<8;i++){const a=i/8*Math.PI*2+Math.PI/8;const sl=box(.95,.2,.14,m.dark,h,Math.sin(a)*2.12,1.35,Math.cos(a)*2.12);sl.rotation.y=a}
+ const st=star(.5,m.trim,h,0,1.25,2.3);st.rotation.y=0;box(.9,.06,.06,m.accent,h,0,1.82,2.18);flag(m,h,-1.2,-1.3,3.4,2.2);
+ const pts=[];for(let i=0;i<=9;i++){const a=i/9*Math.PI*1.1-Math.PI*.55;pts.push([Math.sin(a)*2.9,Math.cos(a)*2.9])}sandbags(m,h,pts,.3);return{hull:h}};
 // ---------------------------------------------------------------------------
 // Specs: S = world units covered by a frame (frame width), dirs = baked directions, poses = rows
 // ---------------------------------------------------------------------------
@@ -409,19 +451,21 @@ export const MODEL_SPECS={
  sniper:{S:3.9,build:t=>soldier(t,{sniper:true}),poses:INF_POSES,infantry:true},heli:{S:10.4,build:t=>heli(t),poses:['rot0','rot1','rot2','rot3']},
  hacker:{S:3.9,build:t=>soldier(t,{pal:'cnuni',hacker:true}),poses:[...INF_POSES,'hack'],infantry:true},flametank:{S:9.2,build:t=>tank(t,{pal:'green',k:.95,flame:true}),turret:true},
  raptor:{S:10.4,build:t=>jetFighter(t,{pal:'dark',twin:true})},chinook:{S:12,build:t=>chinook(t),poses:['rot0','rot1','rot2','rot3']},ambulance:{S:7,build:t=>ambulance(t)},quad:{S:7.2,build:t=>quad(t),turret:true},mig:{S:10.4,build:t=>jetFighter(t,{pal:'olive',twin:false,k:.95})},
- suicide:{S:3.9,build:t=>soldier(t,{pal:'glauni',scarf:true,vest:true}),poses:INF_POSES,infantry:true},toxin:{S:7.8,build:t=>tractor(t)},bombtruck:{S:8.8,build:t=>bombTruck(t)}};
+ suicide:{S:3.9,build:t=>soldier(t,{pal:'glauni',scarf:true,vest:true}),poses:INF_POSES,infantry:true},toxin:{S:7.8,build:t=>tractor(t)},bombtruck:{S:8.8,build:t=>bombTruck(t)},
+ crawler:{S:8.6,build:t=>crawler(t)},battlebus:{S:10,build:t=>battleBus(t)},scudlauncher:{S:10.6,build:t=>scudLauncher(t)},nukecannon:{S:12.4,build:t=>nukeCannon(t),turret:true},
+ overlord_gat:{S:11.6,build:t=>overlord(t,'gat'),turret:true},overlord_spk:{S:11.6,build:t=>overlord(t,'spk'),turret:true},overlord_bnk:{S:11.6,build:t=>overlord(t,'bnk'),turret:true}};
 for(const[k,f]of Object.entries(B)){MODEL_SPECS[k]={build:f,building:true,turret:/^(turret|tunnel)/.test(k),frames:/^radar/.test(k)?8:1}}
 const BLD=f=>Object.fromEntries(['hq','power','refinery','barracks','factory','turret','radar','silo'].filter(t=>B[t+'_'+f]).map(t=>[t,t+'_'+f]));
 export const FACTION_MODELS={
  falcon:{builder:'builder',harvester:'harvester',infantry:'infantry',rocket:'rocket',jeep:'jeep',tank:'crusader',heavy:'paladin',artillery:'tomahawk',sniper:'sniper',heli:'heli',raptor:'raptor',ambulance:'ambulance',...BLD('falcon'),harvester:'chinook',airfield:'airfield',dropzone:'dropzone'},
- dragon:{builder:'dozer_cn',harvester:'truck_cn',infantry:'soldier_cn',rocket:'rocket_cn',jeep:'gattling',tank:'battlemaster',heavy:'overlord',artillery:'inferno',hacker:'hacker',flame:'flametank',mig:'mig',...BLD('dragon'),speaker:'speaker',airfield:'airfield_dragon'},
- sand:{builder:'worker',harvester:'oldtruck',infantry:'soldier_gla',rocket:'rocket_gla',jeep:'technical',tank:'scorpion',heavy:'marauder',artillery:'buggy',suicide:'suicide',toxin:'toxin',bombtruck:'bombtruck',quad:'quad',...BLD('sand'),tunnel:'tunnel',blackmarket:'blackmarket',hole:'hole',trap:'trap'}};
+ dragon:{builder:'dozer_cn',harvester:'truck_cn',infantry:'soldier_cn',rocket:'rocket_cn',jeep:'gattling',tank:'battlemaster',heavy:'overlord',artillery:'inferno',hacker:'hacker',flame:'flametank',mig:'mig',...BLD('dragon'),speaker:'speaker',airfield:'airfield_dragon',bunker:'bunker',crawler:'crawler',nukecannon:'nukecannon',heavy_gat:'overlord_gat',heavy_spk:'overlord_spk',heavy_bnk:'overlord_bnk'},
+ sand:{builder:'worker',harvester:'oldtruck',infantry:'soldier_gla',rocket:'rocket_gla',jeep:'technical',tank:'scorpion',heavy:'marauder',artillery:'buggy',suicide:'suicide',toxin:'toxin',bombtruck:'bombtruck',quad:'quad',...BLD('sand'),tunnel:'tunnel',blackmarket:'blackmarket',hole:'hole',trap:'trap',bus:'battlebus',scudlauncher:'scudlauncher'}};
 export const WALK_FRAMES=WALK;
 
 // ---------------------------------------------------------------------------
 // Bake every model into sprite atlases: columns = directions, rows = poses
 // ---------------------------------------------------------------------------
-const CACHE_VER='iron-dunes-models-v6';
+const CACHE_VER='iron-dunes-models-v7';
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('iron-dunes',1);r.onupgradeneeded=()=>r.result.createObjectStore('atlas');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function cacheGet(key){try{const db=await idb();return await new Promise(res=>{const q=db.transaction('atlas').objectStore('atlas').get(key);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)})}catch(e){return null}}
 async function cachePut(key,val){try{const db=await idb();await new Promise(res=>{const tx=db.transaction('atlas','readwrite');tx.objectStore('atlas').put(val,key);tx.oncomplete=res;tx.onerror=()=>{console.warn('idb put error',tx.error);res()};tx.onabort=()=>{console.warn('idb abort',tx.error);res()}})}catch(e){console.warn('idb',e)}}

@@ -239,3 +239,8 @@ footer section{background:linear-gradient(165deg,#1e251ef7,#131813f9);border:1px
 .slot select[data-k=diff] option[value=impossible]{color:#ff7a5c}
 #selectedInfo .acts button.on{border-color:var(--fac);background:color-mix(in srgb,var(--fac) 30%,#1c221b);color:#fff}
 #selectedInfo .acts{flex-wrap:wrap;justify-content:center}
+/* v11: selection panel keeps its action buttons reachable on small screens */
+#selectedInfo{min-height:0;overflow-y:auto;justify-content:safe center}
+body.touch #selectedInfo:has(.acts) .asset-icon,body.touch #selectedInfo:has(.acts)>svg{display:none}
+#selectedInfo .acts button[disabled]{opacity:.45}
+@media (max-height:500px){#selectedInfo:has(.acts) .asset-icon{display:none}#selectedInfo .acts{gap:4px}}
