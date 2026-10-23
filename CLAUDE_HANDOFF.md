@@ -1,3 +1,11 @@
+# Current handoff: Fires of War v12
+
+Active base is the user-provided v11.1 archive, not v8. Read UPDATE-V12.md first. The v12 change is a presentation/movement pass; original v11.1 simulation systems remain in game.js. New stylesheet warfire.css overrides the original cascade. Assets are self-contained. New launcher is launch.py. Model cache version is fires-of-war-v12-final.
+
+Do not use old v5/v6 notes below as a current feature inventory.
+
+---
+
 # IRON DUNES v5 — Handoff
 
 ## User and objective

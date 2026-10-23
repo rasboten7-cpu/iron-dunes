@@ -4,7 +4,7 @@
 
 // Environments ("biomes"): ground colours, scenery, grading and particle colours
 export const BIOMES={
- desert:{name:'صحراء',ground:null,base:'#9f8e6d',grade:'#e8a43c',gradeA:.6,mult:'#d79a48',multA:.1,tree:'palm',rockTint:null,dust:0xc9a874,patch:['#6e5a3c','#c4ad84'],road:'#6a624e30',mini:'#2a372c',obstacle:'#6d665a',grove:'#4e6a3c',sky:null},
+ desert:{name:'صحراء',ground:null,base:'#9f8e6d',grade:'#d5b286',gradeA:.20,mult:'#b9a080',multA:.05,tree:'palm',rockTint:null,dust:0xc9a874,patch:['#6e5a3c','#c4ad84'],road:'#6a624e30',mini:'#2a372c',obstacle:'#6d665a',grove:'#4e6a3c',sky:null},
  snow:{name:'ثلوج',ground:{base:[218,225,233],var:[[206,215,226],[236,240,246],[198,206,216]],speck:'rgba(120,130,145,.25)'},base:'#d8dee6',grade:'#b8d4f0',gradeA:.35,mult:'#c8d8ec',multA:.08,tree:'pine',rockTint:'snow',dust:0xe8eef6,patch:['#9aa6b4','#f4f7fb'],road:'#5a5e6640',mini:'#4a5662',obstacle:'#8a929c',grove:'#2f4a3a',snowfall:true},
  green:{name:'سهول خضراء',ground:{base:[96,122,62],var:[[78,104,48],[118,140,72],[128,112,74]],speck:'rgba(60,46,26,.22)'},base:'#5f7a3e',grade:'#d8c070',gradeA:.25,mult:'#9ab060',multA:.06,tree:'oak',rockTint:'moss',dust:0x9a8a64,patch:['#4a6430','#8a7a50'],road:'#5a4a3260',mini:'#2e4a2a',obstacle:'#6a6a5a',grove:'#2a5a24'},
  savanna:{name:'سافانا',ground:{base:[176,150,86],var:[[160,132,70],[196,170,104],[150,110,62]],speck:'rgba(90,60,30,.25)'},base:'#b0965a',grade:'#e8b050',gradeA:.45,mult:'#d8a058',multA:.08,tree:'acacia',rockTint:'red',dust:0xc8a46a,patch:['#8a6a3c','#d0b878'],road:'#6a503460',mini:'#4a4428',obstacle:'#7a5a44',grove:'#5a6a2c'}

@@ -1,6 +1,6 @@
 import * as T from './three.module.js';
-import {MAP,MAPS,setMap,mapObstacles,BIOMES} from './world-config.js?v=7';
-import {bakeFaction,WALK_FRAMES,bakeScenery} from './models.js?v=15';
+import {MAP,MAPS,setMap,mapObstacles,BIOMES} from './world-config.js?v=12-7';
+import {bakeFaction,WALK_FRAMES,bakeScenery} from './models.js?v=12-15';
 export {T,MAP,MAPS,setMap,mapObstacles,BIOMES};
 const BIO=()=>BIOMES[MAP.biome]||BIOMES.desert;
 
@@ -32,7 +32,7 @@ await Promise.all([...SHEETS,...ENV].map(key=>new Promise((resolve,reject)=>{
   assets[key]={image,mask,frames,sheet,variants:{}};
   const b=document.getElementById('start');if(b)b.textContent='تحميل الرسومات '+(++loaded)+' / '+total;resolve()};
  image.onerror=()=>{const f=document.getElementById('fatal');if(f){f.hidden=false;f.textContent='تعذر تحميل بعض الرسومات. أعد تحميل الصفحة للتحقق من الاتصال.'}reject(new Error('Missing game asset: '+key))};
- image.src=base+key+EXT;
+ image.src=key==='ground'?'assets/terrain-desert.png':base+key+EXT;
 })));
 
 export const MODELS={};export {WALK_FRAMES};
@@ -48,7 +48,7 @@ function rockAsset(){const t=BIO().rockTint;if(!t)return'rocks';const key='rocks
  if(t==='snow'){const gr=g.createLinearGradient(0,0,0,c.height);gr.addColorStop(0,'rgba(245,249,255,.92)');gr.addColorStop(.55,'rgba(225,235,248,.55)');gr.addColorStop(1,'rgba(200,215,235,.15)');g.fillStyle=gr;g.fillRect(0,0,c.width,c.height)}else if(t==='moss'){g.fillStyle='rgba(70,90,50,.32)';g.fillRect(0,0,c.width,c.height)}else{g.fillStyle='rgba(150,60,30,.3)';g.fillRect(0,0,c.width,c.height)}
  assets[key]={...assets.rocks,frames:[c],variants:{}};dimensions[key]=dimensions.rocks;return key}
 // 3D models are baked per faction and team when a battle starts (cached in the browser afterwards)
-export async function ensureModels(list,progress){const touch=matchMedia('(pointer:coarse)').matches;let step=0;for(const[f,t]of list){const k=f+':'+t;if(MODELS[k]){step++;continue}try{MODELS[k]=await bakeFaction(f,t,{touch,progress:(d,n)=>progress?.(step*8+d,list.length*8)})}catch(err){console.warn('3D models unavailable, using sprites',err);MODELS[k]={}}step++}}
+export async function ensureModels(list,progress){const touch=matchMedia('(pointer:coarse)').matches;let step=0;for(const[f,t]of list){const k=f+':'+t;if(MODELS[k]){step++;continue}try{MODELS[k]=await bakeFaction(f,t,{touch,progress:(d,n)=>progress?.(step+d/n,list.length)})}catch(err){console.warn('3D models unavailable, using sprites',err);MODELS[k]={}}step++}}
 function modelVariant(entry,kind){entry.var??={};const id=kind;if(entry.var[id])return entry.var[id];const src=entry.atlas,c=canvas(src.width,src.height),g=c.getContext('2d');g.drawImage(src,0,0);g.globalCompositeOperation='source-atop';g.fillStyle='rgba(18,14,10,.74)';g.fillRect(0,0,c.width,c.height);entry.var[id]=c;return c}
 // Team colours are baked once per frame so the Canvas renderer needs no per-draw filters (works in every browser).
 const TINT={0:'rgba(60,140,215,.15)',1:'rgba(190,52,36,.15)',2:'rgba(60,170,74,.15)',3:'rgba(224,181,42,.15)',4:'rgba(142,85,201,.15)',5:'rgba(224,122,34,.15)',6:'rgba(42,184,184,.15)',7:'rgba(208,90,154,.15)',wreck:'rgba(18,14,10,.74)',ghostok:'rgba(110,220,140,.55)',ghostbad:'rgba(235,80,60,.6)'};
@@ -106,7 +106,7 @@ export class ImageRenderer{
   if(!this.groundCache||this.groundCache.width!==this.domElement.width||this.groundCache.height!==this.domElement.height){this.groundCache=canvas(this.domElement.width,this.domElement.height)}
   const g=this.groundCache.getContext('2d');g.setTransform(this.ratio,0,0,this.ratio,0,0);g.fillStyle=BIO().base;g.fillRect(0,0,w,h);const LIM=MAP.limit+64;
   const focus=new T.Vector3(),origin=new T.Vector3();camera.getWorldDirection(focus);const t=camera.position.y/(-focus.y);origin.copy(camera.position).addScaledVector(focus,t);
-  const radius=Math.min(250,camera.position.y*1.9),tile=camera.position.y>120?32:16,x0=Math.max(-LIM,Math.floor((origin.x-radius)/tile)*tile),x1=Math.min(LIM,origin.x+radius),z0=Math.max(-LIM,Math.floor((origin.z-radius)/tile)*tile),z1=Math.min(264,origin.z+radius),ground=groundTex();
+  const radius=Math.min(250,camera.position.y*1.9),tile=camera.position.y>120?32:16,x0=Math.max(-LIM,Math.floor((origin.x-radius)/tile)*tile),x1=Math.min(LIM,origin.x+radius),z0=Math.max(-LIM,Math.floor((origin.z-radius)/tile)*tile),z1=Math.min(LIM,origin.z+radius),ground=groundTex();
   const tri=(a,b,c,second)=>{g.save();g.beginPath();g.moveTo(a.x,a.y);g.lineTo(b.x,b.y);g.lineTo(c.x,c.y);g.closePath();g.clip();let aa,bb,cc,dd,tx,ty;const s=tile/16;if(!second){aa=(b.x-a.x)/ground.width/s;bb=(b.y-a.y)/ground.width/s;cc=(c.x-a.x)/ground.height/s;dd=(c.y-a.y)/ground.height/s;tx=a.x;ty=a.y}else{aa=(a.x-b.x)/ground.width/s;bb=(a.y-b.y)/ground.width/s;cc=(a.x-c.x)/ground.height/s;dd=(a.y-c.y)/ground.height/s;tx=b.x+c.x-a.x;ty=b.y+c.y-a.y}g.transform(aa,bb,cc,dd,tx,ty);if(s>1){for(let i=0;i<s;i++)for(let j=0;j<s;j++)g.drawImage(ground,i*ground.width,j*ground.height)}else g.drawImage(ground,0,0);g.restore()};
   for(let z=z0;z<z1;z+=tile)for(let x=x0;x<x1;x+=tile){const a=project(x,height(x,z),z),b=project(x+tile,height(x+tile,z),z),c=project(x,height(x,z+tile),z+tile),d=project(x+tile,height(x+tile,z+tile),z+tile);if([a,b,c,d].some(p=>p.z>1||p.z<-1)||[a,b,c,d].every(p=>p.x<0)||[a,b,c,d].every(p=>p.x>w)||[a,b,c,d].every(p=>p.y<0)||[a,b,c,d].every(p=>p.y>h))continue;tri(a,b,c,false);tri(d,c,b,true)}
   // colour grade toward the warm, saturated ochre of Generals' desert maps
@@ -132,9 +132,9 @@ export class ImageRenderer{
   for(const it of ground)it.u.draw(ctx,H,it.root,it.p);
   items.sort((a,b)=>b.depth-a.depth);this.drawn=[];
   for(const it of items){if(it.kind==='custom'){it.u.draw(ctx,H,it.root,it.p);continue}
-   const{root,u,p,s,pixels,frame}=it,entry=assets[u.asset];ctx.save();ctx.globalAlpha=u.opacity??1;
+   const{root,u,p,s,pixels,frame}=it,entry=assets[u.asset];ctx.save();ctx.globalAlpha=u.opacity??1;if(u.bank||u.bob){ctx.translate(p.x,p.y);ctx.rotate((u.bank||0)+(u.bob||0));ctx.translate(-p.x,-p.y);}
    const gp=it.gp||p;
-   if(!u.noShadow){ctx.fillStyle=u.alt?'#2d2a2344':'#2d2a2338';ctx.beginPath();ctx.ellipse(gp.x,gp.y,u.r*s*root.scale.x*(u.alt?1.6:.95),u.r*s*root.scale.x*(u.alt?1.6:.95)*H.squash,0,0,Math.PI*2);ctx.fill()}
+   if(!u.noShadow){ctx.fillStyle=u.alt?'#2d2a2344':'#2d2a2338';ctx.beginPath();ctx.ellipse(gp.x+(u.alt||0)*s*.38,gp.y+(u.alt||0)*s*.16,u.r*s*root.scale.x*(u.alt?1.6:.95),u.r*s*root.scale.x*(u.alt?1.6:.95)*H.squash,0,0,Math.PI*2);ctx.fill()}
    if(u.tc){ctx.fillStyle=u.tc+'40';ctx.beginPath();ctx.ellipse(gp.x,gp.y,(u.r*root.scale.x+.3)*s,(u.r*root.scale.x+.3)*s*H.squash,0,0,Math.PI*2);ctx.fill()}
    if(u.ring){ctx.strokeStyle=u.ring;ctx.lineWidth=u.tc&&u.ring!=='#f2f6d8'?2.2:1.8;ctx.beginPath();ctx.ellipse(gp.x,gp.y,(u.r*root.scale.x+.35)*s,(u.r*root.scale.x+.35)*s*H.squash,0,0,Math.PI*2);ctx.stroke();if(u.alt){ctx.globalAlpha*=.4;ctx.beginPath();ctx.moveTo(gp.x,gp.y);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.globalAlpha/=.4}}
    if(u.model){const M=u.model,F=M.F,ph=pixels*it.sy/(root.scale.x||1),left=p.x-pixels*.5,topY=p.y-ph*.5,row=Math.min(M.poses.length-1,u.pose||0);const src=u.wreck?modelVariant(M,'w'):M.atlas;if(u.flashT&&performance.now()-u.flashT<90)ctx.globalAlpha*=.75;

@@ -1,6 +1,14 @@
 @echo off
 cd /d "%~dp0"
-echo Open http://localhost:8000 in your browser.
-echo Press Ctrl+C to stop the server.
-py -3 -m http.server 8000 --bind 127.0.0.1 --directory dist
+where py >nul 2>nul
+if %errorlevel%==0 (
+  py -3 launch.py
+) else (
+  where python >nul 2>nul
+  if errorlevel 1 (
+    echo Please install Python 3, then run this file again.
+  ) else (
+      python launch.py
+  )
+)
 pause

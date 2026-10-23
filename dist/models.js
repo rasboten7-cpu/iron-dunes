@@ -12,6 +12,7 @@ function camoTexture(base,spots,repeat=.32,dirt=.25,tint=null,ta=.5){const c=doc
   for(const [dx,dy] of [[256,0],[-256,0],[0,256],[0,-256]]){g.save();g.translate(dx,dy);g.fill();g.restore()}}}
  const d=g.getImageData(0,0,256,256),p=d.data;for(let i=0;i<p.length;i+=4){const n=(rnd()-.5)*22*dirt*2;p[i]+=n;p[i+1]+=n;p[i+2]+=n*.9}g.putImageData(d,0,0);
  if(tint){g.globalCompositeOperation='color';g.globalAlpha=ta;g.fillStyle=tint;g.fillRect(0,0,256,256);g.globalCompositeOperation='soft-light';g.globalAlpha=ta*.5;g.fillRect(0,0,256,256);g.globalCompositeOperation='source-over';g.globalAlpha=1}
+ for(let i=0;i<130;i++){g.strokeStyle=i%3?'#2b282321':'#ddd3bd35';g.lineWidth=.4+rnd()*.65;const x=rnd()*256,y=rnd()*256;g.beginPath();g.moveTo(x,y);g.lineTo(x+rnd()*7,y+rnd()*2);g.stroke()}
  const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(repeat*.8,repeat*.8);t.anisotropy=4;return t}
 function stripeTexture(){const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');g.fillStyle='#2b2924';g.fillRect(0,0,64,64);g.fillStyle='#46423a';for(let i=0;i<8;i++)g.fillRect(0,i*8,64,3);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(1,6);return t}
 const TEAM_COL=[0x3d8fd0,0xc8412e,0x3fae4a,0xe0b52a,0x8e55c9,0xe07a22,0x2ab8b8,0xd05a9a];const tcol=t=>TEAM_COL[t]??0x9a9a8a;const thex=t=>TEAM_COL[t]!=null?'#'+TEAM_COL[t].toString(16).padStart(6,'0'):null;
@@ -27,9 +28,9 @@ export function palette(name,team){const P={
   glauni:['#b29d78',[['#9a8562',40,10],['#c4b08a',26,8],['#7e6c4c',16,6]]],
   uniform:['#8f8463',[['#6d6548',40,10],['#5a5a40',30,8],['#a89c76',20,6]]],
   tanuni:['#a8956a',[['#8a7a52',40,10],['#b9a882',26,8],['#77693f',20,6]]]}[name];
- const uni=/uni$/.test(name)||name==='uniform',tc=thex(team);const camo=new T.MeshStandardMaterial({map:camoTexture(P[0],P[1],uni?1.4:.32,.25,tc,uni?.62:.55),roughness:.86,metalness:.08});
+ const uni=/uni$/.test(name)||name==='uniform',tc=thex(team);const camo=new T.MeshStandardMaterial({map:camoTexture(P[0],P[1],uni?1.4:.65,.45,tc,uni?.10:.07),roughness:.86,metalness:.08});
  return{camo,
-  plain:new T.MeshStandardMaterial({color:tc?new T.Color(P[0]).lerp(new T.Color(tc),.45).multiplyScalar(.92):new T.Color(P[0]).multiplyScalar(.92),roughness:.85,metalness:.08}),
+  plain:new T.MeshStandardMaterial({color:tc?new T.Color(P[0]).lerp(new T.Color(tc),.08).multiplyScalar(.92):new T.Color(P[0]).multiplyScalar(.92),roughness:.85,metalness:.08}),
   dark:new T.MeshStandardMaterial({color:0x2c2b27,roughness:.9,metalness:.15}),
   metal:new T.MeshStandardMaterial({color:0x55574f,roughness:.5,metalness:.55}),
   gun:new T.MeshStandardMaterial({color:0x3d3e38,roughness:.45,metalness:.6}),
@@ -40,7 +41,7 @@ export function palette(name,team){const P={
   wood:new T.MeshStandardMaterial({color:0x8b6a42,roughness:.9}),
   canvas:new T.MeshStandardMaterial({color:0x6b6648,roughness:.95}),
   skin:new T.MeshStandardMaterial({color:0xc08a62,roughness:.7}),
-  team:new T.MeshStandardMaterial({color:tcol(team),roughness:.5,metalness:.1,emissive:tcol(team),emissiveIntensity:.45})}}
+  team:new T.MeshStandardMaterial({color:tcol(team),roughness:.5,metalness:.1,emissive:tcol(team),emissiveIntensity:.08})}}
 
 // ---------------------------------------------------------------------------
 // Geometry helpers
@@ -80,6 +81,8 @@ function tank(team,{heavy=false,pal,k:kk,barrels:bb,round=false,pd=false,gatling
  cyl(.3*k,.32*k,.22*k,m.camo,turret,-.48*k,.82*k,-.45*k);cyl(.24*k,.24*k,.05*k,m.dark,turret,-.48*k,.95*k,-.45*k);cyl(.035*k,.035*k,.8*k,m.gun,turret,-.48*k,1.0*k,-.05*k,'z');
  slab(.36*k,.26*k,.42*k,.03,m.camo,turret,.55*k,.72*k,.35*k);box(.26*k,.12*k,.04*k,m.glass,turret,.55*k,.88*k,.57*k);
  for(const s of [-1,1]){cyl(.018,.018,1.9*k,m.dark,turret,s*.8*k,1.6*k,-1.3*k);for(let i=0;i<3;i++)cyl(.06*k,.06*k,.25*k,m.dark,turret,s*(1.12+i*.02)*k,.52*k+i*.07,(.6+i*.12)*k,'z',8);slab(.04*k,.3*k,.55*k,.01,m.team,turret,s*1.3*k,.24*k,-.35*k)}
+ for(const side of [-1,1])for(let i=0;i<5;i++){slab(.12*k,.30*k,.76*k,.025,m.plain,hull,side*1.45*k,.8*k,(-1.9+i*.9)*k);cyl(.035,.035,.03,m.metal,hull,side*1.52*k,.94*k,(-1.9+i*.9)*k,'x',6)}
+ for(let i=0;i<4;i++){box(.28*k,.025,.07*k,m.metal,turret,(-.5+i*.32)*k,.74*k,.75*k)}
  turret.position.y=1.22*k;return{hull,turret}}
 function artillery(team){const m=palette('desert',team);const hull=new T.Group(),turret=new T.Group();
  for(const s of [-1,1]){trackUnit(6.2,.85,.62,m,hull,s*1.3,.43,-.2);slab(.14,.35,5.6,.04,m.camo,hull,s*1.34,.68,-.2)}
@@ -304,9 +307,9 @@ const padT=(col)=>texCanvas(128,128,(g,w,h)=>{g.fillStyle='#55554e';g.fillRect(0
 const screenT=()=>texCanvas(128,64,(g,w,h)=>{g.fillStyle='#4a0d0a';g.fillRect(0,0,w,h);g.fillStyle='#e8b84a';const st=(cx,cy,R)=>{g.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?R*.42:R;g.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r)}g.closePath();g.fill()};st(30,32,20);g.fillStyle='#f1d9a0';for(let i=0;i<4;i++)g.fillRect(60,14+i*11,50-i*8,5)});
 function bmat(f,team){const tc=tcol(team),th=thex(team),M=o=>new T.MeshStandardMaterial({roughness:.86,metalness:.04,...o});
  const c={glass:M({color:0x22333c,roughness:.12,metalness:.55}),dark:M({color:0x27261f,roughness:.92}),metal:M({color:0x6d6e68,roughness:.42,metalness:.62}),steel:M({color:0x8d918c,roughness:.35,metalness:.7}),team:M({color:tc,emissive:tc,emissiveIntensity:.28,roughness:.55}),lamp:M({color:0xfff1c8,emissive:0xffd88a,emissiveIntensity:.9}),hazard:M({map:stripeT('#d6ac34','#25221c')}),sandbag:M({color:0xa08b62,roughness:1}),crate:M({color:0x8d6c42,roughness:.9}),tarp:M({color:0x6e6a48,roughness:1,side:T.DoubleSide}),wood:M({color:0x7a5a36,roughness:.95}),dirt:M({color:0xa58a5e,roughness:1})};
- const T0=(o)=>{if(o.map&&th)tintTex(o.map,th,.42);return o};const acc=th?M({color:tc,emissive:tc,emissiveIntensity:.5,roughness:.4}):null;
+ const T0=(o)=>{if(o.map&&th)tintTex(o.map,th,.10);return o};const acc=th?M({color:tc,emissive:tc,emissiveIntensity:.08,roughness:.7}):null;
  if(f==='falcon')return{...c,f,wall:M({map:concreteT('#cdc6b3')}),wall2:M({map:concreteT('#a9a594')}),roof:M(T0({map:concreteT('#62707a','#0003'),roughness:.65})),trim:M({color:0x3d5a6c,roughness:.5,metalness:.35}),accent:acc||M({color:0x5fb4ea,emissive:0x2f86c4,emissiveIntensity:.7,roughness:.3}),floor:M({map:concreteT('#6f6c62','#0003')})};
- if(f==='dragon')return{...c,f,wall:M({map:concreteT('#858a6c')}),wall2:M({map:concreteT('#656b53')}),roof:M(T0({map:tileT('#86281f'),roughness:.55})),trim:M({color:0xcfa33c,roughness:.35,metalness:.65}),accent:acc||M({color:0xd9473a,emissive:0x7a1a10,emissiveIntensity:.45}),floor:M({map:concreteT('#605e4e','#0003')}),screen:M({map:screenT(),emissive:0x401010,emissiveIntensity:.5,emissiveMap:screenT()})};
+ if(f==='dragon')return{...c,f,wall:M({map:concreteT('#858a6c')}),wall2:M({map:concreteT('#656b53')}),roof:M(T0({map:tileT('#86281f'),roughness:.55})),trim:M({color:0xcfa33c,roughness:.35,metalness:.65}),accent:acc||M({color:0xd9473a,emissive:0x7a1a10,emissiveIntensity:.08}),floor:M({map:concreteT('#605e4e','#0003')}),screen:M({map:screenT(),emissive:0x401010,emissiveIntensity:.5,emissiveMap:screenT()})};
  return{...c,f,wall:M({map:adobeT('#c8a777')}),wall2:M({map:adobeT('#ad8e62')}),roof:M(T0({map:corrugT('#8f7254'),metalness:.3,roughness:.7})),trim:M({color:0x6e5236}),accent:acc||M({color:0x9a4f2a,roughness:.7}),floor:M({map:adobeT('#b89e72')})}}
 const G=(parent,x=0,y=0,z=0,ry=0)=>{const g=new T.Group();g.position.set(x,y,z);g.rotation.y=ry;parent.add(g);return g};
 // gable roof with its ridge along x
@@ -465,17 +468,17 @@ export const WALK_FRAMES=WALK;
 // ---------------------------------------------------------------------------
 // Bake every model into sprite atlases: columns = directions, rows = poses
 // ---------------------------------------------------------------------------
-const CACHE_VER='iron-dunes-models-v7';
+const CACHE_VER='fires-of-war-v12-final';
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('iron-dunes',1);r.onupgradeneeded=()=>r.result.createObjectStore('atlas');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function cacheGet(key){try{const db=await idb();return await new Promise(res=>{const q=db.transaction('atlas').objectStore('atlas').get(key);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)})}catch(e){return null}}
 async function cachePut(key,val){try{const db=await idb();await new Promise(res=>{const tx=db.transaction('atlas','readwrite');tx.objectStore('atlas').put(val,key);tx.oncomplete=res;tx.onerror=()=>{console.warn('idb put error',tx.error);res()};tx.onabort=()=>{console.warn('idb abort',tx.error);res()}})}catch(e){console.warn('idb',e)}}
 const toBlob=c=>new Promise(r=>c.toBlob(r,'image/webp',.92));
 async function blobToCanvas(b){const bmp=await createImageBitmap(b);const c=document.createElement('canvas');c.width=bmp.width;c.height=bmp.height;c.getContext('2d').drawImage(bmp,0,0);return c}
 async function buildMask(entry){const ms=entry.maskSize,dirs=entry.dirs,rows=entry.poses.length,mc=document.createElement('canvas');mc.width=ms*dirs;mc.height=ms*rows;const mg=mc.getContext('2d',{willReadFrequently:true});mg.drawImage(entry.atlas[0],0,0,mc.width,mc.height);if(entry.turretAtlas)mg.drawImage(entry.turretAtlas,0,0,mc.width,ms);const data=mg.getImageData(0,0,mc.width,mc.height).data;entry.mask=new Uint8Array(mc.width*mc.height);for(let i=0;i<entry.mask.length;i++)entry.mask[i]=data[i*4+3];entry.maskW=mc.width}
-let R=null;function bakeRenderer(){if(R)return R;const renderer=new T.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.setPixelRatio(1);
+let R=null;function bakeRenderer(){if(R)return R;const renderer=new T.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.04;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.setPixelRatio(1);
  const scene=new T.Scene();const hemi=new T.HemisphereLight(0xfff4e2,0x6b5634,1.5);const sun=new T.DirectionalLight(0xfff0d6,2.6);sun.position.set(-5,9,5);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);const sc=sun.shadow.camera;sc.left=sc.bottom=-8;sc.right=sc.top=8;sc.near=1;sc.far=30;sun.shadow.bias=-.0015;const fill=new T.DirectionalLight(0xd8e4ff,.55);fill.position.set(6,4,-4);scene.add(hemi,sun,fill);
  const ground=new T.Mesh(new T.PlaneGeometry(80,80),new T.ShadowMaterial({opacity:.32}));ground.rotation.x=-Math.PI/2;ground.position.y=.01;ground.receiveShadow=true;const el=Math.atan2(.85,.62);R={renderer,scene,sun,ground,dirv:new T.Vector3(0,Math.sin(el),Math.cos(el))};return R}
-function bakeOne(key,team,touch){const spec=MODEL_SPECS[key],{renderer,scene,dirv}=bakeRenderer();const dirs=spec.infantry?(touch?12:16):(touch?24:32),poses=spec.poses||['base'],F=spec.infantry?(touch?72:88):(touch?128:168),SS=2;
+function bakeOne(key,team,touch){const spec=MODEL_SPECS[key],{renderer,scene,dirv}=bakeRenderer();const dirs=spec.infantry?(touch?12:24):(touch?24:48),poses=spec.poses||['base'],F=spec.infantry?(touch?72:88):(touch?128:192),SS=2;
  const CH=8,cw=F*SS;renderer.setSize(cw*CH,cw);renderer.setScissorTest(true);const cam=new T.OrthographicCamera(-spec.S/2,spec.S/2,spec.S/2,-spec.S/2,.1,100);cam.position.copy(dirv).multiplyScalar(40);cam.lookAt(0,0,0);
  const strip=(obj,g,row)=>{for(let c0=0;c0<dirs;c0+=CH){const n=Math.min(CH,dirs-c0);renderer.setScissor(0,0,cw*CH,cw);renderer.setViewport(0,0,cw*CH,cw);renderer.clear();for(let k=0;k<n;k++){obj.rotation.y=(c0+k)/dirs*Math.PI*2;renderer.setViewport(k*cw,0,cw,cw);renderer.setScissor(k*cw,0,cw,cw);renderer.render(scene,cam)}g.drawImage(renderer.domElement,0,0,n*cw,cw,c0*F,row*F,n*F,F)}};
  const model=spec.build(team),holder=new T.Group();holder.add(model.hull);scene.add(holder);const atlas=document.createElement('canvas');atlas.width=F*dirs;atlas.height=F*poses.length;const g=atlas.getContext('2d');
