@@ -1,46 +1,15 @@
-// Live, externally authored building meshes. Zsky / CC BY 4.0; see asset credits.
+// Live original UV-mapped building assets, Architecture Edition.
 import * as T from './three.module.js';
-import {OBJLoader} from './OBJLoader.js';
-import {buildModel,FACTION_MODELS} from './models.js?v=13';
-const DIR='assets/buildings/';
-const names=['Quarter','Storage','Refectory','RadioStation','GasTank','Container_01','Container_02','Container_03','GateKeeperStation','HelicopterBase','MedicTent','SniperTower','SandsSack','WoodenBox','Barrel','LightPole','ConcreteBlock'];
-const source=new Map(),templates=new Map(),icons=new Map();let surface,wallSurface,roofSurface,ready=false,pending;
+import {architecture,loadArchitecture} from './architecture.js?v=14';
+const templates=new Map(),icons=new Map();let ready=false,pending;
 export const BUILDING_TYPES=new Set(['hq','power','refinery','barracks','factory','radar','silo','turret','airfield','dropzone','blackmarket','speaker','bunker','tunnel','hole','trap','civilian']);
-export function loadBuildings(){return pending??=(async()=>{
- surface=await new T.TextureLoader().loadAsync(DIR+'weathered-plaster.png');surface.colorSpace=T.SRGBColorSpace;surface.wrapS=surface.wrapT=T.RepeatWrapping;surface.anisotropy=4;
- [wallSurface,roofSurface]=await Promise.all(['wall-panels.png','roof-metal.png'].map(async name=>{const t=await new T.TextureLoader().loadAsync(DIR+name);t.colorSpace=T.SRGBColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=4;return t}));
- const loader=new OBJLoader();await Promise.all(names.map(async name=>{const response=await fetch(DIR+name+'.obj');if(!response.ok)throw Error('Missing building mesh '+name);const root=loader.parse(await response.text());root.updateMatrixWorld(true);const box=new T.Box3().setFromObject(root),size=box.getSize(new T.Vector3()),center=box.getCenter(new T.Vector3()),scale=1/Math.max(size.x,size.z);root.traverse(o=>{if(!o.isMesh)return;const g=o.geometry.clone();g.applyMatrix4(o.matrixWorld);g.translate(-center.x,-box.min.y,-center.z);g.scale(scale,scale,scale);const p=g.attributes.position,n=g.attributes.normal,uv=[];for(let i=0;i<p.count;i++){const ax=Math.abs(n.getX(i)),ay=Math.abs(n.getY(i)),az=Math.abs(n.getZ(i));uv.push((ax>ay&&ax>az?p.getZ(i):p.getX(i))*6,(ay>ax&&ay>az?p.getZ(i):p.getY(i))*6)}g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));o.geometry=g;o.position.set(0,0,0);o.rotation.set(0,0,0);o.scale.set(1,1,1);o.castShadow=o.receiveShadow=true;});source.set(name,root)}));ready=true;
-})();}
-function mat(name,faction){const n=name.toLowerCase(),wall=faction==='sand'?0xb5a181:faction==='dragon'?0x888b7b:0xa5aaa0;
- if(/glass|window/.test(n))return new T.MeshStandardMaterial({color:0x263d45,metalness:.5,roughness:.22});
- if(/light|lamp/.test(n))return new T.MeshStandardMaterial({color:0xc7c2a1,emissive:0xffc97b,emissiveIntensity:.25});
- const metal=/metal|roof|orange|door|iron|container|barrel|anten|tank|radio/.test(n),wood=/wood|box/.test(n),fabric=/tent|sand/.test(n);
- return new T.MeshStandardMaterial({color:wood?0x786044:fabric?0x837958:metal?(faction==='sand'?0xb1a58a:0xa1aba2):wall,map:wood||fabric?surface:metal?roofSurface:wallSurface,bumpMap:wood||fabric?surface:metal?roofSurface:wallSurface,bumpScale:metal?.055:.025,roughness:metal?.68:.94,metalness:metal?.3:0});}
-function part(group,name,width,x=0,z=0,angle=0,faction='falcon'){
- const g=source.get(name).clone(true);g.traverse(o=>{if(o.isMesh){o.material=(Array.isArray(o.material)?o.material:[o.material]).map(m=>mat(m.name||o.name,faction));if(o.material.length===1)o.material=o.material[0]}});g.scale.setScalar(width);g.position.set(x,0,z);g.rotation.y=angle;group.add(g);return g;
-}
-function assemble(type,faction){const g=new T.Group(),add=(n,w,x=0,z=0,a=0)=>part(g,n,w,x,z,a,faction);
- switch(type){
- case 'hq':add('Quarter',8,-1,0);add('RadioStation',3.1,4,-2);add('GateKeeperStation',1.7,3.8,3);add('LightPole',.7,-3,4);break;
- case 'barracks':add(faction==='sand'?'MedicTent':'Refectory',7.5,-1,0);add('Quarter',3.5,4,0);add('SandsSack',2.8,1,3.8);add('WoodenBox',1.2,-3,3.8);break;
- case 'factory':add('Storage',9.5,0,-.5);add('Container_02',3.5,5.8,1,Math.PI/2);add('Barrel',.7,-4,4);add('WoodenBox',1,-2.5,4);break;
- case 'refinery':add('Container_01',7,-2,0,Math.PI/2);add('GasTank',3.5,3.5,-2);add('Storage',4,3.5,2.5);add('Barrel',.8,-1,4);break;
- case 'power':add('GasTank',4.3,-2,0);add('GasTank',3.2,2.7,-1);add('GateKeeperStation',2.4,2.6,2.6);add('ConcreteBlock',2,-2,3);break;
- case 'radar':add('RadioStation',8);add('Container_03',3,4,2,Math.PI/2);break;
- case 'airfield':add('Storage',7,0,-3);add('HelicopterBase',7,0,4);add('RadioStation',2.5,-5,0);break;
- case 'dropzone':add('HelicopterBase',7.5,0,0);add('Container_01',3.6,0,-5);add('WoodenBox',1.6,4,2);add('WoodenBox',1.2,4,-1);break;
- case 'blackmarket':add('Refectory',7);add('Container_03',3.8,4.5,-1,Math.PI/2);add('WoodenBox',1.5,3.6,3);add('Barrel',.8,-3,3);break;
- case 'civilian':add('Quarter',8);break;
- default:{// Keep functional weapon silhouettes/turret pivots as true live meshes.
-  const key=FACTION_MODELS[faction]?.[type];if(!key)return null;const original=buildModel(key,0);original.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true;const mats=Array.isArray(o.material)?o.material:[o.material];o.material=mats.map(m=>{const c=new T.MeshStandardMaterial({color:m.color||0x969a88,map:m.map||surface,roughness:.8,metalness:m.metalness||0,side:m.side,transparent:m.transparent,opacity:m.opacity,emissive:m.emissive||0x000000,emissiveIntensity:m.emissiveIntensity??1});if(!m.map){c.bumpMap=surface;c.bumpScale=.025;}return c});if(o.material.length===1)o.material=o.material[0]}});g.add(original);g.userData.liveTurret=original.children.length>1?original.children[1]:null;
- }}
- g.updateMatrixWorld(true);return g;
-}
-export function buildingModel(type,faction='falcon',radius=5){if(!ready||!BUILDING_TYPES.has(type))return null;const key=type+':'+faction+':'+radius;if(templates.has(key))return templates.get(key);const model=assemble(type,faction);if(!model)return null;const b=new T.Box3().setFromObject(model),s=b.getSize(new T.Vector3()),c=b.getCenter(new T.Vector3()),k=radius*1.85/Math.max(s.x,s.z);const wrapper=new T.Group();model.position.set(-c.x*k,-b.min.y*k,-c.z*k);model.scale.setScalar(k);wrapper.add(model);wrapper.userData.liveTurret=model.userData.liveTurret;wrapper.updateMatrixWorld(true);const result={root:wrapper,box:new T.Box3().setFromObject(wrapper),key,imported:!['silo','turret','speaker','bunker','tunnel','hole','trap'].includes(type)};templates.set(key,result);return result;}
+export function loadBuildings(){return pending??=(async()=>{await loadArchitecture();ready=true})()}
+const assemble=architecture;
+export function buildingModel(type,faction='falcon',radius=5){if(!ready||!BUILDING_TYPES.has(type))return null;const key=type+':'+faction+':'+radius;if(templates.has(key))return templates.get(key);const model=assemble(type,faction);if(!model)return null;const b=new T.Box3().setFromObject(model),s=b.getSize(new T.Vector3()),c=b.getCenter(new T.Vector3()),k=radius*1.85/Math.max(s.x,s.z);const wrapper=new T.Group();model.position.set(-c.x*k,-b.min.y*k,-c.z*k);model.scale.setScalar(k);wrapper.add(model);wrapper.userData.liveTurret=model.userData.liveTurret;wrapper.updateMatrixWorld(true);const result={root:wrapper,box:new T.Box3().setFromObject(wrapper),key,authored:true,imported:false};templates.set(key,result);return result;}
 let engine;
 function renderer(){if(engine)return engine;const renderer=new T.WebGLRenderer({alpha:true,antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(1);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
- const scene=new T.Scene();scene.add(new T.HemisphereLight(0xcbdde7,0x77644c,2.2));const sun=new T.DirectionalLight(0xffefd5,3.3);sun.position.set(-20,35,20);sun.castShadow=true;sun.shadow.mapSize.set(256,256);Object.assign(sun.shadow.camera,{left:-16,right:16,top:16,bottom:-16,near:1,far:90});sun.shadow.bias=-.001;sun.shadow.normalBias=.04;scene.add(sun);
- const plane=new T.Mesh(new T.PlaneGeometry(60,60),new T.ShadowMaterial({opacity:.23}));plane.rotation.x=-Math.PI/2;plane.position.y=.012;plane.receiveShadow=true;scene.add(plane);const cam=new T.PerspectiveCamera();engine={renderer,scene,cam};return engine;}
+ const scene=new T.Scene();scene.add(new T.HemisphereLight(0xd2deeb,0x7e7053,1.8));const sun=new T.DirectionalLight(0xffefd5,3.5);sun.position.set(-20,35,20);sun.castShadow=true;sun.shadow.mapSize.set(512,512);Object.assign(sun.shadow.camera,{left:-16,right:16,top:16,bottom:-16,near:1,far:90});sun.shadow.bias=-.001;sun.shadow.normalBias=.04;scene.add(sun);
+ const plane=new T.Mesh(new T.PlaneGeometry(60,60),new T.ShadowMaterial({opacity:.32}));plane.rotation.x=-Math.PI/2;plane.position.y=.012;plane.receiveShadow=true;scene.add(plane);const cam=new T.PerspectiveCamera();engine={renderer,scene,cam};return engine;}
 const corner=new T.Vector3(),crop=new T.Matrix4();
 export function drawLiveBuilding(ctx,root,camera,w,h,ratio=1){const u=root.userData,template=u.liveBuilding;if(!template)return null;const {renderer:r,scene,cam}=renderer();
  const model=template.root,construction=u.build===undefined?1:Math.max(.08,u.build);if(model.userData.liveTurret&&u.turretYaw!=null)model.userData.liveTurret.rotation.y=u.turretYaw-root.rotation.y;model.rotation.copy(root.rotation);model.scale.copy(root.scale);model.scale.y*=construction;model.updateMatrixWorld(true);

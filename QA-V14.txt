@@ -1,0 +1,19 @@
+Architecture Edition 14 — validation
+
+Desktop Chromium: 1440×900 and 1280×720.
+- All 32 active faction/building combinations resolve to new static authored meshes.
+- All 32 render visible pixels.
+- Construction changes the displayed model for all three headquarters.
+- Turret pivots respond to yaw for each faction and Sand tunnel.
+- Camera rotation changes live geometry rendering.
+- Existing live alpha-mask picking locates headquarters.
+- Tank production accepted and completed after simulation.
+- No page JavaScript errors.
+
+Portrait Chromium emulation: 390×844, touch, mobile, device scale 2.
+- Match starts, headquarters uses new mesh, selection panel fits.
+- No horizontal page overflow; no page JavaScript errors.
+
+Final visual refinements: open cooling tower rim and extra Dragon headquarters windows/side wing were regenerated and checked through the direct asset renderer.
+
+Limitations: mobile emulation is not physical iOS/Android hardware testing. No claim of sustained hardware FPS or Generals feature parity. Tests focus on changed building rendering and representative production/picking behavior.

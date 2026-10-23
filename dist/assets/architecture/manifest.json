@@ -1,0 +1,257 @@
+[
+  {
+    "key": "falcon_hq",
+    "file": "falcon_hq.obj",
+    "triangles": 4318
+  },
+  {
+    "key": "falcon_power",
+    "file": "falcon_power.obj",
+    "triangles": 1512
+  },
+  {
+    "key": "falcon_refinery",
+    "file": "falcon_refinery.obj",
+    "triangles": 1524
+  },
+  {
+    "key": "falcon_barracks",
+    "file": "falcon_barracks.obj",
+    "triangles": 1772
+  },
+  {
+    "key": "falcon_factory",
+    "file": "falcon_factory.obj",
+    "triangles": 3458
+  },
+  {
+    "key": "falcon_turret",
+    "file": "falcon_turret.obj",
+    "triangles": 560
+  },
+  {
+    "key": "falcon_radar",
+    "file": "falcon_radar.obj",
+    "triangles": 1376
+  },
+  {
+    "key": "falcon_silo",
+    "file": "falcon_silo.obj",
+    "triangles": 1732
+  },
+  {
+    "key": "falcon_airfield",
+    "file": "falcon_airfield.obj",
+    "triangles": 3446
+  },
+  {
+    "key": "falcon_speaker",
+    "file": "falcon_speaker.obj",
+    "triangles": 432
+  },
+  {
+    "key": "falcon_tunnel",
+    "file": "falcon_tunnel.obj",
+    "triangles": 560
+  },
+  {
+    "key": "falcon_dropzone",
+    "file": "falcon_dropzone.obj",
+    "triangles": 1004
+  },
+  {
+    "key": "falcon_blackmarket",
+    "file": "falcon_blackmarket.obj",
+    "triangles": 1772
+  },
+  {
+    "key": "falcon_trap",
+    "file": "falcon_trap.obj",
+    "triangles": 384
+  },
+  {
+    "key": "falcon_hole",
+    "file": "falcon_hole.obj",
+    "triangles": 448
+  },
+  {
+    "key": "falcon_civilian",
+    "file": "falcon_civilian.obj",
+    "triangles": 1772
+  },
+  {
+    "key": "falcon_bunker",
+    "file": "falcon_bunker.obj",
+    "triangles": 448
+  },
+  {
+    "key": "dragon_hq",
+    "file": "dragon_hq.obj",
+    "triangles": 1852
+  },
+  {
+    "key": "dragon_power",
+    "file": "dragon_power.obj",
+    "triangles": 1508
+  },
+  {
+    "key": "dragon_refinery",
+    "file": "dragon_refinery.obj",
+    "triangles": 1548
+  },
+  {
+    "key": "dragon_barracks",
+    "file": "dragon_barracks.obj",
+    "triangles": 1820
+  },
+  {
+    "key": "dragon_factory",
+    "file": "dragon_factory.obj",
+    "triangles": 3482
+  },
+  {
+    "key": "dragon_turret",
+    "file": "dragon_turret.obj",
+    "triangles": 560
+  },
+  {
+    "key": "dragon_radar",
+    "file": "dragon_radar.obj",
+    "triangles": 1400
+  },
+  {
+    "key": "dragon_silo",
+    "file": "dragon_silo.obj",
+    "triangles": 1012
+  },
+  {
+    "key": "dragon_airfield",
+    "file": "dragon_airfield.obj",
+    "triangles": 3470
+  },
+  {
+    "key": "dragon_speaker",
+    "file": "dragon_speaker.obj",
+    "triangles": 432
+  },
+  {
+    "key": "dragon_tunnel",
+    "file": "dragon_tunnel.obj",
+    "triangles": 560
+  },
+  {
+    "key": "dragon_dropzone",
+    "file": "dragon_dropzone.obj",
+    "triangles": 1004
+  },
+  {
+    "key": "dragon_blackmarket",
+    "file": "dragon_blackmarket.obj",
+    "triangles": 1820
+  },
+  {
+    "key": "dragon_trap",
+    "file": "dragon_trap.obj",
+    "triangles": 384
+  },
+  {
+    "key": "dragon_hole",
+    "file": "dragon_hole.obj",
+    "triangles": 448
+  },
+  {
+    "key": "dragon_civilian",
+    "file": "dragon_civilian.obj",
+    "triangles": 1820
+  },
+  {
+    "key": "dragon_bunker",
+    "file": "dragon_bunker.obj",
+    "triangles": 448
+  },
+  {
+    "key": "sand_hq",
+    "file": "sand_hq.obj",
+    "triangles": 3386
+  },
+  {
+    "key": "sand_power",
+    "file": "sand_power.obj",
+    "triangles": 1512
+  },
+  {
+    "key": "sand_refinery",
+    "file": "sand_refinery.obj",
+    "triangles": 1726
+  },
+  {
+    "key": "sand_barracks",
+    "file": "sand_barracks.obj",
+    "triangles": 2346
+  },
+  {
+    "key": "sand_factory",
+    "file": "sand_factory.obj",
+    "triangles": 962
+  },
+  {
+    "key": "sand_turret",
+    "file": "sand_turret.obj",
+    "triangles": 560
+  },
+  {
+    "key": "sand_radar",
+    "file": "sand_radar.obj",
+    "triangles": 1954
+  },
+  {
+    "key": "sand_silo",
+    "file": "sand_silo.obj",
+    "triangles": 1240
+  },
+  {
+    "key": "sand_airfield",
+    "file": "sand_airfield.obj",
+    "triangles": 950
+  },
+  {
+    "key": "sand_speaker",
+    "file": "sand_speaker.obj",
+    "triangles": 432
+  },
+  {
+    "key": "sand_tunnel",
+    "file": "sand_tunnel.obj",
+    "triangles": 560
+  },
+  {
+    "key": "sand_dropzone",
+    "file": "sand_dropzone.obj",
+    "triangles": 1004
+  },
+  {
+    "key": "sand_blackmarket",
+    "file": "sand_blackmarket.obj",
+    "triangles": 2346
+  },
+  {
+    "key": "sand_trap",
+    "file": "sand_trap.obj",
+    "triangles": 384
+  },
+  {
+    "key": "sand_hole",
+    "file": "sand_hole.obj",
+    "triangles": 448
+  },
+  {
+    "key": "sand_civilian",
+    "file": "sand_civilian.obj",
+    "triangles": 2346
+  },
+  {
+    "key": "sand_bunker",
+    "file": "sand_bunker.obj",
+    "triangles": 448
+  }
+]

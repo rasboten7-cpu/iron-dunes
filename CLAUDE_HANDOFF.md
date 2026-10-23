@@ -1,4 +1,6 @@
-> أحدث تعديل: إصدار 13 للمباني، مبني على v12.1. اقرأ UPDATE-V13.md وQA-V13.txt أولًا؛ الملاحظات التالية محفوظة من الإصدارات السابقة.
+# Latest: Architecture Edition 14
+
+Active buildings now load original static UV-mapped OBJ meshes through dist/architecture.js. Preserve this pipeline and the faction-specific silhouettes. See UPDATE-V14.md, QA-V14.txt, and tools/art/author_buildings.py. Earlier Zsky files remain bundled as historical assets but are not loaded by the active building renderer.
 
 # Current handoff: Fires of War v12
 

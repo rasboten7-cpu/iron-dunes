@@ -1,3 +1,7 @@
+# V14 architecture
+
+Original mesh authoring source: tools/art/author_buildings.py. Textures reused from V13. No Generals model files or textures are included. The provided screenshots informed architectural style only.
+
 # Generated art, v12
 Mode: built-in image generation.
 
@@ -18,8 +22,3 @@ Prompt: Seamless tileable PBR base color, flat orthographic scanned weathered
 neutral light gray painted concrete/plaster, subtle fine pores, hairline wear,
 tiny chipped paint, faint dust; uniform albedo, no shadows, objects or perspective.
 Asset: dist/assets/buildings/weathered-plaster.png
-
-Additional built-in generated materials used in v13:
-- wall-panels.png: seamless orthographic weathered prefabricated cement panels, regular 2×2 panel seams, corner fasteners, subtle rain streaks, flat albedo lighting.
-- roof-metal.png: seamless orthographic galvanized corrugated metal, eight ribs, overlap joint and rivets, pale wear, subtle oxidation, flat albedo lighting.
-These are surface textures on actual meshes, not building images.

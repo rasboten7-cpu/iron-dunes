@@ -1,4 +1,4 @@
-import {T,MAP,MAPS,setMap,mapObstacles,height,makeWorld,makeAsset,ImageRenderer,icon,world,addDecal,particle,drawJet,drawMissile,drawChute,dimensions,WALK_FRAMES,ensureModels,setIconFaction,BIOMES} from './visuals.js?v=13';
+import {T,MAP,MAPS,setMap,mapObstacles,height,makeWorld,makeAsset,ImageRenderer,icon,world,addDecal,particle,drawJet,drawMissile,drawChute,dimensions,WALK_FRAMES,ensureModels,setIconFaction,BIOMES} from './visuals.js?v=14';
 import {sfx,say,ack,loadVoices,ambience,setSound,audioState,hasArabicVoice} from './audio.js?v=7';
 
 // ============================================================================
@@ -639,7 +639,7 @@ function cameraUpdate(dt){if(running&&!paused&&!ended){let speed=dt*cam.zoom*.65
  if(pointer.inside&&!pointer.ui&&!pointer.touch&&!drag&&!cameraDrag&&!rdrag){const edge=22;if(pointer.x<edge)dx-=(edge-pointer.x)/edge;else if(pointer.x>innerWidth-edge)dx+=(pointer.x-innerWidth+edge)/edge;if(pointer.y<edge)dz-=(edge-pointer.y)/edge;else if(pointer.y>innerHeight-edge)dz+=(pointer.y-innerHeight+edge)/edge}
  const l=Math.hypot(dx,dz);if(l>1){dx/=l;dz/=l}cam.x=clamp(cam.x+dx*Math.cos(cam.angle)*speed+dz*Math.sin(cam.angle)*speed,-MAP.cameraLimit,MAP.cameraLimit);cam.z=clamp(cam.z+dz*Math.cos(cam.angle)*speed-dx*Math.sin(cam.angle)*speed,-MAP.cameraLimit,MAP.cameraLimit);if(keys.has('KeyQ'))cam.angle+=dt*.8;if(keys.has('KeyE'))cam.angle-=dt*.8}
  const sh=cam.shake>0?cam.shake:0;cam.shake=Math.max(0,cam.shake-dt*2.5);const jx=sh?rand(-sh,sh)*.6:0,jz=sh?rand(-sh,sh)*.6:0;
- smoothCamera??={x:cam.x,z:cam.z,zoom:cam.zoom,angle:cam.angle};const ease=1-Math.exp(-dt*17);for(const k of ['x','z','zoom','angle'])smoothCamera[k]+=(cam[k]-smoothCamera[k])*ease;const sc=smoothCamera;camera.position.set(sc.x+jx+Math.sin(sc.angle)*sc.zoom*.62,sc.zoom*.85,sc.z+jz+Math.cos(sc.angle)*sc.zoom*.62);camera.lookAt(sc.x+jx,0,sc.z+jz);camera.updateMatrixWorld()}
+ smoothCamera??={x:cam.x,z:cam.z,zoom:cam.zoom,angle:cam.angle};const ease=1-Math.exp(-dt*17);for(const k of ['x','z','zoom','angle'])smoothCamera[k]+=(cam[k]-smoothCamera[k])*ease;const sc=smoothCamera;camera.position.set(sc.x+jx+Math.sin(sc.angle)*sc.zoom*.80,sc.zoom*.78,sc.z+jz+Math.cos(sc.angle)*sc.zoom*.80);camera.lookAt(sc.x+jx,0,sc.z+jz);camera.updateMatrixWorld()}
 function groundAt(px,py){ray.setFromCamera(new T.Vector2(px/innerWidth*2-1,1-py/innerHeight*2),camera);const out=new T.Vector3();if(!ray.ray.intersectPlane(groundPlane,out))return{x:cam.x,z:cam.z};const y=height(out.x,out.z);ray.ray.intersectPlane(new T.Plane(new T.Vector3(0,1,0),-y),out);return{x:out.x,z:out.z}}
 function project(e,extra=0){const v=new T.Vector3(e.x,height(e.x,e.z)+(e.building?6:2)+extra,e.z).project(camera);return{x:(v.x+1)*innerWidth/2,y:(1-v.y)*innerHeight/2,visible:v.z<1&&v.z>-1}}
 function entityAt(px,py,tol=0){return renderer.pick(px,py,tol)}

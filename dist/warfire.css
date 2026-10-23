@@ -16,3 +16,13 @@ footer{background:#0c141def;border:1px solid #60738266;border-radius:6px 6px 0 0
 @media (orientation:portrait) and (max-width:650px){.resources{gap:7px}.resources strong{font-size:14px}.resources small{font-size:9px}#timer{font-size:12px}.top-controls{gap:3px}.top-controls button{width:28px;min-width:28px;padding:0}#rankBtn{width:auto;min-width:0;max-width:64px}}
 
 .asset-credits{display:block;margin-top:8px;font-size:10px;color:#8f9b9d}.asset-credits a{color:#c9b28c}
+
+/* Keep portrait selection actions inside their panel. */
+@media (orientation:portrait) and (max-width:650px){
+ body.touch #selectedInfo{display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:3px;padding:5px;direction:rtl}
+ body.touch #selectedInfo>strong{text-align:right;font-size:12px}
+ body.touch #selectedInfo small{font-size:9px;line-height:1.3}
+ body.touch #selectedInfo .hp-track{width:100%;flex-shrink:0}
+ body.touch #selectedInfo .acts{width:100%;justify-content:flex-start;gap:3px}
+ body.touch #selectedInfo .acts button{max-width:100%;font-size:9px;padding:3px 6px;white-space:normal}
+}
