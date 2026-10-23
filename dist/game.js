@@ -1,4 +1,4 @@
-import {T,MAP,MAPS,setMap,mapObstacles,height,makeWorld,makeAsset,ImageRenderer,icon,world,addDecal,particle,drawJet,drawMissile,drawChute,dimensions,WALK_FRAMES,ensureModels,setIconFaction,BIOMES} from './visuals.js?v=12-15';
+import {T,MAP,MAPS,setMap,mapObstacles,height,makeWorld,makeAsset,ImageRenderer,icon,world,addDecal,particle,drawJet,drawMissile,drawChute,dimensions,WALK_FRAMES,ensureModels,setIconFaction,BIOMES} from './visuals.js?v=13';
 import {sfx,say,ack,loadVoices,ambience,setSound,audioState,hasArabicVoice} from './audio.js?v=7';
 
 // ============================================================================

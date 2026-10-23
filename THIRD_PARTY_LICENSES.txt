@@ -22,3 +22,17 @@ THE SOFTWARE.
 
 Voice lines (dist/assets/voice/*.mp3)
 Generated offline with the Piper "ar_JO-kareem-medium" voice (dataset: https://github.com/AliMokhammad/arabicttstrain/ — see that repository for its license) via sherpa-onnx, then filtered with ffmpeg. Scripts: tools/voice/.
+
+
+BUILDING MESH ASSETS — v13
+Military Base Pack by Zsky (@Zsky_01), CC BY 4.0.
+Mandatory author credit: https://www.patreon.com/Zsky
+Source: https://opengameart.org/content/military-base-pack
+License: https://creativecommons.org/licenses/by/4.0/
+Original author notice: dist/assets/buildings/LICENSE-ZSKY.txt
+Changes: normalized mesh origins/scales, new UV projection and materials,
+composition into RTS structures, live rendering and faction palettes.
+The original OBJ and MTL files remain included in dist/assets/buildings.
+
+OBJLoader.js: Three.js r169, MIT license, Three.js authors.
+Source: https://github.com/mrdoob/three.js/blob/r169/examples/jsm/loaders/OBJLoader.js
