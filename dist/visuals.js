@@ -1,4 +1,4 @@
-import {loadBuildings,buildingModel,buildingIcon,drawLiveBuilding} from './buildings-3d.js?v=14';
+import {loadBuildings,buildingModel,buildingIcon,drawLiveBuilding} from './buildings-3d.js?v=15';
 import * as T from './three.module.js';
 import {MAP,MAPS,setMap,mapObstacles,BIOMES} from './world-config.js?v=12-7';
 import {bakeFaction,WALK_FRAMES,bakeScenery} from './models.js?v=12-15';

@@ -1,3 +1,7 @@
+# نيران الحرب — Textured Architecture V15
+
+اقرأ `UPDATE-V15.md` و`START-HERE.txt`. شكل المجسمات الفعلي في `BUILDINGS-PREVIEW.png`، ونتائج الفحص في `QA-V15.txt`. تأكد من ظهور **V15** أثناء المعركة.
+
 # نيران الحرب — Architecture Edition 14
 
 مبانٍ ثلاثية الأبعاد جديدة بهوية منفصلة لكل جيش. اقرأ `UPDATE-V14.md` و`QA-V14.txt`. معاينة النماذج في `BUILDINGS-PREVIEW.png`.

@@ -9,7 +9,12 @@ pi=math.pi
 class Mesh:
  def __init__(self):self.faces=defaultdict(list)
  def poly(self,p,m='wall',g='main'):
-  for i in range(1,len(p)-1):self.faces[g+'_'+m].append((p[0],p[i],p[i+1]))
+  a,b,c=p[:3];u=[b[i]-a[i]for i in range(3)];v=[c[i]-a[i]for i in range(3)];normal=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];axis=max(range(3),key=lambda i:abs(normal[i]));axes=[i for i in range(3)if i!=axis]
+  if axis!=1:axes=[2 if axis==0 else 0,1]
+  limits=[(min(q[a]for q in p),max(q[a]for q in p))for a in axes]
+  def uv(q):return tuple((q[a]-lo)/max(.001,hi-lo) for a,(lo,hi)in zip(axes,limits))
+  for i in range(1,len(p)-1):
+   t=(p[0],p[i],p[i+1]);self.faces[g+'_'+m].append((t,[uv(q)for q in t]))
  def loft(self,rings,m='wall',g='main',caps=True):
   for a,b in zip(rings,rings[1:]):
    for i in range(len(a)):j=(i+1)%len(a);self.poly([a[i],b[i],b[j],a[j]],m,g)
@@ -27,10 +32,18 @@ class Mesh:
   out=['# Original Niran al-Harb architecture; metres, Y up'];idx=1
   for name,fs in self.faces.items():
    out+=['o '+name,'usemtl '+name.split('_',1)[1]]
-   for t in fs:
+   def face_normal(t):
+    a,b,c=t;u=[b[i]-a[i]for i in range(3)];v=[c[i]-a[i]for i in range(3)];n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];length=math.sqrt(sum(x*x for x in n))or 1;return tuple(x/length for x in n)
+   adjacent=defaultdict(list)
+   for t,uvs in fs:
+    n=face_normal(t)
+    for q in t:adjacent[q].append(n)
+   for t,uvs in fs:
     a,b,c=t;u=[b[i]-a[i]for i in range(3)];v=[c[i]-a[i]for i in range(3)];normal=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];axis=max(range(3),key=lambda i:abs(normal[i]));axes=[i for i in range(3)if i!=axis]
-    for q in t:out.append('v '+' '.join(f'{x:.4f}'for x in q));out.append(f'vt {q[axes[0]]*.27:.4f} {q[axes[1]]*.27:.4f}')
-    out.append('f '+' '.join(f'{i}/{i}'for i in range(idx,idx+3)));idx+=3
+    for q,uv in zip(t,uvs):
+     out.append('v '+' '.join(f'{x:.4f}'for x in q));out.append(f'vt {uv[0]:.4f} {uv[1]:.4f}')
+     own=face_normal(t);ns=[n for n in adjacent[q]if sum(n[i]*own[i]for i in range(3))>.8];n=[sum(v[i]for v in ns)for i in range(3)];length=math.sqrt(sum(x*x for x in n))or 1;out.append('vn '+' '.join(f'{x/length:.5f}'for x in n))
+    out.append('f '+' '.join(f'{i}/{i}/{i}'for i in range(idx,idx+3)));idx+=3
   p.write_text('\n'.join(out));return (idx-1)//3
 
 def base(m,w=13,d=11):
@@ -40,13 +53,11 @@ def base(m,w=13,d=11):
  for x in range(-int(w/2)+1,int(w/2)):m.box(x,.313,0,.018,.006,d-.4,'pavingline')
  for z in range(-int(d/2)+1,int(d/2)):m.box(0,.313,z,w-.4,.006,.018,'pavingline')
 def block(m,x,z,w,d,h=2.5,y=.32,windows=True):
- m.box(x,y,z,w,h,d);m.box(x,y,z,w+.12,.25,d+.12,'stone');m.box(x,y+h-.14,z,w+.16,.18,d+.16,'edge')
+ m.box(x,y,z,w,h,d,'facade');m.box(x,y,z,w+.12,.25,d+.12,'stone');m.box(x,y+h-.14,z,w+.16,.18,d+.16,'edge')
  if windows:
-  for xx in[-1,0,1]:
-   for zz in[-1,1]:
-    m.box(x+xx*w*.27,y+h*.55,z+zz*(d/2+.018),.5,.75,.07,'recess');m.box(x+xx*w*.27,y+h*.55+.08,z+zz*(d/2+.06),.33,.55,.03,'glass');m.box(x+xx*w*.27,y+h*.55-.04,z+zz*(d/2+.08),.64,.09,.2,'edge')
-  for zz in[-.25,.25]:
-   for xx in[-1,1]:m.box(x+xx*(w/2+.02),y+h*.55,z+zz*d,.07,.75,.48,'recess')
+  for xx in[-1,1]:
+   for zz in[-1,1]:m.box(x+xx*(w/2-.07),y,z+zz*(d/2-.07),.22,h,.22,'stone')
+  for zz in[-1,1]:m.box(x,y+h*.68,z+zz*(d/2+.035),w,.08,.13,'edge')
  return y+h
 
 def flat(m,x,z,w,d,y):
@@ -68,7 +79,7 @@ def roof(m,f,x,z,w,d,y):
  if f=='dragon':hip(m,x,z,w,d,y)
  else:flat(m,x,z,w,d,y)
 def vent(m,x,z,y,w=1):
- m.box(x,y,z,w,.45,.8,'metal')
+ m.box(x,y,z,w,.45,.8,'equipment')
  for k in range(6):m.box(x-w*.4+k*w*.16,y+.46,z,.035,.02,.7,'dark')
 def door(m,x,z,y=.32,w=1.3):
  m.box(x,y,z,w+.35,1.85,.25,'stone');m.box(x,y+.06,z+.14,w,1.65,.05,'recess');m.box(x,y+.08,z+.18,w*.8,1.48,.04,'door')
@@ -127,6 +138,8 @@ def make(f,t):
    for xx in[3.3,4.2]:m.rod((xx,.32,-3),(xx,7,-3),.065)
    for yy in[1,2,3,4,5,6]:m.rod((3.3,yy,-3),(4.2,yy+1,-3),.035);m.rod((4.2,yy,-3),(3.3,yy+1,-3),.035)
    dish(m,3.75,-3,7,1.2);flag(m,-5,3.7)
+   m.poly([(-1+.52*math.cos(i*pi/16),3.12+.52*math.sin(i*pi/16),3.272)for i in range(32)],'dark')
+   m.poly([(-1+(.4 if i%2==0 else .18)*math.cos(pi/2+i*pi/5),3.12+(.4 if i%2==0 else .18)*math.sin(pi/2+i*pi/5),3.278)for i in range(10)],'white')
  elif t in['barracks','blackmarket','civilian']:
   if s:
    courtyard(m)
@@ -200,6 +213,18 @@ def make(f,t):
   m.cyl(0,.32,1,3.2,3.2,.05,'tarmac',32)
   for x in[-1,1]:m.box(x,.38,1,.3,.02,3,'white')
   m.box(0,.38,1,2,.02,.3,'white');y=block(m,0,-3.5,5,1.5,1.7);flat(m,0,-3.5,5,1.5,y);crates(m,4,1);flag(m,-4,2)
+ # Ground-level architectural dressing with actual geometry.
+ if t in ['hq','barracks','factory','refinery','radar','blackmarket']:
+  for side in[-1,1]:
+   for j in range(3):m.box(side*5.6,.32,-3+j*.55,.4,.28,.42,'sandbag' if s else 'stone')
+  for xx in[-4.9,4.9]:
+   m.cyl(xx,.32,3.5,.045,.045,2.9,'metal',8);m.box(xx,3.1,3.5,.32,.12,.23,'lamp')
+  if not s:
+   m.box(-4.9,.32,-3.8,.8,1.1,.5,'equipment')
+   for yy in[.65,1,1.35]:m.rod((-4.5,yy,-3.85),(-3.7,yy,-3.85),.045)
+  if s:
+   for xx,zz in[(-4,2.5),(3.8,-3.2)]:
+    m.cyl(xx,.32,zz,.32,.28,.65,'wood',12);m.cyl(xx,.88,zz,.3,.3,.07,'metal',12)
  return m
 TYPES='hq power refinery barracks factory turret radar silo airfield speaker tunnel dropzone blackmarket trap hole civilian bunker'.split();manifest=[]
 for f in['falcon','dragon','sand']:

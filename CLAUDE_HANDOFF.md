@@ -1,3 +1,7 @@
+# Current: Textured Architecture V15
+
+See UPDATE-V15.md, ART-PROMPTS-V15.md and QA-V15.txt. New four-image raster atlases, per-face UVs, exported smooth normals, lower camera angle, V15 HUD marker and strict offline cache versioning. Meshes are still original offline-authored OBJ geometry. Do not describe them as professionally hand-sculpted assets or claim Generals-equivalent quality.
+
 # Latest: Architecture Edition 14
 
 Active buildings now load original static UV-mapped OBJ meshes through dist/architecture.js. Preserve this pipeline and the faction-specific silhouettes. See UPDATE-V14.md, QA-V14.txt, and tools/art/author_buildings.py. Earlier Zsky files remain bundled as historical assets but are not loaded by the active building renderer.

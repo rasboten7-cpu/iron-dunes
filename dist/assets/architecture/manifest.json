@@ -2,27 +2,27 @@
   {
     "key": "falcon_hq",
     "file": "falcon_hq.obj",
-    "triangles": 4318
+    "triangles": 4220
   },
   {
     "key": "falcon_power",
     "file": "falcon_power.obj",
-    "triangles": 1512
+    "triangles": 1320
   },
   {
     "key": "falcon_refinery",
     "file": "falcon_refinery.obj",
-    "triangles": 1524
+    "triangles": 1580
   },
   {
     "key": "falcon_barracks",
     "file": "falcon_barracks.obj",
-    "triangles": 1772
+    "triangles": 1636
   },
   {
     "key": "falcon_factory",
     "file": "falcon_factory.obj",
-    "triangles": 3458
+    "triangles": 3514
   },
   {
     "key": "falcon_turret",
@@ -32,17 +32,17 @@
   {
     "key": "falcon_radar",
     "file": "falcon_radar.obj",
-    "triangles": 1376
+    "triangles": 1432
   },
   {
     "key": "falcon_silo",
     "file": "falcon_silo.obj",
-    "triangles": 1732
+    "triangles": 1540
   },
   {
     "key": "falcon_airfield",
     "file": "falcon_airfield.obj",
-    "triangles": 3446
+    "triangles": 3254
   },
   {
     "key": "falcon_speaker",
@@ -57,12 +57,12 @@
   {
     "key": "falcon_dropzone",
     "file": "falcon_dropzone.obj",
-    "triangles": 1004
+    "triangles": 812
   },
   {
     "key": "falcon_blackmarket",
     "file": "falcon_blackmarket.obj",
-    "triangles": 1772
+    "triangles": 1636
   },
   {
     "key": "falcon_trap",
@@ -77,7 +77,7 @@
   {
     "key": "falcon_civilian",
     "file": "falcon_civilian.obj",
-    "triangles": 1772
+    "triangles": 1388
   },
   {
     "key": "falcon_bunker",
@@ -87,27 +87,27 @@
   {
     "key": "dragon_hq",
     "file": "dragon_hq.obj",
-    "triangles": 1852
+    "triangles": 1716
   },
   {
     "key": "dragon_power",
     "file": "dragon_power.obj",
-    "triangles": 1508
+    "triangles": 1316
   },
   {
     "key": "dragon_refinery",
     "file": "dragon_refinery.obj",
-    "triangles": 1548
+    "triangles": 1604
   },
   {
     "key": "dragon_barracks",
     "file": "dragon_barracks.obj",
-    "triangles": 1820
+    "triangles": 1684
   },
   {
     "key": "dragon_factory",
     "file": "dragon_factory.obj",
-    "triangles": 3482
+    "triangles": 3538
   },
   {
     "key": "dragon_turret",
@@ -117,17 +117,17 @@
   {
     "key": "dragon_radar",
     "file": "dragon_radar.obj",
-    "triangles": 1400
+    "triangles": 1456
   },
   {
     "key": "dragon_silo",
     "file": "dragon_silo.obj",
-    "triangles": 1012
+    "triangles": 820
   },
   {
     "key": "dragon_airfield",
     "file": "dragon_airfield.obj",
-    "triangles": 3470
+    "triangles": 3278
   },
   {
     "key": "dragon_speaker",
@@ -142,12 +142,12 @@
   {
     "key": "dragon_dropzone",
     "file": "dragon_dropzone.obj",
-    "triangles": 1004
+    "triangles": 812
   },
   {
     "key": "dragon_blackmarket",
     "file": "dragon_blackmarket.obj",
-    "triangles": 1820
+    "triangles": 1684
   },
   {
     "key": "dragon_trap",
@@ -162,7 +162,7 @@
   {
     "key": "dragon_civilian",
     "file": "dragon_civilian.obj",
-    "triangles": 1820
+    "triangles": 1436
   },
   {
     "key": "dragon_bunker",
@@ -172,27 +172,27 @@
   {
     "key": "sand_hq",
     "file": "sand_hq.obj",
-    "triangles": 3386
+    "triangles": 3138
   },
   {
     "key": "sand_power",
     "file": "sand_power.obj",
-    "triangles": 1512
+    "triangles": 1320
   },
   {
     "key": "sand_refinery",
     "file": "sand_refinery.obj",
-    "triangles": 1726
+    "triangles": 1670
   },
   {
     "key": "sand_barracks",
     "file": "sand_barracks.obj",
-    "triangles": 2346
+    "triangles": 2098
   },
   {
     "key": "sand_factory",
     "file": "sand_factory.obj",
-    "triangles": 962
+    "triangles": 1290
   },
   {
     "key": "sand_turret",
@@ -202,12 +202,12 @@
   {
     "key": "sand_radar",
     "file": "sand_radar.obj",
-    "triangles": 1954
+    "triangles": 2090
   },
   {
     "key": "sand_silo",
     "file": "sand_silo.obj",
-    "triangles": 1240
+    "triangles": 1048
   },
   {
     "key": "sand_airfield",
@@ -227,12 +227,12 @@
   {
     "key": "sand_dropzone",
     "file": "sand_dropzone.obj",
-    "triangles": 1004
+    "triangles": 812
   },
   {
     "key": "sand_blackmarket",
     "file": "sand_blackmarket.obj",
-    "triangles": 2346
+    "triangles": 2098
   },
   {
     "key": "sand_trap",
@@ -247,7 +247,7 @@
   {
     "key": "sand_civilian",
     "file": "sand_civilian.obj",
-    "triangles": 2346
+    "triangles": 1770
   },
   {
     "key": "sand_bunker",

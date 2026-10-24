@@ -1,0 +1,9 @@
+V15 validation — desktop Chromium 1440×900 / 1280×720 and touch/mobile emulation 390×844 @2x.
+
+Passed: all 32 active faction/building choices resolve to new meshes and render visible alpha; construction appearance for all three headquarters; turret rotation including Sand tunnel; camera rotation changes actual geometry; alpha-mask building picking; queued tank production completes; no page JavaScript errors.
+
+Mobile: match starts; live building mesh present; selection panel shown; document has no horizontal overflow; no page errors.
+
+Final geometry-only addition: headquarters insignia, checked in the direct mesh renderer.
+
+Limitations: mobile emulation is not physical iPhone/Android testing; no sustained hardware FPS claim; no comprehensive Generals feature-parity claim. The interface, units and terrain otherwise retain their earlier visual systems.

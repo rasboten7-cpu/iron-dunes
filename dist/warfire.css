@@ -26,3 +26,6 @@ footer{background:#0c141def;border:1px solid #60738266;border-radius:6px 6px 0 0
  body.touch #selectedInfo .acts{width:100%;justify-content:flex-start;gap:3px}
  body.touch #selectedInfo .acts button{max-width:100%;font-size:9px;padding:3px 6px;white-space:normal}
 }
+
+.build-version{color:#f8d99d;font:700 11px monospace;border:1px solid #657375;padding:3px 5px;border-radius:3px;align-self:center}
+@media(max-width:650px){.build-version{position:fixed;top:76px;left:6px;z-index:12;font-size:9px;background:#142329e0;padding:2px 4px;pointer-events:none}}

@@ -1,6 +1,6 @@
 // Live original UV-mapped building assets, Architecture Edition.
 import * as T from './three.module.js';
-import {architecture,loadArchitecture} from './architecture.js?v=14';
+import {architecture,loadArchitecture} from './architecture.js?v=15';
 const templates=new Map(),icons=new Map();let ready=false,pending;
 export const BUILDING_TYPES=new Set(['hq','power','refinery','barracks','factory','radar','silo','turret','airfield','dropzone','blackmarket','speaker','bunker','tunnel','hole','trap','civilian']);
 export function loadBuildings(){return pending??=(async()=>{await loadArchitecture();ready=true})()}
