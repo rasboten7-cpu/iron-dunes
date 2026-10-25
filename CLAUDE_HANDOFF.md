@@ -98,3 +98,6 @@ Fog of war (v4 explicitly wanted the enemy visible; could be an option), aircraf
 - New models in models.js: crawler, battleBus, scudLauncher, nukeCannon, overlord(add), B.bunker. Cache `iron-dunes-models-v7`. visuals.js FALLBACK/dimensions updated.
 - AI: `aiTransports`, `aiBunkers`, addon purchase in `aiProduce`, research throttled (`ai.resT`, niche upgrades after 6 min), earlier 2nd factory/barracks, powers cashhack/sneak/leaflet targeting, reactor overcharge when power is low.
 - Tests: tools/feat11.mjs (features), tools/ai11.mjs (AI vs AI).
+
+## Map size note (after V15)
+- `dunes` (الكثبان الكبرى) is now 1200×1200 world units (limit 600, about 1.5 km). Nav grid half-size `GL=610` in game.js and A* cap 260000 cover it; `gen({forward:true})` adds a forward expansion deposit per base. Keep GL ≥ largest map limit + 10.

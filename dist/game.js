@@ -1,4 +1,4 @@
-import {T,MAP,MAPS,setMap,mapObstacles,height,makeWorld,makeAsset,ImageRenderer,icon,world,addDecal,particle,drawJet,drawMissile,drawChute,dimensions,WALK_FRAMES,ensureModels,setIconFaction,BIOMES} from './visuals.js?v=15';
+import {T,MAP,MAPS,setMap,mapObstacles,height,makeWorld,makeAsset,ImageRenderer,icon,world,addDecal,particle,drawJet,drawMissile,drawChute,dimensions,WALK_FRAMES,ensureModels,setIconFaction,BIOMES} from './visuals.js?v=15-map1';
 import {sfx,say,ack,loadVoices,ambience,setSound,audioState,hasArabicVoice} from './audio.js?v=7';
 
 // ============================================================================
@@ -184,7 +184,7 @@ function refreshMaxHp(e){const ratio=e.hp/e.maxhp,m=maxHpFor(e.type,e.team,e.vet
 // ============================================================================
 // Navigation: solids rasterised into a cached grid; A* with a binary heap
 // ============================================================================
-let solids=[];const CELL=2.5,GL=345,GN=Math.round(GL*2/CELL)+1,CLS=[.6,1.4],counts=[new Uint16Array(GN*GN),new Uint16Array(GN*GN)];
+let solids=[];const CELL=2.5,GL=610,GN=Math.round(GL*2/CELL)+1,CLS=[.6,1.4],counts=[new Uint16Array(GN*GN),new Uint16Array(GN*GN)];
 const coord=i=>i*CELL-GL,gridOf=x=>clamp(Math.round((x+GL)/CELL),0,GN-1);
 function rasterize(s,sign){for(let c=0;c<2;c++){const hs=s.r+CLS[c],arr=counts[c];const i0=Math.max(0,Math.floor((s.x-hs+GL)/CELL)),i1=Math.min(GN-1,Math.ceil((s.x+hs+GL)/CELL)),j0=Math.max(0,Math.floor((s.z-hs+GL)/CELL)),j1=Math.min(GN-1,Math.ceil((s.z+hs+GL)/CELL));for(let j=j0;j<=j1;j++){const cz=coord(j);if(Math.abs(cz-s.z)>=hs)continue;for(let i=i0;i<=i1;i++){const cx=coord(i);if(Math.abs(cx-s.x)<hs)arr[j*GN+i]+=sign}}}}
 function addSolid(s){solids.push(s);rasterize(s,1);navVersion++}
@@ -201,7 +201,7 @@ function pathTo(e,dest){const c=D(e).r<=.75?0:1;let sx=gridOf(e.x),sz=gridOf(e.z
  gen++;const start=sz*GN+sx,end=gz*GN+gx;let hn=0;const push=n=>{let i=hn++;heap[i]=n;while(i>0){const p=(i-1)>>1;if(fScore[heap[p]]<=fScore[heap[i]])break;[heap[p],heap[i]]=[heap[i],heap[p]];i=p}};const pop=()=>{const top=heap[0];heap[0]=heap[--hn];let i=0;for(;;){const l=i*2+1,r=l+1;let m=i;if(l<hn&&fScore[heap[l]]<fScore[heap[m]])m=l;if(r<hn&&fScore[heap[r]]<fScore[heap[m]])m=r;if(m===i)break;[heap[m],heap[i]]=[heap[i],heap[m]];i=m}return top};
  const h=(x,z)=>{const dx=Math.abs(x-gx),dz=Math.abs(z-gz);return(dx+dz)+(1.414-2)*Math.min(dx,dz)};
  stamp[start]=gen;gScore[start]=0;fScore[start]=h(sx,sz);push(start);let iter=0,found=false;
- while(hn&&iter++<120000){const n=pop();if(closed[n]===gen)continue;if(n===end){found=true;break}closed[n]=gen;const x=n%GN,z=(n/GN)|0;
+ while(hn&&iter++<260000){const n=pop();if(closed[n]===gen)continue;if(n===end){found=true;break}closed[n]=gen;const x=n%GN,z=(n/GN)|0;
   for(let k=0;k<8;k++){const dx=[1,-1,0,0,1,-1,1,-1][k],dz=[0,0,1,-1,1,-1,-1,1][k],nx=x+dx,nz=z+dz,id=nz*GN+nx;if(!cellFree(nx,nz,c)||closed[id]===gen)continue;if(dx&&dz&&(!cellFree(x+dx,z,c)||!cellFree(x,z+dz,c)))continue;const v=gScore[n]+(dx&&dz?1.414:1);if(stamp[id]!==gen||v<gScore[id]){stamp[id]=gen;gScore[id]=v;fScore[id]=v+h(nx,nz)*1.02;came[id]=n;push(id)}}}
  if(!found)return[];const raw=[];let n=end;while(n!==start){raw.push({x:coord(n%GN),z:coord((n/GN)|0)});n=came[n]}raw.reverse();raw[raw.length-1]=goalExact;
  // string pulling

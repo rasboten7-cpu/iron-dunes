@@ -17,13 +17,15 @@ const ridge=(x,from,to,gaps,step=9,r=4.6)=>{const out=[];for(let z=from;z<=to;z+
 // ---------------------------------------------------------------------------
 // Generator for large maps with 2-6 start positions placed on a ring.
 // ---------------------------------------------------------------------------
-function gen({id,name,sub,desc,biome,limit,players,seed,rot=0,rockCount=26,groveCount=6,groveR=[12,20],civCount=4,trees=140,center=null}){
+function gen({id,name,sub,desc,biome,limit,players,seed,rot=0,rockCount=26,groveCount=6,groveR=[12,20],civCount=4,trees=140,center=null,forward=false}){
  let s=seed;const rnd=()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296};
  const R=limit*.7,bases=[],deposits=[],rocks=[],groves=[],civilians=[],roads=[];
  for(let i=0;i<players;i++){const a=rot+i/players*Math.PI*2;bases.push({x:Math.round(Math.sin(a)*R),z:Math.round(Math.cos(a)*R)})}
  // each start: one supply pile in front of the base and one behind, plus an expansion between neighbours
  bases.forEach((b,i)=>{const a=Math.atan2(b.x,b.z);for(const [da,dr] of [[.32,-6],[-.3,22]]){const aa=a+da*(players>3?.8:1),rr=R+dr;deposits.push({x:Math.round(Math.sin(aa)*rr),z:Math.round(Math.cos(aa)*rr)})}
   const m=a+Math.PI/players;deposits.push({x:Math.round(Math.sin(m)*R*.78),z:Math.round(Math.cos(m)*R*.78)})});
+ // very large maps: an extra expansion in front of every base, half-way to the centre
+ if(forward)bases.forEach(b=>{const a=Math.atan2(b.x,b.z);deposits.push({x:Math.round(Math.sin(a)*R*.6),z:Math.round(Math.cos(a)*R*.6)})});
  const cDep=players>=4?players:2;for(let i=0;i<cDep;i++){const a=rot+(i+.5)/cDep*Math.PI*2;deposits.push({x:Math.round(Math.sin(a)*limit*.2),z:Math.round(Math.cos(a)*limit*.2)})}
  // roads from every base to the centre
  for(const b of bases){const pts=[];for(let k=0;k<=12;k++){const t=k/12,w=Math.sin(t*Math.PI)*10;const nx=-b.z/R,nz=b.x/R;pts.push([b.x*(1-t)+nx*w,b.z*(1-t)+nz*w])}roads.push(pts)}
@@ -52,7 +54,7 @@ export const MAPS=[
   groves:[],
   roads:[Array.from({length:52},(_,i)=>{const x=-205+i*8;return[x,16+Math.sin(x*.03)*6]})],
   palms:{count:60,rule:(x,z)=>Math.abs(x)>70}},
- gen({id:'dunes',name:'الكثبان الكبرى',sub:'GREAT DUNES',desc:'صحراء واسعة جداً لستة جيوش، ممرات بين الصخور وواحات صغيرة.',biome:'desert',limit:320,players:6,seed:91,rot:.52,rockCount:34,groveCount:5,trees:160}),
+ gen({id:'dunes',name:'الكثبان الكبرى',sub:'GREAT DUNES',desc:'خريطة عملاقة بطول كيلو ونصف لستة جيوش: صحراء مفتوحة وممرات بين الصخور وواحات ومواقع إمداد إضافية.',biome:'desert',limit:600,players:6,seed:91,rot:.52,rockCount:95,groveCount:12,groveR:[14,26],civCount:8,trees:320,forward:true}),
  gen({id:'tundra',name:'جبهة الجليد',sub:'FROZEN FRONT',desc:'أرض ثلجية لأربعة جيوش تتخللها غابات الصنوبر والصخور المتجمدة.',biome:'snow',limit:280,players:4,seed:17,rot:.785,rockCount:26,groveCount:8,trees:190}),
  gen({id:'meadow',name:'سهول الربيع',sub:'SPRING PLAINS',desc:'سهول خضراء واسعة لستة جيوش مع بساتين ومزارع في الوسط.',biome:'green',limit:320,players:6,seed:55,rot:0,rockCount:22,groveCount:10,trees:220,civCount:6}),
  gen({id:'savanna',name:'سافانا الأسود',sub:'LION SAVANNA',desc:'سافانا جافة لأربعة جيوش، أشجار الأكاسيا وصخور حمراء.',biome:'savanna',limit:280,players:4,seed:203,rot:0,rockCount:30,groveCount:6,trees:150}),

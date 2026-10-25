@@ -1,6 +1,6 @@
 import {loadBuildings,buildingModel,buildingIcon,drawLiveBuilding} from './buildings-3d.js?v=15';
 import * as T from './three.module.js';
-import {MAP,MAPS,setMap,mapObstacles,BIOMES} from './world-config.js?v=12-7';
+import {MAP,MAPS,setMap,mapObstacles,BIOMES} from './world-config.js?v=16-1';
 import {bakeFaction,WALK_FRAMES,bakeScenery} from './models.js?v=12-15';
 export {T,MAP,MAPS,setMap,mapObstacles,BIOMES};
 const BIO=()=>BIOMES[MAP.biome]||BIOMES.desert;
@@ -68,7 +68,7 @@ export function makeUnit(type,team){return makeAsset(type,team)}
 // ---------------------------------------------------------------------------
 export const world={patches:[],decals:[],tracks:[],scenery:[],clouds:[]};
 export function makeWorld(scene,map=MAP){
- for(const s of world.scenery)scene.remove(s);world.scenery=[];world.decals=[];world.tracks=[];world.patches=[];world.clouds=Array.from({length:Math.round(7*map.limit/200)},(_,i)=>({x:-map.limit-60+i*80+Math.random()*30,z:(Math.random()-.5)*400,r:38+Math.random()*40,ratio:.55+Math.random()*.3,rot:Math.random()*3}));
+ for(const s of world.scenery)scene.remove(s);world.scenery=[];world.decals=[];world.tracks=[];world.patches=[];world.clouds=Array.from({length:Math.round(7*map.limit/200)},(_,i)=>({x:-map.limit-60+i*80+Math.random()*30,z:(Math.random()-.5)*map.limit*2,r:38+Math.random()*40,ratio:.55+Math.random()*.3,rot:Math.random()*3}));
  let seed=731+map.id.length*97;const random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
  const B=BIO(),treeKey=v=>B.tree==='palm'?'palm':treeAsset(B.tree,v),rk=rockAsset(),L=map.limit;
  const add=(key,x,z,scale,team=9)=>{if(key==='palm'&&B.tree!=='palm'){key=treeKey(Math.floor(random()*3));scale=(scale||1)*({pine:1.55,acacia:1.25,oak:1.1}[B.tree]||1.15)}if(key==='rocks')key=rk;const g=makeAsset(key,team);g.position.set(x,height(x,z),z);if(scale)g.scale.setScalar(scale);scene.add(g);world.scenery.push(g);return g};
