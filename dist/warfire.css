@@ -29,3 +29,21 @@ footer{background:#0c141def;border:1px solid #60738266;border-radius:6px 6px 0 0
 
 .build-version{color:#f8d99d;font:700 11px monospace;border:1px solid #657375;padding:3px 5px;border-radius:3px;align-self:center}
 @media(max-width:650px){.build-version{position:fixed;top:76px;left:6px;z-index:12;font-size:9px;background:#142329e0;padding:2px 4px;pointer-events:none}}
+
+/* spectator mode */
+.spec-btn{padding:5px 10px;font-size:12px;background:#1d2a33;border:1px solid #60738288;color:#dfe6ea;border-radius:4px;cursor:pointer}
+.spec-btn.on{background:#3a2f18;border-color:#e9c46a;color:#ffe3a0;box-shadow:0 0 0 1px #e9c46a55}
+body.spectate .tabs,body.spectate #queue,body.spectate .quick-actions,body.spectate #rankBtn,body.spectate .resources>div,body.spectate #tBox,body.spectate #tArmy,body.spectate #tAttack,body.spectate #tStop{display:none!important}
+body.spectate #cards{display:block!important;overflow:auto!important;height:auto!important;max-height:100%;grid-template-columns:none}
+body.spectate .command-panel{display:flex;flex-direction:column;min-height:0}
+.spec-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 6px;font-size:12px;color:#c9d3d8}
+.spec-bar b{color:#ffe3a0;margin-inline-end:6px}
+.spec-bar button{padding:3px 9px;font-size:11px;background:#1d2a33;border:1px solid #60738266;color:#dfe6ea;border-radius:3px;cursor:pointer}
+.spec-bar button.on{border-color:#e9c46a;background:#3a2f18;color:#ffe3a0}
+.spec-table{width:100%;border-collapse:collapse;font-size:12px;direction:rtl}
+.spec-table th{font-weight:500;color:#9fb0ba;font-size:10px}
+.spec-table th,.spec-table td{padding:3px 6px;text-align:start;border-bottom:1px solid #ffffff12;white-space:nowrap}
+.spec-table td i{display:inline-block;width:9px;height:9px;margin-inline-end:6px;border-radius:2px;vertical-align:middle}
+.spec-table td small{margin-inline-start:6px;color:#8fa0aa;font-size:10px}
+.spec-table tr.dead{opacity:.38;text-decoration:line-through}
+@media (orientation:portrait) and (max-width:650px){body.spectate #cards{max-height:190px}.spec-table{font-size:11px}.spec-table th,.spec-table td{padding:2px 4px}}
