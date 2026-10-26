@@ -47,3 +47,5 @@ body.spectate .command-panel{display:flex;flex-direction:column;min-height:0}
 .spec-table td small{margin-inline-start:6px;color:#8fa0aa;font-size:10px}
 .spec-table tr.dead{opacity:.38;text-decoration:line-through}
 @media (orientation:portrait) and (max-width:650px){body.spectate #cards{max-height:190px}.spec-table{font-size:11px}.spec-table th,.spec-table td{padding:2px 4px}}
+
+.tab-note{grid-column:1/-1;margin:4px 6px;color:#c9d3d8;font-size:12px;align-self:center}
