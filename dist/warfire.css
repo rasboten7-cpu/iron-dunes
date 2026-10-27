@@ -49,3 +49,6 @@ body.spectate .command-panel{display:flex;flex-direction:column;min-height:0}
 @media (orientation:portrait) and (max-width:650px){body.spectate #cards{max-height:190px}.spec-table{font-size:11px}.spec-table th,.spec-table td{padding:2px 4px}}
 
 .tab-note{grid-column:1/-1;margin:4px 6px;color:#c9d3d8;font-size:12px;align-self:center}
+
+/* menu: three army cards only */
+.factions{grid-template-columns:repeat(3,minmax(0,1fr))!important}
