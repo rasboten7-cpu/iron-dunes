@@ -1,0 +1,25 @@
+V16 console — Chromium validation
+
+Initial desktop render: 1440x900, 1280x720, 844x390 and 390x844.
+Touch/mobile run: isMobile + hasTouch, device scale 2, 390x844 and 844x390; also checked expanded layout at 1440x900.
+
+14 functional checks passed:
+- Touch interface initializes.
+- All 32 active faction/building combinations have mapped raster command artwork.
+- Tapping the HQ's builder photo adds production to the queue.
+- Cash text updates with the purchase.
+- Cancelling from the queue refunds the purchase.
+- Tapping a building photo enters placement mode.
+- Power gauge reacts to adding a power station.
+- Upgrade cards use raster artwork.
+- General power cards use raster artwork.
+- Minimap tap changes the camera position.
+- Portrait footer and controls fit the viewport.
+- Landscape footer and controls fit the viewport.
+- Desktop footer and controls fit the viewport.
+- Spectator statistics board remains functional.
+
+No page JavaScript errors or failed HTTP requests.
+
+Visual checks used internal browser screenshots; screenshots are not shipped in this archive.
+Limitations: mobile validation uses emulation, not physical phone hardware. No new benchmark or feature-parity claim is made.

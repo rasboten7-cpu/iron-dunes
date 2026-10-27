@@ -1,3 +1,7 @@
+# نيران الحرب — Command Console V16
+
+واجهة مرسومة جديدة بترتيب مستوحى من جنرال. اقرأ UPDATE-V16.md وSTART-HERE.txt. نتائج الفحص في QA-V16.txt.
+
 # نيران الحرب — Textured Architecture V15
 
 اقرأ `UPDATE-V15.md` و`START-HERE.txt`. شكل المجسمات الفعلي في `BUILDINGS-PREVIEW.png`، ونتائج الفحص في `QA-V15.txt`. تأكد من ظهور **V15** أثناء المعركة.

@@ -1,3 +1,7 @@
+# Latest: Command Console V16
+
+Based on the user-supplied modified V15 archive. Preserve the supplied spectator, menu cleanup, map and supply changes. See UPDATE-V16.md, QA-V16.txt and ART-PROMPTS-V16.md. New interface skin and command artwork are in dist/assets/interface; mappings in hud-art.js; responsive layout in generals-ui.css. World models and simulation rules are unchanged.
+
 # Current: Textured Architecture V15
 
 See UPDATE-V15.md, ART-PROMPTS-V15.md and QA-V15.txt. New four-image raster atlases, per-face UVs, exported smooth normals, lower camera angle, V15 HUD marker and strict offline cache versioning. Meshes are still original offline-authored OBJ geometry. Do not describe them as professionally hand-sculpted assets or claim Generals-equivalent quality.

@@ -1,0 +1,103 @@
+/* V16: illustrated military command console. Loaded after all legacy styles. */
+:root{--console-h:clamp(214px,27vh,290px);--steel:#94aab4;--accent:#d8c37d}
+#hud .battle-header{height:44px;left:10px;right:10px;top:8px;padding:0 10px;background:transparent;border:0;box-shadow:none;pointer-events:none}
+#hud .battle-header .brand{min-width:0;font-size:14px;text-shadow:0 1px 3px #000;opacity:.85;gap:7px}
+#hud .battle-header .brand i{width:24px;height:24px}#hud .battle-header .brand b{font-size:13px;color:#e5e8df}#hud .battle-header .brand small{font-size:8px;color:#ccd3ca}
+#hud .battle-header .top-controls{pointer-events:auto;padding:3px;background:#0a1119ae;border:1px solid #8799a44d;border-radius:2px;gap:6px}
+#hud #timer{font:700 13px monospace;color:#e4dcc4;margin:0 6px}#hud #pauseBtn{height:27px;width:29px;padding:0;background:#293b45;border:1px solid #8e9fa8;border-radius:0}
+#hud .control-strip{display:none}
+#hud footer.generals-console{height:var(--console-h);position:absolute;inset:auto 0 0;display:grid;grid-template-columns:22% minmax(0,56%) 22%;grid-template-rows:minmax(0,1fr);align-items:stretch;direction:ltr;gap:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:visible;isolation:isolate}
+#hud footer.generals-console::before{content:'';position:absolute;inset:20% 1% 0;background:#0a1014;z-index:-2}
+.console-art{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;z-index:-1;user-select:none}
+#hud footer.generals-console>section{border:0;background:transparent;box-shadow:none;clip-path:none;border-radius:0;width:auto;min-width:0;min-height:0;direction:rtl;position:relative}
+#hud footer .panel-cap{background:transparent;border:0;color:#aabac0;padding:0;font-size:8px;line-height:16px;height:16px;letter-spacing:.05em;display:flex}
+#hud footer .panel-cap b{color:#e6dca5}
+#hud .radar-panel{grid-column:1;display:flex;flex-direction:column;padding:11% 8% 5%;overflow:hidden}
+#hud .radar-panel .panel-cap{flex:none;padding:0 2px}
+#hud #minimap{width:100%;height:auto;min-height:0;flex:1;display:block;border:1px solid #4c6669;background:#343723;box-shadow:0 0 0 2px #050a0c;image-rendering:auto;touch-action:none;cursor:crosshair}
+#hud .radar-foot{height:12px;flex:none;font-size:8px;line-height:12px;overflow:hidden;color:#9baaa9;padding-top:1px;white-space:nowrap;display:flex;justify-content:center;gap:8px}
+#hud .command-panel{grid-column:2;display:flex;flex-direction:column;padding:0 1.2% 1.8%;overflow:visible}
+#hud .economy.resources{height:34%;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0;position:relative;padding-top:1%;direction:ltr}
+#hud .resources>div{min-width:0;display:block}
+#hud .cash-readout{width:28%;min-width:140px;text-align:center;height:45%;padding:2px 8px 0;background:#08100fd9;box-shadow:inset 0 0 7px #0008;display:flex!important;align-items:center;justify-content:center;gap:8px;flex-direction:row!important}
+#hud .cash-readout small{font-size:8px;color:#c5be95;line-height:1;letter-spacing:0}
+#hud #money{font:700 clamp(13px,1.35vw,20px) monospace;color:#f0e6bc;text-shadow:0 0 4px #cec57a55;white-space:nowrap;direction:ltr}
+#hud .energy-readout{width:96%;padding-top:2px}
+#hud .energy-caption{display:flex;align-items:center;justify-content:space-between;color:#c9d0bc;font-size:8px;height:14px;padding:0 3px;direction:rtl}
+#hud #power{font:700 10px monospace;direction:ltr;color:#b0ce95}#hud #power.warn{color:#ffc183}
+#energyGauge{height:9px;background:#06110b;border:1px solid #70817a;border-top-color:#131c19;position:relative;box-shadow:0 1px #becbc278,inset 0 1px 4px #000}
+#energyFill{position:absolute;left:1px;top:1px;bottom:1px;width:0;background:repeating-linear-gradient(90deg,#4c9e2a 0 6px,#7ac046 6px 8px,#18361b 8px 9px);transition:width .25s}
+#energyGauge.low #energyFill{background:repeating-linear-gradient(90deg,#a83220 0 6px,#e77c3c 6px 8px,#4a241b 8px 9px)}
+#energyNeedle{position:absolute;left:0;top:-2px;bottom:-2px;width:2px;background:#fce79b;box-shadow:0 0 3px #000;transition:left .25s}
+#hud footer .tabs{height:21px;flex:none;display:flex;align-items:stretch;justify-content:flex-start;background:#070e12ba;border:0;direction:rtl;padding:0 1px;gap:2px}
+#hud footer .tabs button{font-size:10px;line-height:1;border:1px solid #6c7e84;background:#26363f;color:#b7c6ca;padding:2px 13px;min-width:60px;border-radius:0;position:relative;box-shadow:inset 0 1px #acbbc229}
+#hud footer .tabs button.active{border-color:#d6cf9d;color:#fff2c4;background:#46514e;box-shadow:inset 0 -2px #b9bd74}
+#hud .tabs small{display:none}#hud .tabs>span{margin-inline-start:auto;font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;align-self:center;max-width:44%;color:#adc2a7}
+#hud #cards{height:auto;min-height:0;flex:1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));grid-auto-flow:row;grid-auto-rows:minmax(48px,1fr);gap:3px;padding:4px 2px;overflow:auto;align-content:start;direction:rtl;scrollbar-width:thin;scrollbar-color:#8d9b98 #101719;touch-action:pan-y}
+#hud #cards .card{min-width:0;max-width:none;width:100%;height:100%;min-height:0;padding:0;display:block;position:relative;overflow:hidden;border:1px solid #8d9a9e;border-radius:0;clip-path:none;background:#0b1115;box-shadow:inset 0 0 0 1px #081012;filter:none;opacity:1;transition:border-color .12s}
+#hud #cards .card:hover,#hud #cards .card:focus-visible{border-color:#fff3c7;outline:1px solid #decf82;outline-offset:0;z-index:1}
+#hud #cards .card:disabled{opacity:1;filter:none;cursor:not-allowed;border-color:#3e4b51}
+#hud #cards .card:disabled .command-art{filter:grayscale(.6) brightness(.45)}
+#hud #cards .card:disabled::after{content:'';position:absolute;inset:auto 0 0;height:2px;background:#987a4c80;pointer-events:none}
+#hud #cards .card.ready{border-color:#acd579}.card.done::after{content:'✓';position:absolute;right:2px;top:2px;color:#e8f5bc;text-shadow:0 1px #000}
+#hud #cards .card>strong,#hud #cards .card>span:not(.asset-icon),#hud #cards .card>small{display:none}
+#hud #cards .card>em{position:absolute;top:2px;right:2px;padding:1px 3px;background:#101916da;font:700 10px monospace;color:#f3e5b4;z-index:2}
+#hud #cards .card .cd{z-index:1;background:#091018a0;pointer-events:none}
+.asset-icon.command-art{background-image:var(--art-url);background-repeat:no-repeat;background-size:400% 300%!important;background-position:var(--art-x) var(--art-y)!important;filter:none;border-radius:0;display:block;flex-shrink:0}
+#hud #cards .card>.asset-icon.command-art{width:100%;height:100%;max-width:none;max-height:none;min-height:0}
+#hud #cards .card>.asset-icon:not(.command-art){width:100%;height:100%;max-height:none;max-width:none;filter:none}
+#hud #queue{height:17px;min-height:17px;flex:none;display:flex;gap:3px;align-items:center;overflow-x:auto;overflow-y:hidden;padding:0 2px;font-size:9px;white-space:nowrap;color:#b0c4bd;direction:rtl;scrollbar-width:none;border:0;background:transparent}
+#hud #queue>b{display:none}#hud #queue>button{position:relative;overflow:hidden;padding:0 7px;background:#172c2b;border:1px solid #58736b;border-radius:0;font-size:9px;height:16px;line-height:14px;margin:0;flex-shrink:0}#hud #queue>button i{position:absolute;bottom:0;left:0;height:2px;background:#99bd69}
+#hud footer .selection-panel{grid-column:3;display:flex;flex-direction:column;padding:11% 8% 5%;overflow:hidden}
+#hud #selectedInfo{flex:1;min-height:0;display:grid;grid-template-columns:42% minmax(0,1fr);grid-template-rows:auto auto 1fr;align-items:start;align-content:start;justify-content:start;gap:4px 7px;padding:4px 0;text-align:right;overflow-y:auto;direction:rtl}
+#hud #selectedInfo>.asset-icon,#hud #selectedInfo>svg,#hud #selectedInfo>.empty-symbol{grid-column:2;grid-row:1/span 3;width:100%;height:auto;aspect-ratio:1.15;max-height:112px;margin:0;object-fit:contain;background-color:#101c20;border:1px solid #677a7d;display:block!important;align-self:start}
+#hud #selectedInfo>.empty-symbol{font-size:38px;display:flex!important;align-items:center;justify-content:center;color:#82948a}
+#hud #selectedInfo>strong{grid-column:1;grid-row:1;font-size:11px;line-height:1.5;color:#e6ddbc;text-align:right}
+#hud #selectedInfo>.hp-track{grid-column:1;grid-row:2;width:100%;height:4px;min-height:4px;margin:0}
+#hud #selectedInfo>small{grid-column:1;grid-row:3;font-size:8px;line-height:1.65;color:#b0c3bb;max-height:65px;overflow:auto}
+#hud #selectedInfo>.acts{grid-column:1/-1;grid-row:auto;width:100%;justify-content:flex-start;gap:3px;flex-wrap:wrap}
+#hud #selectedInfo .acts button{padding:2px 5px;min-height:20px;font-size:9px;line-height:1.2;white-space:normal;background:#243c40;border:1px solid #73878a;border-radius:0;color:#e1e0ca}
+#hud #selectedInfo .acts .asset-icon{width:17px;height:15px;aspect-ratio:auto;border:0}
+#hud #selectedInfo .multi{grid-column:1/-1;width:100%;max-height:80px;gap:3px;justify-content:flex-start}
+#hud #selectedInfo .multi button{width:46px;height:35px;border-radius:0;padding:0}.multi .command-art{width:100%!important;height:100%!important}
+#hud .commander-status{display:flex;align-items:center;justify-content:space-between;gap:4px;min-height:30px;flex:none;direction:rtl;margin-top:2px}
+#hud .army-pop{font-size:8px;display:flex;flex-direction:column;color:#899f99}#hud #population{font:700 11px monospace;color:#d4d8ba;direction:ltr}
+#hud #rankBtn{display:flex!important;min-width:0;max-width:74%;padding:2px 4px;gap:1px;background:#101a1c;border:1px solid #687c7d;border-radius:0;text-align:center}
+#hud #rankBtn small{font-size:7px;display:block;color:#94aaa4}#hud #rankBtn b{font-size:11px;letter-spacing:1px;color:#dacf8b}#hud #rankBtn .xp{height:2px}#hud #rankBtn em{width:15px;min-width:15px;height:15px;line-height:15px;left:-5px;top:-5px;font-size:9px}
+#hud .quick-actions{display:flex;gap:2px;padding:3px 0 0;flex:none;background:transparent;border:0}
+#hud .quick-actions button{border-radius:0;border:1px solid #62777d;font-size:8px;padding:3px 2px;min-width:0;background:#20353d;color:#c4d3cd}#hud .quick-actions kbd{display:none}
+#cardTooltip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);width:310px;max-width:90vw;background:#101b1eef;border:1px solid #8b9c95;border-top:3px solid #c3b878;box-shadow:0 8px 24px #0008;padding:12px;direction:rtl;z-index:20;pointer-events:none;text-align:right}
+#cardTooltip strong{font-size:14px;color:#ece3c7}#cardTooltip .tip-cost{float:left;font:700 13px monospace;color:#d5c28b;direction:ltr}#cardTooltip p{font-size:11px;color:#b6c8c3;line-height:1.8;margin:5px 0 0}
+#hud #alerts{top:66px;left:12px;right:auto;max-width:min(390px,70vw)}#hud #swTimers{top:62px}#hud #promo{bottom:calc(var(--console-h) + 12px);max-height:calc(100vh - var(--console-h) - 30px);overflow:auto}
+body.spectate #hud .command-panel .economy{visibility:hidden}body.spectate #hud #cards{display:block!important;overflow:auto!important;font-size:11px}body.spectate #hud .commander-status{display:none}
+@media(max-width:1100px){:root{--console-h:224px}#hud #cards{grid-template-columns:repeat(6,minmax(0,1fr))}#hud .tabs>span{display:none}#hud footer .tabs button{padding:2px 9px;min-width:46px;font-size:9px}#hud #selectedInfo{grid-template-columns:42% minmax(0,1fr);gap:3px 5px}#hud #selectedInfo>strong{font-size:10px}#hud #selectedInfo>small{font-size:7px}#hud footer .panel-cap{font-size:7px}}
+@media(max-height:620px) and (orientation:landscape){:root{--console-h:168px}#hud .radar-panel,#hud footer .selection-panel{padding-top:9%;padding-bottom:4%}#hud footer .panel-cap{height:12px;line-height:12px}#hud .radar-foot{display:none}#hud footer .tabs{height:18px}#hud footer .tabs button{font-size:8px;padding:1px 7px}#hud #cards{grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;padding:3px 2px;grid-auto-rows:minmax(32px,1fr)}#hud .energy-caption{height:11px;font-size:7px}#hud #power{font-size:8px}#energyGauge{height:7px}#hud .cash-readout{min-width:105px}#hud #money{font-size:12px}#hud #selectedInfo>small{font-size:7px;max-height:32px}#hud #selectedInfo>strong{font-size:9px}#hud #selectedInfo>.asset-icon{max-height:60px}#hud #selectedInfo .acts button{font-size:7px;min-height:16px;padding:1px 3px}#hud .commander-status{min-height:23px}#hud #rankBtn small{display:none}#hud #rankBtn b{font-size:8px}#hud .quick-actions button{font-size:7px;padding:2px}#hud .battle-header .brand{display:none}#hud #queue{height:13px;min-height:13px;font-size:7px}#hud #queue>button{font-size:7px;height:12px;line-height:11px}#hud #touchBar{bottom:calc(var(--console-h) + 8px);top:auto;right:8px;display:flex;flex-direction:row;gap:3px}#hud #touchBar button{width:35px;height:35px;font-size:16px}#hud #touchBar small{display:none}}
+@media(orientation:portrait) and (max-width:650px){:root{--console-h:326px}#hud footer.generals-console{grid-template-columns:42% minmax(0,58%);grid-template-rows:128px minmax(0,1fr);padding:0 5px 5px;background:#111b1f;border:2px solid #859aa4;box-shadow:inset 0 0 0 3px #172c32,inset 0 0 0 5px #4d6873}
+#hud .console-art{height:128px}#hud footer.generals-console::before{display:none}#hud .radar-panel{grid-column:1;grid-row:1;padding:11px 6px 2px}#hud footer .selection-panel{grid-column:2;grid-row:1;padding:11px 6px 2px}#hud .radar-panel .panel-cap{display:none}#hud .radar-foot{height:10px;font-size:6px;line-height:9px}#hud .command-panel{grid-column:1/-1;grid-row:2;padding:0 4px 3px}#hud .economy.resources{height:47px;padding:0;flex:none;display:grid;grid-template-columns:35% minmax(0,1fr);gap:7px;align-items:center;direction:ltr}
+#hud .cash-readout{width:100%;height:27px;min-width:0;border:1px solid #6e8688;padding:1px 3px!important;gap:3px}#hud .cash-readout small{font-size:7px}#hud #money{font-size:13px}#hud .energy-readout{width:100%;padding:0}#hud .energy-caption{height:14px}#hud #power{font-size:9px}#hud footer .tabs{height:22px}#hud footer .tabs button{min-width:0;flex:1;padding:1px 4px;font-size:9px}#hud #cards{grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));grid-auto-flow:row;grid-auto-columns:auto;height:auto;overflow-x:hidden;overflow-y:auto;gap:3px;grid-auto-rows:minmax(38px,1fr);touch-action:pan-y;scroll-snap-type:none}
+#hud #selectedInfo{display:grid;grid-template-columns:45% minmax(0,1fr);grid-template-rows:auto auto 1fr;padding:0;gap:2px 5px}#hud #selectedInfo>.asset-icon{max-height:52px}#hud #selectedInfo>strong{font-size:9px}#hud #selectedInfo>small{font-size:7px;max-height:28px}#hud #selectedInfo>.acts{gap:2px}#hud #selectedInfo .acts button{font-size:7px;min-height:15px;padding:1px 3px}#hud .selection-panel .panel-cap{display:none}#hud .commander-status{min-height:20px;margin:0}#hud .army-pop{font-size:7px}#hud #population{font-size:9px}#hud #rankBtn b{font-size:9px}#hud #rankBtn small{display:none}#hud .quick-actions{padding-top:2px}#hud .quick-actions button{font-size:7px;padding:2px}#hud #queue{height:15px;min-height:15px}#hud .battle-header{height:35px;left:5px;right:5px;top:4px;padding:0}#hud .battle-header .brand small{display:none}#hud .battle-header .brand b{font-size:11px}#hud .battle-header .brand i{width:19px;height:19px}#hud .battle-header .brand{gap:4px}#hud #alerts{top:48px;font-size:10px}#hud #touchBar{bottom:calc(var(--console-h) + 10px);top:auto;right:5px;gap:3px}#hud #touchBar button{width:35px;height:35px;font-size:17px}#hud #touchBar small{display:none}}
+/* Match the opaque frame bounds within the original transparent production artwork. */
+#hud .console-art{top:-46.7%;height:176%;bottom:auto}
+#hud .command-panel{padding-left:4.5%;padding-right:4.5%}
+#hud .economy.resources{height:39%;padding:0;position:relative}
+#hud .cash-readout{position:absolute;top:29%;height:36%;left:36%}
+#hud .energy-readout{position:absolute;bottom:0;left:2%;width:96%}
+.asset-icon.command-art{background-size:var(--art-size,400% 300%)!important}
+#energyGauge.independent #energyNeedle{display:none}
+@media(orientation:portrait) and (max-width:650px){
+ #hud .console-art{display:none}
+ #hud .radar-panel,#hud footer .selection-panel{background-image:url('assets/interface/console-frame.png');background-repeat:no-repeat;background-size:455% 176%;background-position:0 61.3%}
+ #hud footer .selection-panel{background-position:100% 61.3%}
+ #hud .command-panel{padding:0 4px 3px}
+ #hud .economy.resources{height:47px;display:grid}
+ #hud .cash-readout{position:static;height:27px}
+ #hud .energy-readout{position:static;width:100%}
+}
+@media(min-width:1101px) and (min-height:621px){:root{--console-h:clamp(240px,31vh,306px)}}
+#hud .battle-header .top-controls{margin-left:auto}
+@media(orientation:portrait) and (max-width:650px){
+ #hud footer.generals-console>section.radar-panel,#hud footer.generals-console>section.selection-panel{background-color:#10191d;background-image:url('assets/interface/console-frame.png');background-repeat:no-repeat;background-size:455% 176%;background-position:0 61.3%;padding:25px 11px 6px}
+ #hud .radar-foot{height:8px;line-height:8px}
+ #hud .commander-status{min-height:17px}
+ #hud .quick-actions{padding-top:1px}
+}
