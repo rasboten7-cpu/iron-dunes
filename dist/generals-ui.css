@@ -101,3 +101,106 @@ body.spectate #hud .command-panel .economy{visibility:hidden}body.spectate #hud 
  #hud .commander-status{min-height:17px}
  #hud .quick-actions{padding-top:1px}
 }
+
+/* ===== V16.1 layout fix: every panel sits exactly inside the painted screens of the frame =====
+   Percentages are measured from console-frame.png (opaque area 2172x412 px), so they stay aligned at any width. */
+@media not all and (orientation:portrait) and (max-width:650px){
+:root{--console-h:clamp(150px,calc(100vw / 5.27),300px)}
+#hud footer.generals-console{display:block;height:var(--console-h)}
+#hud footer.generals-console::before{display:none}
+#hud footer .panel-cap{display:none}
+#hud footer.generals-console>section{position:absolute;padding:0;overflow:visible}
+/* left screen: minimap */
+#hud footer.generals-console>section.radar-panel{left:2.4%;right:auto;width:19.1%;top:20.2%;height:68.8%;display:flex;flex-direction:column;gap:2px}
+#hud .radar-panel{align-items:center;justify-content:center}
+#hud #minimap{flex:none;width:auto;height:auto;min-height:0;max-width:100%;max-height:calc(100% - 18px);aspect-ratio:auto;margin:0 auto;border:0;box-shadow:0 0 0 1px #3b4f52}
+#hud .radar-foot{height:auto;font-size:clamp(9px,.7vw,11px);line-height:1.4;padding:1px 0 0;color:#c9d4cf;flex-wrap:wrap;gap:3px 10px}
+#hud .radar-foot i{width:8px;height:8px}
+/* centre: cash plate, power slot, tabs, cards and queue */
+#hud .command-panel{position:static!important;padding:0!important}
+#hud .economy.resources{position:static!important;height:auto;padding:0;display:block}
+#hud .cash-readout{position:absolute!important;left:43.4%!important;width:13.2%!important;top:15.4%!important;height:8.6%!important;min-width:0!important;padding:0 6px!important;background:transparent!important;box-shadow:none!important;gap:8px!important}
+#hud .cash-readout small{font-size:clamp(9px,.68vw,12px);color:#cfc69a}
+#hud #money{font-size:clamp(12px,1.25vw,21px)}
+#hud .energy-readout{position:absolute!important;left:34.2%!important;width:31.6%!important;top:32%!important;height:5.8%!important;bottom:auto!important;padding:0!important;display:flex;align-items:center;gap:8px;direction:rtl}
+#hud .energy-caption{height:auto;padding:0;gap:6px;flex:none;font-size:clamp(9px,.65vw,11px);white-space:nowrap}
+#hud #power{font-size:clamp(9px,.7vw,12px)}
+#hud #energyGauge{flex:1;height:62%;min-height:5px;border:0;box-shadow:none}
+#hud footer .tabs{position:absolute;left:25.3%;width:49.4%;top:46.6%;height:clamp(16px,8.6%,26px);background:transparent;padding:0;gap:3px;align-items:stretch}
+#hud footer .tabs button{font-size:clamp(9px,.72vw,12px);min-width:0;padding:0 clamp(6px,1vw,16px)}
+#hud .tabs>span{font-size:clamp(9px,.62vw,11px);max-width:40%;padding:0 4px}
+#hud #cards{position:absolute;left:25.3%;width:49.4%;top:calc(46.6% + clamp(16px,8.6%,26px) + 3px);bottom:16.8%;height:auto;padding:0;gap:3px;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:none;grid-auto-rows:calc((100% - 3px) / 2);overflow-y:auto;overflow-x:hidden}
+#hud #queue{position:absolute;left:25.3%;width:49.4%;bottom:11.6%;top:auto;height:clamp(12px,4.6%,18px);min-height:0;font-size:clamp(9px,.62vw,11px)}
+#hud #queue>button{height:100%;line-height:1;font-size:inherit;display:flex;align-items:center}
+/* right screen: selected unit; the two small plates above it hold rank and army size */
+#hud footer .selection-panel{position:static!important}
+#hud #selectedInfo{position:absolute;left:78.9%;width:18.4%;top:38.2%;bottom:calc(10.6% + clamp(15px,7%,22px) + 3px);height:auto;padding:0;grid-template-columns:minmax(0,1fr) 40%;grid-template-rows:auto auto minmax(0,1fr) auto;gap:3px 7px;overflow:hidden}
+#hud #selectedInfo>.asset-icon,#hud #selectedInfo>svg,#hud #selectedInfo>.empty-symbol{grid-column:2;grid-row:1/span 3;width:100%;height:100%;max-height:none;aspect-ratio:auto;object-fit:cover;background-size:cover}
+#hud #selectedInfo>.empty-symbol{font-size:clamp(22px,2vw,36px)}
+#hud #selectedInfo>strong{grid-column:1;grid-row:1;font-size:clamp(10px,.8vw,14px);line-height:1.35;overflow:hidden;text-overflow:ellipsis}
+#hud #selectedInfo>strong em{font-size:.85em}
+#hud #selectedInfo>.hp-track{grid-column:1;grid-row:2}
+#hud #selectedInfo>small{grid-column:1;grid-row:3;font-size:clamp(9px,.62vw,11px);line-height:1.5;max-height:none;overflow:auto;min-height:0}
+#hud #selectedInfo>.acts{grid-column:1/-1;grid-row:4;max-height:none}
+#hud #selectedInfo .acts button{font-size:clamp(9px,.62vw,11px);min-height:18px;padding:1px 6px}
+#hud #selectedInfo .multi{grid-column:1/-1;grid-row:1;max-height:none;overflow:auto;flex-wrap:wrap}
+#hud #selectedInfo .multi~.hp-track{grid-column:1/-1;grid-row:2}
+#hud #selectedInfo .multi~small{grid-column:1/-1;grid-row:3}
+#hud #selectedInfo .multi button{width:clamp(34px,3vw,52px);height:clamp(26px,2.3vw,40px)}
+#hud .quick-actions{position:absolute;left:78.9%;width:18.4%;bottom:10.6%;height:clamp(15px,7%,22px);padding:0;gap:3px}
+#hud .quick-actions button{flex:1;font-size:clamp(9px,.62vw,11px);padding:0 2px}
+#hud .commander-status{position:static;display:contents}
+#hud #rankBtn{position:absolute;left:81.5%;width:7%;top:12.5%;height:11.5%;max-width:none;padding:1px 3px;justify-content:center;flex-direction:column;background:#0d1719e6}
+#hud #rankBtn small{display:none}
+#hud #rankBtn b{font-size:clamp(8px,.62vw,12px);letter-spacing:0}
+#hud #rankBtn .xp{width:90%;margin:1px auto 0}
+#hud .army-pop{position:absolute;left:89.7%;width:6.6%;top:15.2%;height:9.2%;background:#0d1719e6;border:1px solid #687c7d;flex-direction:row;align-items:center;justify-content:center;gap:5px;font-size:clamp(8px,.58vw,10px);color:#a9bab4}
+#hud #population{font-size:clamp(9px,.7vw,12px)}
+/* top-left army name: readable plate instead of faint text over the map */
+#hud .battle-header .brand{opacity:1;background:#0a1119d9;border:1px solid #8799a455;padding:3px 10px 3px 8px;height:auto;pointer-events:none}
+#hud .battle-header .brand b{font-size:14px;color:#f1ecd8}
+#hud .battle-header .brand small{font-size:10px;color:#b9c7c4}
+}
+/* very short landscape screens (phones on their side) */
+@media (orientation:landscape) and (max-height:520px){
+#hud .radar-foot{display:none}
+#hud #minimap{max-height:100%}
+#hud #selectedInfo>small{display:none}
+#hud .army-pop small{display:none}
+#hud .battle-header .brand{display:none}
+}
+/* portrait phones: keep the selected-unit picture, rank and quick buttons from overlapping, and the minimap legend inside its screen */
+@media (orientation:portrait) and (max-width:650px){
+#hud .radar-panel{align-items:center}
+#hud #minimap{flex:none;width:auto;height:auto;max-width:100%;max-height:calc(100% - 13px);margin:0 auto}
+#hud footer .selection-panel{display:flex;flex-direction:column;gap:2px}
+#hud #selectedInfo{flex:1 1 0;min-height:0;overflow:hidden;grid-template-rows:auto auto minmax(0,1fr)}
+#hud #selectedInfo>.asset-icon,#hud #selectedInfo>svg,#hud #selectedInfo>.empty-symbol{height:100%;max-height:58px;width:100%;aspect-ratio:auto;object-fit:cover;background-size:cover}
+#hud #selectedInfo>small{max-height:none;overflow:hidden}
+#hud .commander-status{flex:none;min-height:22px;height:22px;gap:6px;margin:0}
+#hud #rankBtn{height:20px;max-width:60%;flex-direction:row;align-items:center;gap:4px;padding:1px 6px}
+#hud #rankBtn .xp{display:none}
+#hud .army-pop{flex-direction:row;align-items:center;gap:4px}
+#hud .quick-actions{flex:none;height:22px}
+#hud .quick-actions button{font-size:9px}
+}
+/* the console has a dedicated picture slot, so unit pictures are never hidden (older phone rules hid them when action buttons were shown) */
+#hud #selectedInfo .asset-icon,body.touch #hud #selectedInfo .asset-icon{display:block!important}
+@media (orientation:portrait) and (max-width:650px){#hud #selectedInfo{align-content:stretch}}
+/* portrait: info on top, one compact bar underneath (rank + army/base/hold) */
+@media (orientation:portrait) and (max-width:650px){
+#hud footer .selection-panel{display:grid!important;grid-template-columns:auto minmax(0,1fr);grid-template-rows:minmax(0,1fr) 22px;gap:3px 4px}
+#hud #selectedInfo{grid-column:1/-1;grid-row:1;min-height:0}
+#hud .commander-status{display:contents}
+#hud .army-pop{display:none}
+#hud #rankBtn{grid-column:1;grid-row:2;height:22px;max-width:none}
+#hud .quick-actions{grid-column:2;grid-row:2;height:22px;padding:0}
+#hud #selectedInfo .multi button{width:38px;height:28px}
+}
+@media (orientation:portrait) and (max-width:650px){
+:root{--console-h:356px}
+#hud footer.generals-console{grid-template-rows:158px minmax(0,1fr)}
+#hud footer .selection-panel{padding:12px 8px 6px!important}
+#hud #rankBtn em{left:auto;right:-4px;top:-6px}
+}
+@media (orientation:portrait) and (max-width:650px){#hud .radar-panel{padding:12px 8px 14px!important}#hud #minimap{max-height:calc(100% - 15px)}}
