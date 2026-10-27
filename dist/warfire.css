@@ -52,3 +52,6 @@ body.spectate .command-panel{display:flex;flex-direction:column;min-height:0}
 
 /* menu: three army cards only */
 .factions{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+
+/* in-battle cleanup: version badge, voice/sound/arsenal/help buttons and the objective panel are hidden (pause stays) */
+.build-version,#voiceBtn,#sound,#bookBtn,#helpBtn,.mission{display:none!important}
