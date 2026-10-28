@@ -762,7 +762,7 @@ async function start(){if(starting)return;starting=true;
  setIconFaction(myF);lastCards='';document.body.dataset.f=myF;$('hudEmblem').innerHTML=EMBLEM[myF];$('hudFaction').textContent=SPEC?'👁 وضع المشاهدة':FACTIONS[myF].name;
  // start positions: allies sit next to each other around the ring
  const NB=MAP.bases.length,order=slots.map((sl,i)=>i).sort(()=>Math.random()-.5),grp=[...new Set(order.map(i=>slots[i].team))].map(tm=>order.filter(i=>slots[i].team===tm)),gaps=NB-slots.length;let seat=Math.floor(Math.random()*NB);startPos=[];grp.forEach((g,gi)=>{for(const si of g){startPos[si]=MAP.bases[seat%NB];seat++}seat+=Math.floor(gaps/grp.length)+(gi<gaps%grp.length?1:0)});
- const fcount={};teams=slots.map((sl,i)=>newTeam(i,settings.money+(sl.ai&&sl.diff==='hard'?2000:0),sl.faction,sl.team));
+ const fcount={};teams=slots.map((sl,i)=>newTeam(i,settings.money,sl.faction,sl.team));
  slots.forEach((sl,i)=>{const F=FACTIONS[sl.faction];fcount[sl.faction]=(fcount[sl.faction]||0)+1;const dup=slots.filter(x=>x.faction===sl.faction).length>1;TEAM[i].name=(i===0&&!settings.aiBoth?'أنت · ':'')+F.name+(dup&&i?' '+fcount[sl.faction]:'');TEAM[i].short=i===0&&!settings.aiBoth?'أنت':F.short+(dup?' '+fcount[sl.faction]:'')});
  ais=slots.map((sl,i)=>sl.ai?makeAI(i,sl.diff||'normal'):null);
  timer=0;ended=false;paused=false;tab='build';victoryCheck=2;lastAlert=null;alertTimes={};renderer.tint=settings.lighting;
