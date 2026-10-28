@@ -146,3 +146,14 @@ Fog of war (v4 explicitly wanted the enemy visible; could be an option), aircraf
 - `PLV` (game.js, before POWER_ORDER): strike, paradrop, emergency, barrage, cashhack, bounty, spectre have 3 levels; others 1. `tm.powers[id].level`; `unlockPower` buys the next level (1 point, needs rank `POWERS[id].rank + level-1`). `canUpgrade`, `pLvl`, `pMax`, `pLvlTxt`.
 - Effects by level `Lv` in usePower: A-10 planes 1/2/3, paradrop 5/10/20 rangers (sand ambush 4/8/16 rebels), repair 6/9/12 s, barrage 12/24/36 shells, cash hack 1000/2000/4000, bounty 5/10/20 %, spectre 12/18/24 s.
 - Promotion screen shows ●○○ dots, current/next level; command bar shows Ⅰ/Ⅱ/Ⅲ. AI buys new powers first, then levels.
+
+
+## v22 — fixes and vehicle steering
+- `factionOf`, optional faction argument to `D` and `spawn`, object-based `maxHpFor`: preserve captured vehicle identity and HP ratio.
+- Production queue entries store faction/time/cost; enqueue, requirements, spawnFrom, crew, pair spawning, and selected factory UI resolve against the producer faction.
+- Capture refunds the old owner's queue, cancels builder linkage and prior battle plan. Foreign construction trees are outside this patch.
+- Sniper infantry multiplier 2; accurate description. Aurora immunity requires a forced attack target. Stop cancels tasks/tunnel entry/contamination.
+- Original faction preserved for wrecks, pilots, rebuilds and superweapon launch. Native faction model atlas is reused if the new owner's combination is not yet baked.
+- Vehicle translation follows heading; turns over ~60 degrees stop forward creep. Acceleration/braking and body sway revised.
+- Desktop cards show names/prices; menu/HUD/SW revision 22.
+- See FIXES-V22.txt and QA-V22.txt for scope and verification.

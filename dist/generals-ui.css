@@ -211,3 +211,9 @@ body.spectate #hud .command-panel .economy{visibility:hidden}body.spectate #hud 
 /* v21: general power levels */
 .pw .lv{font-style:normal;color:#e9c46a;letter-spacing:2px;margin-inline-start:6px;font-size:.9em}
 .pw.owned.upgradable:not(:disabled){border-color:#e9c46a;box-shadow:0 0 0 1px #e9c46a55 inset}
+
+/* v22: readable command cards without replacing their artwork. */
+@media(min-width:1000px){#hud #cards{grid-template-rows:none;grid-auto-rows:66px}#hud #cards .card{min-height:66px;position:relative;padding-bottom:22px!important}#hud #cards .card>strong{display:block!important;position:absolute;bottom:2px;inset-inline:2px;font-size:10px;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#101820e8;color:#f4e8ca;text-align:center;z-index:3}#hud #cards .card>.asset-icon{height:100%;background-position:center!important}}
+#hud #cards .card:focus-visible{outline:2px solid #f4c776;outline-offset:2px}
+
+@media(min-width:1000px){#hud #cards .card>span:not(.asset-icon){display:block!important;position:absolute;top:2px;left:2px;max-width:95%;padding:1px 3px;background:#101820e8;color:#f2d195;font:9px/13px Tahoma,sans-serif;z-index:4;direction:ltr}}
