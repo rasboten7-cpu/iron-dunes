@@ -109,3 +109,10 @@ Fog of war (v4 explicitly wanted the enemy visible; could be an option), aircraf
 ## Map sizes (after V16)
 - Sized by player count like Generals: 2-player maps 800x800 units (limit 400, ~1 km), 4-player 1000x1000 (limit 500, ~1.25 km), 6-player 1200x1200 (limit 600, ~1.5 km). Scale: 1 unit ~ 1.25 m. Nav grid GL=610 covers limit 600.
 - AI cancels and refunds any construction site with no progress for 90 s (unreachable spots on big maps).
+
+## v18 — GLA-style Sand economy (worker gatherers)
+- Sand has no supply trucks: `builder` (عامل, $200) has `gatherer:true`, is also trained at the supply stash (`also:['refinery']`) and gathers 100 per trip (150 with logistics, 2.8s load). Idle AI workers gather; `aiEconomy` pulls the nearest empty-handed worker to build. A finished stash gives 2 free workers instead of a truck.
+- Player: right-click a deposit or own stash with workers → gather; any move order stops gathering.
+- `aiTunnels`: hurt AI ground units (<40%) within 70 of a tunnel dive in to heal and come out at the tunnel nearest the staging point (`exitSome`).
+- AI anti-air weights now scale with the number of armed enemy aircraft (unarmed Chinooks no longer count). Impossible Sand researches GLA upgrades from 4 min, builds a 3rd arms dealer and black markets earlier.
+- Test (Sand impossible vs Falcon hard, 6 maps): 3 wins Sand, 2 Falcon (both on pass), 1 draw — was 0/6.
