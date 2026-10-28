@@ -134,3 +134,10 @@ Fog of war (v4 explicitly wanted the enemy visible; could be an option), aircraf
 - New units: burton (falcon hero, stealth, timed charges), pilot (spawned from vet≥1 falcon vehicles, auto-seeks a lower-vet vehicle), stealth (stealth jet, ground only), aurora (supersonic: immune while inbound), lotus (dragon hero: capture 2s, disable vehicles, steal ≤1000$), mob (sand, regenerates, Arm the Mob), hijacker (stealth, weapon kind 'hijack' converts vehicles), jarmen (sand hero sniper, `snipeDriver` → vehicle becomes NEUTRAL `empty`, any rifle/rocket infantry can crew it).
 - Fire wall (dragon flame tank), firestorm (`firestormCheck`: 4 incendiary hits within 7m/4s), gattling spin-up (dragon jeep/turret), laser lock (falcon rocket, +40% vs vehicles, +6 range, 12s), TNT (dragon rocket).
 - AI: `aiAutoAbility` on fire, `aiAbilities` each tactic tick (crew empty vehicles, capture undefended buildings, Burton charges, Lotus steal/disable/capture, Jarmen snipes). Hero `limit:1` enforced by `atLimit`.
+
+## v20 — Generals INI numbers
+- `GEN` table (game.js, just before `function D`) overrides FDEFS per faction with Generals HP / price / build seconds / weapon damage+cadence. Clip+reload folded into `burst`+`rate`; ranges = Generals × 0.155 (`GR()`).
+- VS: small arms vs heavy 0.25, new `gattling` kind (heavy 0.10), cannon (armor-piercing) vs infantry 0.10.
+- Salvage: Marauder rate 2→1.5→(2 shots /0.85s); Quad 8 dmg /0.05 (×2 at level 2). Laser lock = laser-guided missile (40 dmg /0.5s, range GR(300)). Comanche: 20mm gun + 4 AT missiles every 15s, Rocket Pods = 20×30 every 30s. TOW 30 (50 vs air), Scorpion rocket 100 /15s, Buggy 6 → 12 rockets.
+- Superweapons: particle beam 100/0.25s for 10s; nuke 3500 inside 9.3 → 300 at 32.5, radiation skips buildings; Scud Storm 9 missiles, 500 within 7.7 + 150 within 31 + toxin.
+- Powers at Generals level 1: barrage 12×105, paradrop 5 rangers / ambush 4 rebels, cash hack 1000, strike bombs 200, fuel bomb 2000 r15.5, anthrax 200 blast + 40 field. Mines 50+100. Bomb truck 1000 (+100 secondary), HE ×2; terrorist 500 + 300.
