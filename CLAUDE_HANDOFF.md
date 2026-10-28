@@ -116,3 +116,11 @@ Fog of war (v4 explicitly wanted the enemy visible; could be an option), aircraf
 - `aiTunnels`: hurt AI ground units (<40%) within 70 of a tunnel dive in to heal and come out at the tunnel nearest the staging point (`exitSome`).
 - AI anti-air weights now scale with the number of armed enemy aircraft (unarmed Chinooks no longer count). Impossible Sand researches GLA upgrades from 4 min, builds a 3rd arms dealer and black markets earlier.
 - Test (Sand impossible vs Falcon hard, 6 maps): 3 wins Sand, 2 Falcon (both on pass), 1 draw — was 0/6.
+
+## v18b — GLA vehicle parity (Sand)
+- Prices like Generals: Marauder 800 (hp 1150, `twin:true` → burst 2 after 2 salvage crates), Technical 500, Toxin tractor 600. Rocket buggy now needs the palace (radar).
+- Technical carries 5 infantry (`capacity:5,noFire:true`). Fixed boarding bug: infantry got stuck next to vehicles (enter check now also runs while still moving when close).
+- Scud launcher: per-unit warhead toggle (`e.warhead` 'tox'|'he', HE = 300 dmg no toxin); AI picks HE vs buildings.
+- Bomb truck spawns `disguised`: not auto-targeted unless a detector/radar/scan sees it (`dSeen`); looks like the viewer's own jeep (`disguiseLook`); disguise drops when damaged. Upgrade `biobomb` (black market) leaves a big toxin cloud.
+- Toxin tractor: "تلويث الأرض" command (`e.contam`), 10s cooldown.
+- New unit `radarvan` (500, detector 30) + upgrade `radarscan` (factory): reveals a 30 radius area for 12s (`scans[]`, 45s cooldown). AI builds one and scans sneaky enemies near its forces (`aiRadar`). Model `radarVan` in models.js (CACHE_VER bumped → atlases re-bake once).

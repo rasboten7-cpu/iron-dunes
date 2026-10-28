@@ -147,6 +147,11 @@ function technical(team){const m=palette('rust',team);const hull=new T.Group(),t
  box(.55,.4,.5,m.canvas,hull,.5,1.1,-1.75);
  cyl(.1,.1,.6,m.gun,turret,0,.3,0);box(.12,.14,.6,m.gun,turret,0,.62,.2);cyl(.04,.04,1.1,m.gun,turret,0,.64,.95,'z',8);box(.5,.4,.05,m.metal,turret,0,.75,.45);
  turret.position.set(0,.95,0);hull.position.z=.6;turret.position.z=0;return{hull,turret}}
+// radar van: technical pickup with a box body and a dish on the roof (sand)
+function radarVan(team){const t=technical(team),m=palette('rust',team);const hull=t.hull;slab(1.85,1.05,2.1,.06,m.canvas,hull,0,1.05,-1.2);
+ const dish=new T.Group();dish.position.set(0,2.25,-1.3);dish.rotation.x=-.5;hull.add(dish);cyl(.06,.06,.5,m.metal,hull,0,1.85,-1.3);
+ const d=new T.Mesh(new T.SphereGeometry(.85,16,8,0,Math.PI*2,0,.9),m.metal);d.rotation.x=Math.PI;d.position.y=.55;d.castShadow=true;dish.add(d);cyl(.03,.03,.5,m.gun,dish,0,.35,0);
+ for(const s of [-1,1])box(.05,.12,.12,m.light,hull,s*.95,1.7,-.3);slab(.06,.3,.9,.01,m.team,hull,.96,1.25,-1.3);slab(.06,.3,.9,.01,m.team,hull,-.96,1.25,-1.3);return{hull,turret:null}}
 // light buggy with a rocket rack (sand artillery)
 function buggy(team){const m=palette('rust',team);const hull=new T.Group(),turret=new T.Group();
  for(const [x,z] of [[-1.0,1.35],[1.0,1.35],[-1.05,-1.25],[1.05,-1.25]])wheel(.5,.36,m,hull,x,.5,z);
@@ -454,7 +459,7 @@ export const MODEL_SPECS={
  sniper:{S:3.9,build:t=>soldier(t,{sniper:true}),poses:INF_POSES,infantry:true},heli:{S:10.4,build:t=>heli(t),poses:['rot0','rot1','rot2','rot3']},
  hacker:{S:3.9,build:t=>soldier(t,{pal:'cnuni',hacker:true}),poses:[...INF_POSES,'hack'],infantry:true},flametank:{S:9.2,build:t=>tank(t,{pal:'green',k:.95,flame:true}),turret:true},
  raptor:{S:10.4,build:t=>jetFighter(t,{pal:'dark',twin:true})},chinook:{S:12,build:t=>chinook(t),poses:['rot0','rot1','rot2','rot3']},ambulance:{S:7,build:t=>ambulance(t)},quad:{S:7.2,build:t=>quad(t),turret:true},mig:{S:10.4,build:t=>jetFighter(t,{pal:'olive',twin:false,k:.95})},
- suicide:{S:3.9,build:t=>soldier(t,{pal:'glauni',scarf:true,vest:true}),poses:INF_POSES,infantry:true},toxin:{S:7.8,build:t=>tractor(t)},bombtruck:{S:8.8,build:t=>bombTruck(t)},
+ suicide:{S:3.9,build:t=>soldier(t,{pal:'glauni',scarf:true,vest:true}),poses:INF_POSES,infantry:true},toxin:{S:7.8,build:t=>tractor(t)},bombtruck:{S:8.8,build:t=>bombTruck(t)},radarvan:{S:7.6,build:t=>radarVan(t)},
  crawler:{S:8.6,build:t=>crawler(t)},battlebus:{S:10,build:t=>battleBus(t)},scudlauncher:{S:10.6,build:t=>scudLauncher(t)},nukecannon:{S:12.4,build:t=>nukeCannon(t),turret:true},
  overlord_gat:{S:11.6,build:t=>overlord(t,'gat'),turret:true},overlord_spk:{S:11.6,build:t=>overlord(t,'spk'),turret:true},overlord_bnk:{S:11.6,build:t=>overlord(t,'bnk'),turret:true}};
 for(const[k,f]of Object.entries(B)){MODEL_SPECS[k]={build:f,building:true,turret:/^(turret|tunnel)/.test(k),frames:/^radar/.test(k)?8:1}}
@@ -462,13 +467,13 @@ const BLD=f=>Object.fromEntries(['hq','power','refinery','barracks','factory','t
 export const FACTION_MODELS={
  falcon:{builder:'builder',harvester:'harvester',infantry:'infantry',rocket:'rocket',jeep:'jeep',tank:'crusader',heavy:'paladin',artillery:'tomahawk',sniper:'sniper',heli:'heli',raptor:'raptor',ambulance:'ambulance',...BLD('falcon'),harvester:'chinook',airfield:'airfield',dropzone:'dropzone'},
  dragon:{builder:'dozer_cn',harvester:'truck_cn',infantry:'soldier_cn',rocket:'rocket_cn',jeep:'gattling',tank:'battlemaster',heavy:'overlord',artillery:'inferno',hacker:'hacker',flame:'flametank',mig:'mig',...BLD('dragon'),speaker:'speaker',airfield:'airfield_dragon',bunker:'bunker',crawler:'crawler',nukecannon:'nukecannon',heavy_gat:'overlord_gat',heavy_spk:'overlord_spk',heavy_bnk:'overlord_bnk'},
- sand:{builder:'worker',harvester:'oldtruck',infantry:'soldier_gla',rocket:'rocket_gla',jeep:'technical',tank:'scorpion',heavy:'marauder',artillery:'buggy',suicide:'suicide',toxin:'toxin',bombtruck:'bombtruck',quad:'quad',...BLD('sand'),tunnel:'tunnel',blackmarket:'blackmarket',hole:'hole',trap:'trap',bus:'battlebus',scudlauncher:'scudlauncher'}};
+ sand:{builder:'worker',harvester:'oldtruck',infantry:'soldier_gla',rocket:'rocket_gla',jeep:'technical',tank:'scorpion',heavy:'marauder',artillery:'buggy',suicide:'suicide',toxin:'toxin',bombtruck:'bombtruck',quad:'quad',...BLD('sand'),tunnel:'tunnel',blackmarket:'blackmarket',hole:'hole',trap:'trap',bus:'battlebus',scudlauncher:'scudlauncher',radarvan:'radarvan'}};
 export const WALK_FRAMES=WALK;
 
 // ---------------------------------------------------------------------------
 // Bake every model into sprite atlases: columns = directions, rows = poses
 // ---------------------------------------------------------------------------
-const CACHE_VER='fires-of-war-v12-final';
+const CACHE_VER='fires-of-war-v18-gla';
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('iron-dunes',1);r.onupgradeneeded=()=>r.result.createObjectStore('atlas');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function cacheGet(key){try{const db=await idb();return await new Promise(res=>{const q=db.transaction('atlas').objectStore('atlas').get(key);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)})}catch(e){return null}}
 async function cachePut(key,val){try{const db=await idb();await new Promise(res=>{const tx=db.transaction('atlas','readwrite');tx.objectStore('atlas').put(val,key);tx.oncomplete=res;tx.onerror=()=>{console.warn('idb put error',tx.error);res()};tx.onabort=()=>{console.warn('idb abort',tx.error);res()}})}catch(e){console.warn('idb',e)}}
