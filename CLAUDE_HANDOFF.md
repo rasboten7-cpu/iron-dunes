@@ -124,3 +124,13 @@ Fog of war (v4 explicitly wanted the enemy visible; could be an option), aircraf
 - Bomb truck spawns `disguised`: not auto-targeted unless a detector/radar/scan sees it (`dSeen`); looks like the viewer's own jeep (`disguiseLook`); disguise drops when damaged. Upgrade `biobomb` (black market) leaves a big toxin cloud.
 - Toxin tractor: "تلويث الأرض" command (`e.contam`), 10s cooldown.
 - New unit `radarvan` (500, detector 30) + upgrade `radarscan` (factory): reveals a 30 radius area for 12s (`scans[]`, 45s cooldown). AI builds one and scans sneaky enemies near its forces (`aiRadar`). Model `radarVan` in models.js (CACHE_VER bumped → atlases re-bake once).
+
+## v19 — Generals roster parity (all three factions)
+- Unit portraits: `dist/assets/portraits/{faction}-{type}.webp` (cut from the user's concept sheets). `icon()` in visuals.js uses them first (`UNIT_ART` list; NOTE `PORTRAITS` name is already taken by the sprite-portrait Map). CSS `.asset-icon.portrait` in generals-ui.css.
+- Prices/requirements like Generals: dozers 1000, Chinook 1200 + carries 8 (AI never loads it), Battlemaster 800, Overlord gatling add-on 1200, Rebel 150, RPG 300, Tomahawk/Inferno need radar, Comanche can't hit air (`aa:false`), ambulance heals infantry only and cleans enemy toxin/radiation pools nearby.
+- Entity-level faction `e.fac`: `D(e)` uses `FDEFS[e.fac]` so hijacked/captured/crewed things keep their own stats and look (`swapLook`).
+- Walking abilities: `e.task={kind,target}` handled by `taskStep` (TASKS: capture, charge, tnt, steal, crew, pilot). Any move order clears it.
+- New upgrades: `capture` (barracks, all factions — rifle infantry), `armmob` (sand palace).
+- New units: burton (falcon hero, stealth, timed charges), pilot (spawned from vet≥1 falcon vehicles, auto-seeks a lower-vet vehicle), stealth (stealth jet, ground only), aurora (supersonic: immune while inbound), lotus (dragon hero: capture 2s, disable vehicles, steal ≤1000$), mob (sand, regenerates, Arm the Mob), hijacker (stealth, weapon kind 'hijack' converts vehicles), jarmen (sand hero sniper, `snipeDriver` → vehicle becomes NEUTRAL `empty`, any rifle/rocket infantry can crew it).
+- Fire wall (dragon flame tank), firestorm (`firestormCheck`: 4 incendiary hits within 7m/4s), gattling spin-up (dragon jeep/turret), laser lock (falcon rocket, +40% vs vehicles, +6 range, 12s), TNT (dragon rocket).
+- AI: `aiAutoAbility` on fire, `aiAbilities` each tactic tick (crew empty vehicles, capture undefended buildings, Burton charges, Lotus steal/disable/capture, Jarmen snipes). Hero `limit:1` enforced by `atLimit`.

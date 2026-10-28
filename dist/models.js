@@ -27,7 +27,11 @@ export function palette(name,team){const P={
   cnuni:['#5a6b48',[['#4a5a3a',40,10],['#3e4b31',26,8],['#6b7b55',18,6]]],
   glauni:['#b29d78',[['#9a8562',40,10],['#c4b08a',26,8],['#7e6c4c',16,6]]],
   uniform:['#8f8463',[['#6d6548',40,10],['#5a5a40',30,8],['#a89c76',20,6]]],
-  tanuni:['#a8956a',[['#8a7a52',40,10],['#b9a882',26,8],['#77693f',20,6]]]}[name];
+  tanuni:['#a8956a',[['#8a7a52',40,10],['#b9a882',26,8],['#77693f',20,6]]],
+  burtonuni:['#5b5a3c',[['#3f3e2a',40,10],['#6f6b48',26,8],['#2f2e22',16,6]]],
+  pilotuni:['#6d6a4e',[['#5f5c42',30,10],['#77745a',20,6]]],
+  lotusuni:['#26222a',[['#8a1c22',34,10],['#1a181c',20,8]]],
+  pale:['#b4b8bc',[['#a2a6ac',20,24],['#c4c8cc',12,16]]]}[name];
  const uni=/uni$/.test(name)||name==='uniform',tc=thex(team);const camo=new T.MeshStandardMaterial({map:camoTexture(P[0],P[1],uni?1.4:.65,.45,tc,uni?.10:.07),roughness:.86,metalness:.08});
  return{camo,
   plain:new T.MeshStandardMaterial({color:tc?new T.Color(P[0]).lerp(new T.Color(tc),.08).multiplyScalar(.92):new T.Color(P[0]).multiplyScalar(.92),roughness:.85,metalness:.08}),
@@ -147,6 +151,10 @@ function technical(team){const m=palette('rust',team);const hull=new T.Group(),t
  box(.55,.4,.5,m.canvas,hull,.5,1.1,-1.75);
  cyl(.1,.1,.6,m.gun,turret,0,.3,0);box(.12,.14,.6,m.gun,turret,0,.62,.2);cyl(.04,.04,1.1,m.gun,turret,0,.64,.95,'z',8);box(.5,.4,.05,m.metal,turret,0,.75,.45);
  turret.position.set(0,.95,0);hull.position.z=.6;turret.position.z=0;return{hull,turret}}
+// angry mob: five armed civilians that move as one unit (sand)
+function mob(team){const g=new T.Group(),members=[];const spots=[[0,0],[-.9,-.5],[.9,-.5],[-.5,.75],[.55,.8]];spots.forEach(([x,z],i)=>{const sd=soldier(team,{pal:i%2?'glauni':'tanuni',scarf:i!==2,noGun:i===3,beret:i===2?0x3a5a2a:0});sd.hull.position.set(x,0,z);sd.hull.scale.setScalar(1.1);g.add(sd.hull);members.push(sd)});
+ return{hull:g,turret:null,pose:(k,ph=0)=>members.forEach((m,i)=>m.pose(k==='hack'?'idle':k,ph+i*1.3))}}
+function darkJet(team){const j=jetFighter(team,{pal:'dark',twin:true,k:.98});(j.hull||j).traverse?.(o=>{if(o.material&&o.material.color&&!o.material.emissive?.getHex?.())o.material=o.material.clone(),o.material.color.multiplyScalar(.42)});return j}
 // radar van: technical pickup with a box body and a dish on the roof (sand)
 function radarVan(team){const t=technical(team),m=palette('rust',team);const hull=t.hull;slab(1.85,1.05,2.1,.06,m.canvas,hull,0,1.05,-1.2);
  const dish=new T.Group();dish.position.set(0,2.25,-1.3);dish.rotation.x=-.5;hull.add(dish);cyl(.06,.06,.5,m.metal,hull,0,1.85,-1.3);
@@ -164,7 +172,7 @@ function worker(team){const sd=soldier(team,{pal:'glauni',noGun:true,scarf:true}
 // ---------------------------------------------------------------------------
 // Infantry with a real walk cycle (poses are baked as separate rows)
 // ---------------------------------------------------------------------------
-function soldier(team,{rocket=false,pal,scarf=false,noGun=false,sniper=false,hacker=false,vest=false}={}){const m=palette(pal||(rocket?'tanuni':'uniform'),team);const root=new T.Group();
+function soldier(team,{rocket=false,pal,scarf=false,noGun=false,sniper=false,hacker=false,vest=false,beret=0,pilot=false,bun=false,bare=false}={}){const m=palette(pal||(rocket?'tanuni':'uniform'),team);const root=new T.Group();
  const limb=(r,len,mat)=>{const g=new T.CapsuleGeometry(r,len,4,8);g.translate(0,-len/2-r,0);return g};
  const hips=new T.Group();hips.position.y=1.0;root.add(hips);
  const legs=[-1,1].map(s=>{const thigh=new T.Group();thigh.position.set(s*.17,0,0);hips.add(thigh);mesh(limb(.13,.38,m.camo),m.camo,thigh);const knee=new T.Group();knee.position.y=-.52;thigh.add(knee);mesh(limb(.11,.36,m.camo),m.camo,knee);const boot=box(.2,.14,.36,m.dark,knee,0,-.52,.07);return{thigh,knee}});
@@ -175,13 +183,17 @@ function soldier(team,{rocket=false,pal,scarf=false,noGun=false,sniper=false,hac
  slab(.42,.48,.24,.05,m.plain,torso,0,.25,-.3).material=new T.MeshStandardMaterial({color:0x5a5640,roughness:.9});
  box(.1,.06,.06,m.team,torso,-.27,.62,0);box(.1,.06,.06,m.team,torso,.27,.62,0);
  const head=new T.Group();head.position.y=.92;torso.add(head);mesh(new T.SphereGeometry(.15,12,10),m.skin,head,0,.02,.02);
- if(sniper){cyl(.3,.3,.03,m.camo,head,0,.06,0,'y',16);cyl(.17,.19,.16,m.camo,head,0,.14,0,'y',14)}else if(hacker){const cap=mesh(new T.SphereGeometry(.18,14,10,0,Math.PI*2,0,Math.PI*.5),new T.MeshStandardMaterial({color:0x3e4a32,roughness:.8}),head,0,.04,0);box(.2,.03,.16,new T.MeshStandardMaterial({color:0x3e4a32}),head,0,.05,.18);box(.26,.05,.04,m.dark,head,0,.03,.15)}else if(scarf){const wrap=mesh(new T.SphereGeometry(.19,14,10,0,Math.PI*2,0,Math.PI*.62),new T.MeshStandardMaterial({color:team===1?0x8a2a22:0x2a4a6a,roughness:.9}),head,0,.02,-.01);wrap.scale.set(1.05,1,1.1);box(.26,.12,.08,new T.MeshStandardMaterial({color:0xd8d0bc,roughness:.9}),head,0,-.1,.12)}else{const helm=mesh(new T.SphereGeometry(.2,14,10,0,Math.PI*2,0,Math.PI*.55),m.camo,head,0,.02,0);helm.scale.set(1,.9,1.08);box(.24,.05,.05,m.dark,head,0,.04,.17)}
+ if(beret){const b=mesh(new T.SphereGeometry(.17,12,8,0,Math.PI*2,0,Math.PI*.5),new T.MeshStandardMaterial({color:beret,roughness:.9}),head,.03,.08,0);b.scale.set(1.15,.55,1.1);b.rotation.z=-.25;box(.1,.03,.05,m.dark,head,.08,-.02,.15)}
+ else if(pilot){const h=mesh(new T.SphereGeometry(.2,14,10),new T.MeshStandardMaterial({color:0xe8e6dc,roughness:.4}),head,0,.04,0);h.scale.set(1,1,1.08);box(.26,.1,.06,new T.MeshStandardMaterial({color:0x1a2228,roughness:.1,metalness:.6}),head,0,.04,.17)}
+ else if(bun){const hair=new T.MeshStandardMaterial({color:0x141210,roughness:.6});const h=mesh(new T.SphereGeometry(.165,12,10,0,Math.PI*2,0,Math.PI*.6),hair,head,0,.04,-.02);h.scale.set(1.02,1,1.05);mesh(new T.SphereGeometry(.08,10,8),hair,head,0,.2,-.1)}
+ else if(sniper){cyl(.3,.3,.03,m.camo,head,0,.06,0,'y',16);cyl(.17,.19,.16,m.camo,head,0,.14,0,'y',14)}else if(hacker){const cap=mesh(new T.SphereGeometry(.18,14,10,0,Math.PI*2,0,Math.PI*.5),new T.MeshStandardMaterial({color:0x3e4a32,roughness:.8}),head,0,.04,0);box(.2,.03,.16,new T.MeshStandardMaterial({color:0x3e4a32}),head,0,.05,.18);box(.26,.05,.04,m.dark,head,0,.03,.15)}else if(scarf){const wrap=mesh(new T.SphereGeometry(.19,14,10,0,Math.PI*2,0,Math.PI*.62),new T.MeshStandardMaterial({color:team===1?0x8a2a22:0x2a4a6a,roughness:.9}),head,0,.02,-.01);wrap.scale.set(1.05,1,1.1);box(.26,.12,.08,new T.MeshStandardMaterial({color:0xd8d0bc,roughness:.9}),head,0,-.1,.12)}else{const helm=mesh(new T.SphereGeometry(.2,14,10,0,Math.PI*2,0,Math.PI*.55),m.camo,head,0,.02,0);helm.scale.set(1,.9,1.08);box(.24,.05,.05,m.dark,head,0,.04,.17)}
  const arms=[-1,1].map(s=>{const sh=new T.Group();sh.position.set(s*.32,.72,0);torso.add(sh);mesh(limb(.09,.3,m.camo),m.camo,sh);const el=new T.Group();el.position.y=-.45;sh.add(el);mesh(limb(.08,.28,m.camo),m.camo,el);return{sh,el}});
  // weapon held in front of the chest
  const gun=new T.Group();torso.add(gun);
  if(vest){const ex=new T.MeshStandardMaterial({color:0x8a3a22,roughness:.7});for(let i=0;i<9;i++){const an=i/9*Math.PI*2;cyl(.045,.045,.34,ex,torso,Math.sin(an)*.27,.28,Math.cos(an)*.2,'y',6)}cyl(.012,.012,.6,new T.MeshStandardMaterial({color:0xd8c040}),torso,.1,.5,.2,'x',4);box(.1,.12,.06,m.dark,gun,0,0,.1)}
  else if(hacker){box(.42,.05,.3,m.dark,gun,0,0,0)}
  else if(sniper){box(.07,.09,1.35,m.gun,gun,0,0,.2);cyl(.045,.045,.36,m.dark,gun,0,.1,.15,'z',8);box(.05,.14,.08,m.gun,gun,0,-.1,0);box(.06,.1,.32,m.dark,gun,0,-.02,-.5);cyl(.02,.02,.4,m.gun,gun,0,.02,.95,'z',6)}
+ else if(bare){}
  else if(noGun){cyl(.025,.025,1.1,m.wood,gun,0,0,0,'z',6);box(.18,.03,.24,m.metal,gun,0,0,.6)}else if(rocket){cyl(.09,.09,1.25,new T.MeshStandardMaterial({color:0x4f5238,roughness:.8}),gun,0,0,0,'z',12);cyl(.12,.1,.2,m.dark,gun,0,0,.62,'z',10);box(.06,.12,.1,m.dark,gun,-.1,.06,.1);}
  else{box(.07,.1,.85,m.gun,gun,0,0,.1);box(.05,.16,.08,m.gun,gun,0,-.11,.05);box(.06,.09,.25,m.dark,gun,0,-.02,-.38);cyl(.02,.02,.3,m.gun,gun,0,.02,.62,'z',6)}
  let laptop=null;if(hacker){laptop=new T.Group();laptop.position.set(0,.4,.42);root.add(laptop);box(.56,.04,.4,m.dark,laptop,0,0,0);const scr=box(.56,.38,.03,new T.MeshStandardMaterial({color:0x163a1c,emissive:0x40ff70,emissiveIntensity:.55}),laptop,0,.19,-.19);scr.rotation.x=-.25;laptop.visible=false}
@@ -459,21 +471,21 @@ export const MODEL_SPECS={
  sniper:{S:3.9,build:t=>soldier(t,{sniper:true}),poses:INF_POSES,infantry:true},heli:{S:10.4,build:t=>heli(t),poses:['rot0','rot1','rot2','rot3']},
  hacker:{S:3.9,build:t=>soldier(t,{pal:'cnuni',hacker:true}),poses:[...INF_POSES,'hack'],infantry:true},flametank:{S:9.2,build:t=>tank(t,{pal:'green',k:.95,flame:true}),turret:true},
  raptor:{S:10.4,build:t=>jetFighter(t,{pal:'dark',twin:true})},chinook:{S:12,build:t=>chinook(t),poses:['rot0','rot1','rot2','rot3']},ambulance:{S:7,build:t=>ambulance(t)},quad:{S:7.2,build:t=>quad(t),turret:true},mig:{S:10.4,build:t=>jetFighter(t,{pal:'olive',twin:false,k:.95})},
- suicide:{S:3.9,build:t=>soldier(t,{pal:'glauni',scarf:true,vest:true}),poses:INF_POSES,infantry:true},toxin:{S:7.8,build:t=>tractor(t)},bombtruck:{S:8.8,build:t=>bombTruck(t)},radarvan:{S:7.6,build:t=>radarVan(t)},
+ suicide:{S:3.9,build:t=>soldier(t,{pal:'glauni',scarf:true,vest:true}),poses:INF_POSES,infantry:true},toxin:{S:7.8,build:t=>tractor(t)},bombtruck:{S:8.8,build:t=>bombTruck(t)},radarvan:{S:7.6,build:t=>radarVan(t)},burton:{S:3.9,build:t=>soldier(t,{pal:'burtonuni',beret:0x8a1a1a}),poses:INF_POSES,infantry:true},pilot:{S:3.9,build:t=>soldier(t,{pal:'pilotuni',pilot:true,bare:true}),poses:INF_POSES,infantry:true},lotus:{S:3.9,build:t=>soldier(t,{pal:'lotusuni',bun:true,bare:true}),poses:INF_POSES,infantry:true},hijacker:{S:3.9,build:t=>soldier(t,{pal:'glauni',scarf:true,bare:true}),poses:INF_POSES,infantry:true},jarmen:{S:3.9,build:t=>soldier(t,{pal:'glauni',sniper:true,beret:0x3a5a2a}),poses:INF_POSES,infantry:true},mob:{S:6.4,build:t=>mob(t),poses:INF_POSES,infantry:true},stealthjet:{S:10.4,build:t=>darkJet(t)},aurora:{S:11.4,build:t=>jetFighter(t,{pal:'pale',twin:true,k:1.12})},
  crawler:{S:8.6,build:t=>crawler(t)},battlebus:{S:10,build:t=>battleBus(t)},scudlauncher:{S:10.6,build:t=>scudLauncher(t)},nukecannon:{S:12.4,build:t=>nukeCannon(t),turret:true},
  overlord_gat:{S:11.6,build:t=>overlord(t,'gat'),turret:true},overlord_spk:{S:11.6,build:t=>overlord(t,'spk'),turret:true},overlord_bnk:{S:11.6,build:t=>overlord(t,'bnk'),turret:true}};
 for(const[k,f]of Object.entries(B)){MODEL_SPECS[k]={build:f,building:true,turret:/^(turret|tunnel)/.test(k),frames:/^radar/.test(k)?8:1}}
 const BLD=f=>Object.fromEntries(['hq','power','refinery','barracks','factory','turret','radar','silo'].filter(t=>B[t+'_'+f]).map(t=>[t,t+'_'+f]));
 export const FACTION_MODELS={
- falcon:{builder:'builder',harvester:'harvester',infantry:'infantry',rocket:'rocket',jeep:'jeep',tank:'crusader',heavy:'paladin',artillery:'tomahawk',sniper:'sniper',heli:'heli',raptor:'raptor',ambulance:'ambulance',...BLD('falcon'),harvester:'chinook',airfield:'airfield',dropzone:'dropzone'},
- dragon:{builder:'dozer_cn',harvester:'truck_cn',infantry:'soldier_cn',rocket:'rocket_cn',jeep:'gattling',tank:'battlemaster',heavy:'overlord',artillery:'inferno',hacker:'hacker',flame:'flametank',mig:'mig',...BLD('dragon'),speaker:'speaker',airfield:'airfield_dragon',bunker:'bunker',crawler:'crawler',nukecannon:'nukecannon',heavy_gat:'overlord_gat',heavy_spk:'overlord_spk',heavy_bnk:'overlord_bnk'},
- sand:{builder:'worker',harvester:'oldtruck',infantry:'soldier_gla',rocket:'rocket_gla',jeep:'technical',tank:'scorpion',heavy:'marauder',artillery:'buggy',suicide:'suicide',toxin:'toxin',bombtruck:'bombtruck',quad:'quad',...BLD('sand'),tunnel:'tunnel',blackmarket:'blackmarket',hole:'hole',trap:'trap',bus:'battlebus',scudlauncher:'scudlauncher',radarvan:'radarvan'}};
+ falcon:{builder:'builder',harvester:'harvester',infantry:'infantry',rocket:'rocket',jeep:'jeep',tank:'crusader',heavy:'paladin',artillery:'tomahawk',sniper:'sniper',heli:'heli',raptor:'raptor',ambulance:'ambulance',...BLD('falcon'),harvester:'chinook',airfield:'airfield',dropzone:'dropzone',burton:'burton',pilot:'pilot',stealth:'stealthjet',aurora:'aurora'},
+ dragon:{builder:'dozer_cn',harvester:'truck_cn',infantry:'soldier_cn',rocket:'rocket_cn',jeep:'gattling',tank:'battlemaster',heavy:'overlord',artillery:'inferno',hacker:'hacker',flame:'flametank',mig:'mig',...BLD('dragon'),speaker:'speaker',airfield:'airfield_dragon',bunker:'bunker',crawler:'crawler',nukecannon:'nukecannon',heavy_gat:'overlord_gat',heavy_spk:'overlord_spk',heavy_bnk:'overlord_bnk',lotus:'lotus'},
+ sand:{builder:'worker',harvester:'oldtruck',infantry:'soldier_gla',rocket:'rocket_gla',jeep:'technical',tank:'scorpion',heavy:'marauder',artillery:'buggy',suicide:'suicide',toxin:'toxin',bombtruck:'bombtruck',quad:'quad',...BLD('sand'),tunnel:'tunnel',blackmarket:'blackmarket',hole:'hole',trap:'trap',bus:'battlebus',scudlauncher:'scudlauncher',radarvan:'radarvan',mob:'mob',hijacker:'hijacker',jarmen:'jarmen'}};
 export const WALK_FRAMES=WALK;
 
 // ---------------------------------------------------------------------------
 // Bake every model into sprite atlases: columns = directions, rows = poses
 // ---------------------------------------------------------------------------
-const CACHE_VER='fires-of-war-v18-gla';
+const CACHE_VER='fires-of-war-v19-units';
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('iron-dunes',1);r.onupgradeneeded=()=>r.result.createObjectStore('atlas');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function cacheGet(key){try{const db=await idb();return await new Promise(res=>{const q=db.transaction('atlas').objectStore('atlas').get(key);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)})}catch(e){return null}}
 async function cachePut(key,val){try{const db=await idb();await new Promise(res=>{const tx=db.transaction('atlas','readwrite');tx.objectStore('atlas').put(val,key);tx.oncomplete=res;tx.onerror=()=>{console.warn('idb put error',tx.error);res()};tx.onabort=()=>{console.warn('idb abort',tx.error);res()}})}catch(e){console.warn('idb',e)}}

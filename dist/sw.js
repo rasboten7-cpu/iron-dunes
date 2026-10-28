@@ -1,5 +1,5 @@
 // Offline support for the home-screen app: network first, cached copy when offline.
-const CACHE='fires-of-war-v18b-gla';
+const CACHE='fires-of-war-v19-units';
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(Promise.all([self.clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('fires-of-war-')&&k!==CACHE).map(k=>caches.delete(k))))])));
 self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET'||new URL(r.url).origin!==location.origin)return;
