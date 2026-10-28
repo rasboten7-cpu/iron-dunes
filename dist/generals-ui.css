@@ -207,3 +207,7 @@ body.spectate #hud .command-panel .economy{visibility:hidden}body.spectate #hud 
 
 /* v19: unit portraits */
 .asset-icon.portrait,#hud .asset-icon.portrait{background-size:cover!important;background-position:center 38%!important;background-repeat:no-repeat!important;image-rendering:auto}
+
+/* v21: general power levels */
+.pw .lv{font-style:normal;color:#e9c46a;letter-spacing:2px;margin-inline-start:6px;font-size:.9em}
+.pw.owned.upgradable:not(:disabled){border-color:#e9c46a;box-shadow:0 0 0 1px #e9c46a55 inset}

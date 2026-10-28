@@ -141,3 +141,8 @@ Fog of war (v4 explicitly wanted the enemy visible; could be an option), aircraf
 - Salvage: Marauder rate 2→1.5→(2 shots /0.85s); Quad 8 dmg /0.05 (×2 at level 2). Laser lock = laser-guided missile (40 dmg /0.5s, range GR(300)). Comanche: 20mm gun + 4 AT missiles every 15s, Rocket Pods = 20×30 every 30s. TOW 30 (50 vs air), Scorpion rocket 100 /15s, Buggy 6 → 12 rockets.
 - Superweapons: particle beam 100/0.25s for 10s; nuke 3500 inside 9.3 → 300 at 32.5, radiation skips buildings; Scud Storm 9 missiles, 500 within 7.7 + 150 within 31 + toxin.
 - Powers at Generals level 1: barrage 12×105, paradrop 5 rangers / ambush 4 rebels, cash hack 1000, strike bombs 200, fuel bomb 2000 r15.5, anthrax 200 blast + 40 field. Mines 50+100. Bomb truck 1000 (+100 secondary), HE ×2; terrorist 500 + 300.
+
+## v21 — general power levels
+- `PLV` (game.js, before POWER_ORDER): strike, paradrop, emergency, barrage, cashhack, bounty, spectre have 3 levels; others 1. `tm.powers[id].level`; `unlockPower` buys the next level (1 point, needs rank `POWERS[id].rank + level-1`). `canUpgrade`, `pLvl`, `pMax`, `pLvlTxt`.
+- Effects by level `Lv` in usePower: A-10 planes 1/2/3, paradrop 5/10/20 rangers (sand ambush 4/8/16 rebels), repair 6/9/12 s, barrage 12/24/36 shells, cash hack 1000/2000/4000, bounty 5/10/20 %, spectre 12/18/24 s.
+- Promotion screen shows ●○○ dots, current/next level; command bar shows Ⅰ/Ⅱ/Ⅲ. AI buys new powers first, then levels.
