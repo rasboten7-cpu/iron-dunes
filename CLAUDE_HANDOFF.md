@@ -105,3 +105,7 @@ Fog of war (v4 explicitly wanted the enemy visible; could be an option), aircraf
 
 ## Map size note (after V15)
 - `dunes` (الكثبان الكبرى) is now 1200×1200 world units (limit 600, about 1.5 km). Nav grid half-size `GL=610` in game.js and A* cap 260000 cover it; `gen({forward:true})` adds a forward expansion deposit per base. Keep GL ≥ largest map limit + 10.
+
+## Map sizes (after V16)
+- Sized by player count like Generals: 2-player maps 800x800 units (limit 400, ~1 km), 4-player 1000x1000 (limit 500, ~1.25 km), 6-player 1200x1200 (limit 600, ~1.5 km). Scale: 1 unit ~ 1.25 m. Nav grid GL=610 covers limit 600.
+- AI cancels and refunds any construction site with no progress for 90 s (unreachable spots on big maps).

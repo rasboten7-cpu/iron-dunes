@@ -38,28 +38,29 @@ function gen({id,name,sub,desc,biome,limit,players,seed,rot=0,rockCount=26,grove
  return{id,name,sub,desc,biome,limit,playLimit:limit-6,cameraLimit:limit-10,terrainSize:limit*2.6,max:players,bases,deposits,civilians,rocks,groves,roads,palms:{count:trees,rule:(x,z)=>far(x,z,-20)&&offRoad(x,z)}}}
 
 export const MAPS=[
- {...common,id:'valley',name:'وادي الحديد',sub:'IRON VALLEY',desc:'وادٍ صحراوي مفتوح لجيشين، مبانٍ مدنية في الوسط.',
-  bases:[{x:-130,z:130},{x:130,z:-130}],
-  deposits:[{x:-139,z:103},{x:139,z:-103},{x:-60,z:-50},{x:60,z:50},{x:-145,z:-80},{x:145,z:80},{x:-30,z:130},{x:30,z:-130}],
-  civilians:mirror([{x:30,z:-4},{x:-6,z:38}]),
-  rocks:mirror([{x:-78,z:34,r:5.5},{x:-16,z:-88,r:5},{x:-100,z:-10,r:4.5},{x:-176,z:20,r:6}]),
-  groves:[],
-  roads:[Array.from({length:52},(_,i)=>{const z=-205+i*8;return[Math.sin(z*.028)*12,z]})],
-  palms:{count:95,rule:(x,z)=>Math.abs(x)>25&&Math.abs(z)<95}},
- {...common,id:'pass',name:'ممر العقارب',sub:'SCORPION PASS',desc:'سلسلتان صخريتان وثلاثة ممرات ضيقة. الدفاع والمدفعية حاسمان.',
-  bases:[{x:-150,z:25},{x:150,z:-25}],
-  deposits:[{x:-158,z:-22},{x:158,z:22},{x:-120,z:100},{x:120,z:-100},{x:-104,z:-112},{x:104,z:112},{x:0,z:88},{x:0,z:-88}],
-  civilians:[{x:0,z:0},...mirror([{x:-28,z:58}])],
-  rocks:[...ridge(-56,-190,190,[[-34,30],[96,142],[-150,-108]]),...ridge(56,-190,190,[[-30,34],[108,150],[-142,-96]])],
-  groves:[],
-  roads:[Array.from({length:52},(_,i)=>{const x=-205+i*8;return[x,16+Math.sin(x*.03)*6]})],
-  palms:{count:60,rule:(x,z)=>Math.abs(x)>70}},
+ // hand-made 2-player maps: about 1 km across (800 units)
+ {...common,limit:400,playLimit:394,cameraLimit:390,terrainSize:1040,id:'valley',name:'وادي الحديد',sub:'IRON VALLEY',desc:'وادٍ صحراوي مفتوح لجيشين بطول كيلومتر، مبانٍ مدنية في الوسط.',
+  bases:[{x:-260,z:260},{x:260,z:-260}],
+  deposits:mirror([{x:-278,z:206},{x:-120,z:-100},{x:-290,z:-160},{x:-60,z:260},{x:-200,z:40},{x:60,z:140}]),
+  civilians:mirror([{x:60,z:-8},{x:-12,z:76},{x:-150,z:-210}]),
+  rocks:mirror([{x:-156,z:68,r:7},{x:-32,z:-176,r:6.5},{x:-200,z:-20,r:6},{x:-352,z:40,r:8},{x:-90,z:150,r:6},{x:-250,z:120,r:7},{x:-60,z:-320,r:7.5},{x:-330,z:-260,r:6.5},{x:20,z:-60,r:5.5},{x:-120,z:320,r:7}]),
+  groves:mirror([{x:-300,z:-60,r:16},{x:-40,z:-250,r:14}]),
+  roads:[Array.from({length:104},(_,i)=>{const z=-410+i*8;return[Math.sin(z*.014)*24,z]})],
+  palms:{count:230,rule:(x,z)=>Math.abs(x)>50&&Math.abs(z)<190}},
+ {...common,limit:400,playLimit:394,cameraLimit:390,terrainSize:1040,id:'pass',name:'ممر العقارب',sub:'SCORPION PASS',desc:'سلسلتان صخريتان وثلاثة ممرات ضيقة على كيلومتر من الصحراء. الدفاع والمدفعية حاسمان.',
+  bases:[{x:-300,z:50},{x:300,z:-50}],
+  deposits:mirror([{x:-316,z:-44},{x:-240,z:200},{x:-208,z:-224},{x:0,z:176},{x:-200,z:60},{x:-60,z:-300}]),
+  civilians:[{x:0,z:0},...mirror([{x:-56,z:116},{x:-40,z:-200}])],
+  rocks:[...ridge(-112,-390,390,[[-68,60],[192,284],[-300,-216]]),...ridge(112,-390,390,[[-60,68],[216,300],[-284,-192]]),...mirror([{x:-250,z:-150,r:7},{x:-330,z:220,r:7.5},{x:-180,z:330,r:6.5}])],
+  groves:mirror([{x:-260,z:-330,r:14}]),
+  roads:[Array.from({length:104},(_,i)=>{const x=-410+i*8;return[x,32+Math.sin(x*.015)*12]})],
+  palms:{count:150,rule:(x,z)=>Math.abs(x)>140}},
  gen({id:'dunes',name:'الكثبان الكبرى',sub:'GREAT DUNES',desc:'خريطة عملاقة بطول كيلو ونصف لستة جيوش: صحراء مفتوحة وممرات بين الصخور وواحات ومواقع إمداد إضافية.',biome:'desert',limit:600,players:6,seed:91,rot:.52,rockCount:95,groveCount:12,groveR:[14,26],civCount:8,trees:320,forward:true}),
- gen({id:'tundra',name:'جبهة الجليد',sub:'FROZEN FRONT',desc:'أرض ثلجية لأربعة جيوش تتخللها غابات الصنوبر والصخور المتجمدة.',biome:'snow',limit:280,players:4,seed:17,rot:.785,rockCount:26,groveCount:8,trees:190}),
- gen({id:'meadow',name:'سهول الربيع',sub:'SPRING PLAINS',desc:'سهول خضراء واسعة لستة جيوش مع بساتين ومزارع في الوسط.',biome:'green',limit:320,players:6,seed:55,rot:0,rockCount:22,groveCount:10,trees:220,civCount:6}),
- gen({id:'savanna',name:'سافانا الأسود',sub:'LION SAVANNA',desc:'سافانا جافة لأربعة جيوش، أشجار الأكاسيا وصخور حمراء.',biome:'savanna',limit:280,players:4,seed:203,rot:0,rockCount:30,groveCount:6,trees:150}),
- gen({id:'pines',name:'غابة الصنوبر',sub:'PINE FOREST',desc:'خريطة ثلجية لجيشين يفصل بينهما حزام غابات كثيف في الوسط.',biome:'snow',limit:240,players:2,seed:77,rot:.785,rockCount:16,groveCount:10,groveR:[10,16],trees:240,civCount:2,center:22}),
- gen({id:'oasis',name:'واحة النخيل',sub:'PALM OASIS',desc:'سهل أخضر لأربعة جيوش تحيط بواحة نخيل كبيرة في المركز.',biome:'green',limit:260,players:4,seed:131,rot:0,rockCount:18,groveCount:4,trees:170,center:24})
+ gen({id:'tundra',name:'جبهة الجليد',sub:'FROZEN FRONT',desc:'أرض ثلجية لأربعة جيوش بطول كيلو وربع تتخللها غابات الصنوبر والصخور المتجمدة.',biome:'snow',limit:500,players:4,seed:17,rot:.785,rockCount:70,groveCount:16,groveR:[13,24],civCount:6,trees:380,forward:true}),
+ gen({id:'meadow',name:'سهول الربيع',sub:'SPRING PLAINS',desc:'سهول خضراء بطول كيلو ونصف لستة جيوش مع بساتين ومزارع في الوسط.',biome:'green',limit:600,players:6,seed:55,rot:0,rockCount:70,groveCount:22,groveR:[14,26],trees:420,civCount:10,forward:true}),
+ gen({id:'savanna',name:'سافانا الأسود',sub:'LION SAVANNA',desc:'سافانا جافة بطول كيلو وربع لأربعة جيوش، أشجار الأكاسيا وصخور حمراء.',biome:'savanna',limit:500,players:4,seed:203,rot:0,rockCount:80,groveCount:12,groveR:[13,24],civCount:6,trees:330,forward:true}),
+ gen({id:'pines',name:'غابة الصنوبر',sub:'PINE FOREST',desc:'خريطة ثلجية لجيشين بطول كيلومتر يفصل بينهما حزام غابات كثيف في الوسط.',biome:'snow',limit:400,players:2,seed:77,rot:.785,rockCount:40,groveCount:24,groveR:[10,18],trees:420,civCount:4,center:34,forward:true}),
+ gen({id:'oasis',name:'واحة النخيل',sub:'PALM OASIS',desc:'سهل أخضر بطول كيلو وربع لأربعة جيوش تحيط بواحة نخيل كبيرة في المركز.',biome:'green',limit:500,players:4,seed:131,rot:0,rockCount:55,groveCount:10,groveR:[13,24],civCount:6,trees:340,center:40,forward:true})
 ];
 export let MAP=MAPS[0];
 export function setMap(id){MAP=MAPS.find(m=>m.id===id)||MAPS[0];return MAP}

@@ -1,7 +1,7 @@
 import {commandIcon,loadCommandArt} from './hud-art.js?v=16';
 import {loadBuildings,buildingModel,buildingIcon,drawLiveBuilding} from './buildings-3d.js?v=15';
 import * as T from './three.module.js';
-import {MAP,MAPS,setMap,mapObstacles,BIOMES} from './world-config.js?v=16-1';
+import {MAP,MAPS,setMap,mapObstacles,BIOMES} from './world-config.js?v=17-maps';
 import {bakeFaction,WALK_FRAMES,bakeScenery} from './models.js?v=12-15';
 export {T,MAP,MAPS,setMap,mapObstacles,BIOMES};
 const BIO=()=>BIOMES[MAP.biome]||BIOMES.desert;
